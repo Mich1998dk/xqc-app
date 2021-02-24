@@ -1,2 +1,4 @@
 import Home from "./Home";
-export { Home };
+import ChooseMode from "./ChooseMode";
+import Welcome from "./Welcome";
+export { Welcome, ChooseMode, Home };

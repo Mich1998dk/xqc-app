@@ -1,21 +1,16 @@
 import * as l from "./layout";
 
 export const colors = {
-  background: "#F5F5F5",
+  background: "#1C1C1C",
+  accent: "#6872DE",
   white: "#FFFFFF",
-  dark: "#242424",
-  gray: "#C4C4C4",
-  darkGray: "#7F7F7F",
-  lightGray: "#E3E3E3",
-  shadow: "#ADADAD",
-  loaderBackground: "rgba(0, 0, 0, 0.60)",
-  green: "#2EDE8D",
-  red: "#F44646",
-  yellow: "#FFDB41",
+  gray: "#8D8D8D",
+  box: "#272727",
+  loader_bg: "rgba(0, 0, 0, 0.60)",
 };
 
 export const sizes = {
-  title: 24,
+  title: 44,
   small: l.setSize(11.5, 10, 8), //l.setSize(11.5, 10, 8)
   regular: l.setSize(15, 13, 11),
   header: 22,

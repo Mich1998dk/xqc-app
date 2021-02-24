@@ -4,4 +4,6 @@ export type NavigationParamList = {
 
 export type HomeStackParamList = {
   Home: undefined;
+  ChooseMode: undefined;
+  Welcome: undefined;
 };

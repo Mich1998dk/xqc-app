@@ -10,7 +10,7 @@ export const Title = (props: Props) => (
   <Text
     {...props}
     style={[
-      { fontFamily: fonts.med, fontSize: sizes.title, color: colors.dark },
+      { fontFamily: fonts.med, fontSize: sizes.title, color: colors.white },
       props.style,
     ]}
   />
@@ -20,7 +20,26 @@ export const Regular = (props: Props) => (
   <Text
     {...props}
     style={[
-      { fontFamily: fonts.med, fontSize: sizes.regular, color: colors.dark },
+      { fontFamily: fonts.med, fontSize: sizes.regular, color: colors.gray },
+      props.style,
+    ]}
+  />
+);
+export const Button = (props: Props) => (
+  <Text
+    {...props}
+    style={[
+      { fontFamily: fonts.med, fontSize: sizes.regular, color: colors.white },
+      props.style,
+    ]}
+  />
+);
+
+export const ButtonSecondary = (props: Props) => (
+  <Text
+    {...props}
+    style={[
+      { fontFamily: fonts.med, fontSize: sizes.regular, color: colors.accent },
       props.style,
     ]}
   />
@@ -30,59 +49,7 @@ export const Header = (props: Props) => (
   <Text
     {...props}
     style={[
-      { fontFamily: fonts.med, fontSize: sizes.header, color: colors.dark },
-      props.style,
-    ]}
-  />
-);
-
-export const Small = (props: Props) => (
-  <Text
-    {...props}
-    style={[
-      { fontFamily: fonts.med, fontSize: sizes.small, color: colors.dark },
-      props.style,
-    ]}
-  />
-);
-
-export const RegularWhite = (props: Props) => (
-  <Text
-    {...props}
-    style={[
-      {
-        fontFamily: fonts.med,
-        fontSize: sizes.regular,
-        color: colors.background,
-      },
-      props.style,
-    ]}
-  />
-);
-
-export const RegularDarkGray = (props: Props) => (
-  <Text
-    {...props}
-    style={[
-      {
-        fontFamily: fonts.med,
-        fontSize: sizes.regular,
-        color: colors.darkGray,
-      },
-      props.style,
-    ]}
-  />
-);
-
-export const RegularLightGray = (props: Props) => (
-  <Text
-    {...props}
-    style={[
-      {
-        fontFamily: fonts.med,
-        fontSize: sizes.regular,
-        color: colors.gray,
-      },
+      { fontFamily: fonts.med, fontSize: sizes.header, color: colors.white },
       props.style,
     ]}
   />

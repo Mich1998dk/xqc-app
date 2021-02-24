@@ -1,4 +1,4 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import {
   StyleSheet,
   View,
@@ -7,32 +7,35 @@ import {
   Platform,
 } from "react-native";
 import { Loader } from "../components/molecules/index";
-import { Header } from "../containers/index";
 import { colors, sizes, fonts } from "../utils/theme";
 import i18n from "i18n-js";
+import { StatusBar } from "expo-status-bar";
 
 interface Props {
   children: React.ReactNode;
   loading?: boolean;
   isKeyBoardAvoiding?: boolean;
+  style?: CSSProperties;
 }
 
 export default function Container({
   children,
   loading,
   isKeyBoardAvoiding,
+  style,
 }: Props) {
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar style="light" />
       {isKeyBoardAvoiding ? (
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
-          style={styles.content}
+          style={[styles.content, style as any]}
         >
           {children}
         </KeyboardAvoidingView>
       ) : (
-        <View style={styles.content}>{children}</View>
+        <View style={[styles.content, style as any]}>{children}</View>
       )}
 
       {loading && <Loader />}
@@ -51,6 +54,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     flexDirection: "column",
     maxWidth: 800,
-    width: "100%",
+    width: "96%",
   },
 });
