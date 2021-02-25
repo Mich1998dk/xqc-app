@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, FlatList, View } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  View,
+  Image,
+} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
@@ -16,10 +22,12 @@ type Props = {
 };
 
 export default function Home({ navigation }: Props) {
-  const [state, setState] = useState({ loading: false });
+  const [state, setState] = useState({ loading: true, images: [] });
   const [selected, setSelected] = useState<number[]>([]);
+  const [images, setImages] = useState<string[]>([]);
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
+  const [path, setPath] = useState("")
 
   const testConnection = async () => {
     fetch("http://bjth.itu.dk:5001/", {
@@ -34,16 +42,66 @@ export default function Home({ navigation }: Props) {
       });
   };
 
-  const initExquisitor = async () => {
-    fetch("http://bjth.itu.dk:5001/initExquisitor", {
+  function parse(str: string) {
+    var y = str.substr(0, 4),
+      m = str.substr(4, 2),
+      d = str.substr(6, 2);
+    return `${y}-${m}-${d}`;
+  }
+
+  function isUpperCase(str: string) {
+    return /[A-Z]/.test(str);
+  }
+
+  const initModel = async () => {
+    var arr = [];
+    while (arr.length < 50) {
+      var randomnumber = Math.floor(Math.random() * Math.floor(191524)) + 1;
+      if (arr.indexOf(randomnumber) > -1) continue;
+      arr[arr.length] = randomnumber;
+    }
+    fetch("http://bjth.itu.dk:5001/initModel", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ ids: arr }),
     })
       .then((resp) => resp.json())
       .then((res) => {
-        console.log(res);
+        var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
+
+
+        var paths = [];
+        for (let i = 0; i < res.img_locations.length; i++) {
+          var rootPath = "../../../assets/BSCBilleder/images";
+          var fileName = res.img_locations[i];
+          var result = regex.exec(res.img_locations[i]);
+          //@ts-ignore
+          var folderName = result[0].replace("_", "");
+          var capitalOrNot = isUpperCase(fileName) ? ".JPG" : ".jpg";
+
+          var filePath = `${rootPath}/${parse(
+            folderName
+          )}/${fileName}${capitalOrNot}`;
+          paths.push(filePath);
+          console.log(paths[i]);
+          //import("/Users/emilknudsen/Desktop/BSCBilleder/images/2015-02-23/")
+          // var temp = res.img_locations[i].split("_");
+          // var folderName = temp[0];
+          // var date = parse(folderName)
+          // console.log(folderName)
+          // console.log(date);
+        }
+        console.log("PATH")
+        console.log(paths[0])
+        setPath(paths[0])
+
+        //setImages(paths)
+        setState({...state, loading: false, images: paths as any})
+
+        //Make new string which is the folder name
+        // - Split on "_" and reformat the first position to "YYYY-MM-DD"
       })
       .catch((err) => {
         console.error("Error:", err);
@@ -56,7 +114,7 @@ export default function Home({ navigation }: Props) {
     return unsubscribe;
   }, [navigation]);
 
-  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+  const data = ["../../../assets/BSCBilleder/images/2018-05-22/B00005972_21I6X0_20180522_112602E.JPG", "../../../assets/BSCBilleder/images/2015-03-16/b00002298_21i6bq_20150316_145858e.jpg", "../../../assets/BSCBilleder/images/2018-05-26/B00003681_21I6X0_20180526_094519E.JPG", "../../../assets/BSCBilleder/images/2018-05-06/B00008766_21I6X0_20180506_160205E.JPG", "../../../assets/BSCBilleder/images/2018-05-08/B00001150_21I6X0_20180508_190424E.JPG"];
 
   return (
     <Container>
@@ -66,7 +124,26 @@ export default function Home({ navigation }: Props) {
         <Button onPress={() => initExquisitor()} title="Init" />
       </ScrollView> */}
 
-      <FlatList
+      {/*images.length > 0 && (
+        <Image
+          style={{ width: 200, height: 200 }}
+          source={{url: images[0]} as any} 
+        />
+      )*/}
+{/* {!state.loading && 
+  <Image style={{width: 200, height: 200}} source={require(images[20])} />
+} */}
+
+  
+  <Image style={{width: 200, height: 200}} source={require("../../../assets/BSCBilleder/images/2018-05-22/B00005972_21I6X0_20180522_112602E.JPG")} />
+  <Image style={{width: 200, height: 200}} source={require("../../../assets/BSCBilleder/images/2015-03-16/b00002298_21i6bq_20150316_145858e.jpg")} />
+  <Image style={{width: 200, height: 200}} source={require("../../../assets/BSCBilleder/images/2018-05-26/B00003681_21I6X0_20180526_094519E.JPG")} />
+  
+
+  
+
+
+      {/* <FlatList
         columnWrapperStyle={{ justifyContent: "space-between" }}
         data={data}
         numColumns={2}
@@ -92,11 +169,11 @@ export default function Home({ navigation }: Props) {
             ></TouchableOpacity>
           );
         }}
-      />
+      /> */}
       <View style={styles.buttons}>
         <IconButton
           title="NEW RANDOM SET"
-          onPress={() => console.log("New random set")}
+          onPress={() => initModel()}
           type="random"
           style={{ marginLeft: 10, marginRight: 10 }}
           secondary

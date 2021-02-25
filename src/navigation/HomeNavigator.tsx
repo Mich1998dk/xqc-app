@@ -7,7 +7,7 @@ const Stack = createStackNavigator<HomeStackParamList>();
 
 export default function Navigation() {
   return (
-    <Stack.Navigator headerMode="none" initialRouteName="Welcome">
+    <Stack.Navigator headerMode="none" initialRouteName="Home">
       <Stack.Screen name="Welcome" component={Welcome}></Stack.Screen>
       <Stack.Screen name="ChooseMode" component={ChooseMode}></Stack.Screen>
       <Stack.Screen name="Home" component={Home}></Stack.Screen>
