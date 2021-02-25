@@ -3,6 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { fonts, colors, sizes } from "../../utils/theme";
 import { Text } from "../atoms/index";
 import { Ionicons } from "@expo/vector-icons";
+import * as Animatable from "react-native-animatable";
 
 interface Props {
   title: string;
@@ -25,7 +26,7 @@ export default function IconButton({
         return (
           <Ionicons
             name="sync-outline"
-            size={26}
+            size={22}
             color={secondary ? colors.accent : colors.white}
             style={{ marginRight: 8 }}
           />
@@ -34,7 +35,7 @@ export default function IconButton({
         return (
           <Ionicons
             name="shuffle"
-            size={26}
+            size={22}
             color={secondary ? colors.accent : colors.white}
             style={{ marginRight: 8 }}
           />
@@ -62,9 +63,11 @@ export default function IconButton({
     >
       {iconSwitch()}
       {secondary ? (
-        <Text.ButtonSecondary>{title}</Text.ButtonSecondary>
+        <Text.ButtonSecondary style={{ fontSize: 14 }}>
+          {title}
+        </Text.ButtonSecondary>
       ) : (
-        <Text.Button>{title}</Text.Button>
+        <Text.Button style={{ fontSize: 14 }}>{title}</Text.Button>
       )}
     </TouchableOpacity>
   );
@@ -73,9 +76,9 @@ export default function IconButton({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.accent,
-    height: 46,
-    paddingHorizontal: 14,
-    borderRadius: 18,
+    height: 42,
+    paddingHorizontal: 12,
+    borderRadius: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

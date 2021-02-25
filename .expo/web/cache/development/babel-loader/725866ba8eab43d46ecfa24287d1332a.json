@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var URL = \"https://\";","map":{"version":3,"sources":["/Users/thqv/Desktop/Bachelor/xqc-app/src/utils/constants.tsx"],"names":["URL"],"mappings":"AAAA,OAAO,IAAMA,GAAG,GAAG,UAAZ","sourcesContent":["export const URL = \"https://\";\n"]},"metadata":{},"sourceType":"module"}
