@@ -15,3 +15,11 @@ export type Obj = {
   shotId?: number;
   folderName?: string;
 };
+
+export type State = {
+  positives: Obj[];
+  negatives: Obj[];
+  seen: Obj[];
+  images: Obj[];
+  loading: boolean;
+};

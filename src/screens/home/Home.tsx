@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -7,7 +7,7 @@ import {
   Alert,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList } from "../../utils/types";
+import { HomeStackParamList, State } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
 import {
   Header,
@@ -17,11 +17,17 @@ import {
 } from "../../components/molecules/index";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
-import {} from "../../redux/reducers";
+import {
+  initModelAsync,
+  negativeExamplePressed,
+  positiveExamplePressed,
+  learnModelAsync,
+} from "../../redux/reducers";
 import { colors } from "../../utils/theme";
 import { formatDate, isUpperCase, formatToLocation } from "../../utils/helpers";
 import { Menu } from "../../components/organisms/index";
 import { Obj } from "../../utils/types";
+
 import axios from "axios";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
@@ -43,6 +49,8 @@ export default function Home({ navigation }: Props) {
   const [negatives, setNegatives] = useState<Obj[]>([]);
   const [selected, setSelected] = useState<Obj[]>([]);
 
+  //const [appState, setAppState] = useContext(AppContext);
+
   // console.log("Positives");
   // console.log(positives);
 
@@ -50,7 +58,7 @@ export default function Home({ navigation }: Props) {
   // console.log(negatives);
 
   const dispatch = useDispatch();
-  const redux = useSelector((state) => state);
+  const redux = useSelector((state: State) => state);
 
   const testConnection = async () => {
     fetch("http://bjth.itu.dk:5001/", {
@@ -197,7 +205,8 @@ export default function Home({ navigation }: Props) {
   };
 
   useEffect(() => {
-    initModel();
+    //initModel();
+    dispatch(initModelAsync());
     const unsubscribe = navigation.addListener("focus", () => {});
 
     return unsubscribe;
@@ -211,7 +220,7 @@ export default function Home({ navigation }: Props) {
   };
 
   return (
-    <Container loading={state.loading} loadingTitle={state.loadingTitle}>
+    <Container loading={redux.loading} loadingTitle={state.loadingTitle}>
       <Header
         title="XQC"
         onPress={() => navigation.goBack()}
@@ -241,10 +250,10 @@ export default function Home({ navigation }: Props) {
   <Image style={{width: 200, height: 200}} source={require("../../../assets/BSCBilleder/images/2015-03-16/b00002298_21i6bq_20150316_145858e.jpg")} />
   <Image style={{width: 200, height: 200}} source={require("../../../assets/BSCBilleder/images/2018-05-26/B00003681_21I6X0_20180526_094519E.JPG")} />
    */}
-      {images.length > 0 && (
+      {redux.images.length > 0 && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
-          data={images}
+          data={redux.images}
           numColumns={4}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
@@ -261,39 +270,13 @@ export default function Home({ navigation }: Props) {
                 <Text.Button>{item.exqId}</Text.Button>
                 <ImageOverlay
                   onPressNegative={() => {
-                    //Check if it is in positives
-                    if (positives.includes(item)) {
-                      //If it is in negatives, remove it and add to positives
-                      setPositives(removeElmFromArr(item, positives));
-                    }
-
-                    if (negatives.includes(item)) {
-                      //If the item is already in it, we would like to delete it
-                      setNegatives(removeElmFromArr(item, negatives));
-                    } else {
-                      //Add to positives
-                      var newArray = [...negatives, item];
-                      setNegatives(newArray);
-                    }
+                    dispatch(negativeExamplePressed(item));
                   }}
                   onPressPositive={() => {
-                    //Check if it is in negatives
-                    if (negatives.includes(item)) {
-                      //If it is in negatives, remove it and add to positives
-                      setNegatives(removeElmFromArr(item, negatives));
-                    }
-
-                    if (positives.includes(item)) {
-                      //If the item is already in it, we would like to delete it
-                      setPositives(removeElmFromArr(item, positives));
-                    } else {
-                      //Add to positives
-                      var newArray = [...positives, item];
-                      setPositives(newArray);
-                    }
+                    dispatch(positiveExamplePressed(item));
                   }}
-                  negativeSelected={negatives.includes(item)}
-                  positiveSelected={positives.includes(item)}
+                  negativeSelected={redux.negatives.includes(item)}
+                  positiveSelected={redux.positives.includes(item)}
                 />
               </View>
             );
@@ -304,7 +287,11 @@ export default function Home({ navigation }: Props) {
       <View style={styles.buttons}>
         <IconButton
           title="+/-"
-          onPress={() => navigation.navigate("PosAndNeg")}
+          onPress={() => {
+            console.log(redux.seen);
+
+            navigation.navigate("PosAndNeg");
+          }}
           secondary
         />
         <IconButton
@@ -314,7 +301,11 @@ export default function Home({ navigation }: Props) {
           style={{ marginLeft: 10, marginRight: 10 }}
           secondary
         />
-        <IconButton title="TRAIN" onPress={() => learn()} type="sync" />
+        <IconButton
+          title="TRAIN"
+          onPress={() => dispatch(learnModelAsync())}
+          type="sync"
+        />
       </View>
     </Container>
   );

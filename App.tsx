@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, createContext } from "react";
 import i18n from "i18n-js";
 import * as Font from "expo-font";
 import { StatusBar } from "expo-status-bar";
@@ -9,13 +9,16 @@ import { store } from "./src/redux/store";
 import { Provider } from "react-redux";
 import { Obj } from "./src/utils/types";
 
-const initalState = {
+const initialState = {
   positives: [] as Obj[],
   negatives: [] as Obj[],
 };
 
+export const AppContext = createContext([initialState]);
+
 export default function App() {
   const [appReady, setAppReady] = useState(false);
+  const [appState, setAppState] = useState(initialState);
 
   i18n.fallbacks = true;
   //TODO: Tilføj resten med localisation og i18n.js

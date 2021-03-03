@@ -1,234 +1,245 @@
 import {
-  ADD_DEVICE,
-  SET_DEVICES,
-  CLEAR_DEVICES,
-  SET_SELECTED_DEVICE,
+  ADD_POSITIVE,
+  SET_POSITIVE,
+  REMOVE_POSITIVE,
+  ADD_NEGATIVE,
+  SET_NEGATIVE,
+  REMOVE_NEGATIVE,
+  ADD_IMAGES,
+  SET_IMAGES,
+  ADD_SEEN,
+  SET_SEEN,
   SET_LOADING,
-  SET_HISTORY,
+  UPDATE_SEEN,
 } from "./action-types";
 import {
-  addDevice,
-  setDevices,
-  clearDevices,
-  setSelectedDevice,
+  addImages,
+  setImages,
+  addNegative,
+  setNegative,
+  addPositive,
+  setPositive,
+  addSeen,
+  setSeen,
   setLoading,
-  setHistory,
+  removePositive,
+  removeNegative,
+  updateSeen,
 } from "./actions";
 import { URL } from "../utils/constants";
-import { Device, StateProps, History } from "../utils/types";
+import { Obj, State } from "../utils/types";
 import moment from "moment";
+import axios from "axios";
+
 import {
-  setDevicesInAsyncStorage,
-  getDevicesInAsyncStorage,
-  clearStorage,
-} from "../utils/storage";
-import { filterEquals, deviceExists } from "../utils/helpers";
+  formatDate,
+  formatToLocation,
+  isUpperCase,
+  initArray,
+} from "../utils/helpers";
 import { Alert } from "react-native";
 
-const initialDevice: Device = {
-  Imei: "",
-  Name: "",
-  Status: undefined,
-};
-
-const initialState: StateProps = {
-  devices: [],
-  selectedDevice: initialDevice,
-  isConnectingDevice: false,
+const initialState: State = {
+  positives: [],
+  negatives: [],
+  images: [],
+  seen: [],
   loading: false,
-  deviceHistory: undefined,
 };
 
-export const devicesReducer = (state = initialState, action: any) => {
+export const reducer = (state = initialState, action: any) => {
   switch (action.type) {
-    case ADD_DEVICE: {
-      return { ...state, devices: [...state.devices, action.payload] };
-    }
-    case SET_DEVICES: {
-      return { ...state, devices: action.payload };
-    }
-    case CLEAR_DEVICES: {
-      return { ...state, devices: action.payload };
-    }
-    case SET_SELECTED_DEVICE: {
-      return { ...state, selectedDevice: action.payload };
-    }
     case SET_LOADING: {
       return { ...state, loading: action.payload };
     }
-    case SET_HISTORY: {
-      return { ...state, deviceHistory: action.payload };
+    case ADD_POSITIVE: {
+      return { ...state, positives: [...state.positives, action.payload] };
+    }
+    case SET_POSITIVE: {
+      return { ...state, positives: action.payload };
+    }
+    case REMOVE_POSITIVE: {
+      return {
+        ...state,
+        positives: state.positives.filter(
+          (item) => item.exqId !== action.payload.exqId
+        ),
+      };
+    }
+    case ADD_NEGATIVE: {
+      return { ...state, negatives: [...state.positives, action.payload] };
+    }
+    case SET_NEGATIVE: {
+      return { ...state, negatives: action.payload };
+    }
+    case REMOVE_NEGATIVE: {
+      return {
+        ...state,
+        negatives: state.negatives.filter(
+          (item) => item.exqId !== action.payload.exqId
+        ),
+      };
+    }
+    case ADD_IMAGES: {
+      return { ...state, images: [...state.images, action.payload] };
+    }
+    case SET_IMAGES: {
+      return { ...state, images: action.payload };
+    }
+    case ADD_SEEN: {
+      return { ...state, seen: [...state.images, action.payload] };
+    }
+    case SET_SEEN: {
+      return { ...state, seen: action.payload };
+    }
+    case UPDATE_SEEN: {
+      return { ...state, seen: state.seen.concat(state.images) };
     }
     default:
       return state;
   }
 };
 
-export const clearDevicesAsync = () => async (dispatch: any, getState: any) => {
-  dispatch(clearDevices());
-};
-
-export const updateDeviceInStorage = (device: Device) => async (
+export const negativeExamplePressed = (item: Obj) => async (
   dispatch: any,
   getState: any
 ) => {
-  dispatch(setLoading(true));
-
-  const devicesFromStorage = await getDevicesInAsyncStorage();
-
-  if (!devicesFromStorage) {
-    return;
+  //Check if it is in positives
+  if (getState().positives.includes(item)) {
+    //If it is in negatives, remove it and add to positives
+    dispatch(removePositive(item));
   }
 
-  var tempArray: Device[] = JSON.parse(devicesFromStorage);
-
-  for (let i = 0; i < tempArray.length; i++) {
-    if (tempArray[i].Imei == device.Imei) {
-      tempArray[i].Name = device.Name;
-    }
-  }
-
-  setDevicesInAsyncStorage(tempArray);
-  dispatch(setLoading(false));
-};
-
-export const fetchDevices = () => async (dispatch: any, getState: any) => {
-  dispatch(setLoading(true));
-  const devicesFromStorage = await getDevicesInAsyncStorage();
-  if (devicesFromStorage === null) {
-    Alert.alert("No storage");
-    return;
-  }
-
-  const devicesJson = JSON.parse(devicesFromStorage!);
-
-  let fetchedDevices: Device[] = [];
-
-  for (let i = 0; i < devicesJson.length; i++) {
-    const device = await fetch(`${URL}${devicesJson[i].Imei}`).then((res) =>
-      res.json()
-    );
-
-    const formatted: Device = {
-      Name: devicesJson[i].Name,
-      Imei: devicesJson[i].Imei,
-      Status: device,
-    };
-
-    fetchedDevices.push(formatted);
-  }
-  dispatch(setLoading(false));
-  dispatch(setDevices(fetchedDevices));
-};
-
-export const setSelectedDeviceAsync = (device: Device) => async (
-  dispatch: any,
-  getState: any
-) => {
-  dispatch(setSelectedDevice(device));
-};
-
-export const updateSelectedDevice = () => async (
-  dispatch: any,
-  getState: any
-) => {
-  if (getState().selectedDevice.Imei === undefined) {
-    Alert.alert("Error", "No selected device!");
-  }
-
-  const deviceFromState = getState().selectedDevice;
-
-  const device = await fetch(`${URL}${deviceFromState.Imei}`)
-    .then((res) => res.json())
-    .catch((err) => {
-      console.log("ERROR: " + err);
-    });
-  const formattedDevice: Device = {
-    Imei: deviceFromState.Imei,
-    Name: deviceFromState.Name,
-    Status: device,
-  };
-  console.log(formattedDevice);
-  dispatch(setSelectedDevice(formattedDevice));
-};
-
-export const addDeviceAsync = (name: string, imei: string) => async (
-  dispatch: any,
-  getState: any
-) => {
-  const devicesFromStorage = await getDevicesInAsyncStorage();
-
-  const device: Device = {
-    Name: name,
-    Imei: imei,
-    Status: undefined,
-  };
-
-  if (!devicesFromStorage) {
-    setDevicesInAsyncStorage([device]);
+  if (getState().negatives.includes(item)) {
+    //If the item is already in it, we would like to delete it
+    dispatch(removeNegative(item));
   } else {
-    if (deviceExists(JSON.parse(devicesFromStorage), device.Imei)) {
-      Alert.alert("ERROR", "Already has a device with that code!");
-      return;
-    } else {
-      const formattedDevices = JSON.parse(devicesFromStorage);
-      await setDevicesInAsyncStorage(formattedDevices.concat([device]));
-    }
+    //Add to positives
+    dispatch(setNegative([...getState().negatives, item]));
+  }
+};
+
+export const positiveExamplePressed = (item: Obj) => async (
+  dispatch: any,
+  getState: any
+) => {
+  //Check if it is in positives
+  if (getState().negatives.includes(item)) {
+    //If it is in negatives, remove it and add to positives
+    dispatch(removeNegative(item));
   }
 
-  dispatch(addDevice(device));
+  if (getState().positives.includes(item)) {
+    //If the item is already in it, we would like to delete it
+    dispatch(removePositive(item));
+  } else {
+    //Add to positives
+    dispatch(setPositive([...getState().positives, item]));
+  }
 };
 
-export const deleteDeviceAsync = (imei: string) => async (
-  dispatch: any,
-  getState: any
-) => {
-  dispatch(setLoading(true));
-  const devicesFromStorage = await getDevicesInAsyncStorage();
-
-  var filteredDevices: Device[] = JSON.parse(
-    devicesFromStorage!
-  ).filter((device: Device) => filterEquals(device, imei));
-
-  setDevicesInAsyncStorage(filteredDevices);
-  dispatch(setDevices(filteredDevices));
-  dispatch(setLoading(true));
-};
-
-//TEST
-export const getDevicesFromStorage = () => async (
-  dispatch: any,
-  getState: any
-) => {
-  const devicesFromStorage = await getDevicesInAsyncStorage();
-  console.log(devicesFromStorage);
-};
-
-//TEST
-export const clearStorageAsync = () => async (dispatch: any, getState: any) => {
-  clearStorage();
-};
-
-export const fetchHistory = () => async (dispatch: any, getState: any) => {
+export const learnModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
 
-  const device: Device = getState().selectedDevice;
+  if (getState().positives.length === 0 && getState().negatives.length === 0) {
+    Alert.alert(
+      "Error",
+      "You haven't selected any images to train the model, press 'NEW RANDOM SET' if you want new images presented."
+    );
+    return;
+  }
+  //Update seen with the current iteration of the model, afterwards we fetch new examples
+  await dispatch(updateSeen());
+  //Clear the current images, and wait for the new ones..
+  await dispatch(setImages([]));
 
-  const body = JSON.stringify({ start: "2021-01-30T18:11:01.674Z" });
+  await axios({
+    method: "post",
+    url: `${URL}/learn`,
+    data: JSON.stringify({
+      pos: getState().positives.map((item: Obj) => item.exqId),
+      neg: getState().negatives.map((item: Obj) => item.exqId),
+      seen: getState().seen.map((item: Obj) => item.exqId),
+      excludedVids: [],
+      queryByImage: -1,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Credentials": "*",
+      "Access-Control-Allow-Origin": "*",
+    },
+  })
+    .then((res) => {
+      var objects: Obj[] = [];
+      for (let i = 0; i < res.data.img_locations.length; i++) {
+        let loc = res.data.img_locations[i];
+        //Maybe get the foldername from here
+        let suggestion = res.data.sugg[i];
+        var newObj: Obj = {
+          exqId: suggestion,
+          thumbnail: formatToLocation(loc),
+          folderName: "",
+          shotId: -1,
+        };
+        objects.push(newObj);
+      }
+      dispatch(setImages(objects));
+      dispatch(setLoading(false));
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch(setLoading(false));
+    });
+};
 
-  const result: History = await fetch(`${URL}history/${device.Imei}`, {
+export const initModelAsync = () => async (dispatch: any, getState: any) => {
+  dispatch(setLoading(true));
+  dispatch(setImages([]));
+  dispatch(setNegative([]));
+  dispatch(setPositive([]));
+
+  const initialArray = initArray();
+  await fetch(`${URL}/initModel`, {
     method: "POST",
-    body: body,
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((res) => res.json());
+    body: JSON.stringify({ ids: initialArray }),
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
+      var imageObjects: Obj[] = [];
 
-  for (let i = 0; i < result.history.length; i++) {
-    result.history[i].events.reverse();
-  }
-  result.history.reverse();
+      for (let i = 0; i < res.img_locations.length; i++) {
+        var rootPath = "../../../assets/BSCBilleder/images";
+        var fileName = formatToLocation(res.img_locations[i]);
+        var result = regex.exec(res.img_locations[i]);
+        //@ts-ignore
+        var folderName = result[0].replace("_", "");
 
-  dispatch(setHistory(result));
-  dispatch(setLoading(false));
+        for (let i = 0; i < res.mediainfo[folderName].shots.length; i++) {
+          var obj = res.mediainfo[folderName].shots[i];
+
+          if (obj.thumbnail === fileName) {
+            var newObj: Obj;
+            newObj = {
+              shotId: obj.shotId,
+              exqId: obj.exqId,
+              folderName: folderName,
+              thumbnail: obj.thumbnail,
+            };
+
+            imageObjects.push(newObj);
+          }
+        }
+      }
+
+      dispatch(setImages(imageObjects));
+      dispatch(setLoading(false));
+    })
+    .catch((err) => {
+      dispatch(setLoading(false));
+      console.log(err);
+    });
 };

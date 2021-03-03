@@ -1,39 +1,74 @@
 import {
-  SET_DEVICES,
-  ADD_DEVICE,
-  CLEAR_DEVICES,
-  SET_SELECTED_DEVICE,
+  ADD_POSITIVE,
+  ADD_NEGATIVE,
+  ADD_IMAGES,
+  ADD_SEEN,
+  REMOVE_NEGATIVE,
+  REMOVE_POSITIVE,
+  SET_POSITIVE,
+  SET_NEGATIVE,
+  SET_IMAGES,
+  SET_SEEN,
   SET_LOADING,
-  SET_HISTORY,
+  UPDATE_SEEN,
 } from "./action-types";
-import { Device, History } from "../utils/types";
+import { Obj } from "../utils/types";
 
-export const setDevices = (devices: Device[]) => ({
-  type: SET_DEVICES,
-  payload: devices,
-});
-
-export const addDevice = (device: Device) => ({
-  type: ADD_DEVICE,
-  payload: device,
-});
-
-export const clearDevices = () => ({
-  type: CLEAR_DEVICES,
-  payload: [],
-});
-
-export const setSelectedDevice = (device: Device) => ({
-  type: SET_SELECTED_DEVICE,
-  payload: device,
-});
-
-export const setLoading = (payload: boolean) => ({
+export const setLoading = (bool: boolean) => ({
   type: SET_LOADING,
-  payload: payload,
+  payload: bool,
 });
 
-export const setHistory = (payload: History) => ({
-  type: SET_HISTORY,
-  payload: payload,
+export const addPositive = (positives: Obj[]) => ({
+  type: ADD_POSITIVE,
+  payload: positives,
+});
+
+export const setPositive = (positives: Obj[]) => ({
+  type: SET_POSITIVE,
+  payload: positives,
+});
+
+export const removePositive = (pos: Obj) => ({
+  type: REMOVE_POSITIVE,
+  payload: pos,
+});
+
+export const addNegative = (negatives: Obj[]) => ({
+  type: ADD_NEGATIVE,
+  payload: negatives,
+});
+
+export const setNegative = (negatives: Obj[]) => ({
+  type: SET_NEGATIVE,
+  payload: negatives,
+});
+
+export const removeNegative = (neg: Obj) => ({
+  type: REMOVE_NEGATIVE,
+  payload: neg,
+});
+
+export const addSeen = (seen: Obj[]) => ({
+  type: ADD_SEEN,
+  payload: seen,
+});
+
+export const setSeen = (seen: Obj[]) => ({
+  type: SET_SEEN,
+  payload: seen,
+});
+
+export const updateSeen = () => ({
+  type: UPDATE_SEEN,
+});
+
+export const addImages = (images: Obj[]) => ({
+  type: ADD_IMAGES,
+  payload: images,
+});
+
+export const setImages = (images: Obj[]) => ({
+  type: SET_IMAGES,
+  payload: images,
 });

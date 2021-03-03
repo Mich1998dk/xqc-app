@@ -13,3 +13,13 @@ export function formatToLocation(fileName: string) {
   const res = isUpperCase(fileName) ? fileName + ".JPG" : fileName + ".jpg";
   return res;
 }
+
+export function initArray() {
+  var arr = [];
+  while (arr.length < 50) {
+    var randomNumber = Math.floor(Math.random() * Math.floor(191524)) + 1;
+    if (arr.indexOf(randomNumber) > -1) continue;
+    arr[arr.length] = randomNumber;
+  }
+  return arr;
+}
