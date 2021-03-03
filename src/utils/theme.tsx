@@ -6,7 +6,9 @@ export const colors = {
   white: "#FFFFFF",
   gray: "#8D8D8D",
   box: "#272727",
-  loader_bg: "rgba(0, 0, 0, 0.60)",
+  loader_bg: "rgba(28, 28, 28, 0.90)",
+  positiveOverlay: "rgba(98, 224, 122, 0.30)",
+  negativeOverlay: "rgba(237, 93, 93, 0.30)",
 };
 
 export const sizes = {

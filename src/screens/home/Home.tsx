@@ -4,16 +4,25 @@ import {
   TouchableOpacity,
   FlatList,
   View,
-  Image,
+  Alert,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
-import { Header, Button, IconButton } from "../../components/molecules/index";
+import {
+  Header,
+  Button,
+  IconButton,
+  ImageOverlay,
+} from "../../components/molecules/index";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
 import {} from "../../redux/reducers";
 import { colors } from "../../utils/theme";
+import { formatDate, isUpperCase, formatToLocation } from "../../utils/helpers";
+import { Menu } from "../../components/organisms/index";
+import { Obj } from "../../utils/types";
+import axios from "axios";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
 
@@ -22,12 +31,26 @@ type Props = {
 };
 
 export default function Home({ navigation }: Props) {
-  const [state, setState] = useState({ loading: true, images: [] });
-  const [selected, setSelected] = useState<number[]>([]);
-  const [images, setImages] = useState<string[]>([]);
+  const [state, setState] = useState({
+    loading: true,
+    loadingTitle: "Initiating the model..",
+    menu: false,
+    mediaInfo: null,
+  });
+  const [seen, setSeen] = useState<Obj[]>([]);
+  const [images, setImages] = useState<Obj[]>([]);
+  const [positives, setPositives] = useState<Obj[]>([]);
+  const [negatives, setNegatives] = useState<Obj[]>([]);
+  const [selected, setSelected] = useState<Obj[]>([]);
+
+  // console.log("Positives");
+  // console.log(positives);
+
+  // console.log("Negatives");
+  // console.log(negatives);
+
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
-  const [path, setPath] = useState("")
 
   const testConnection = async () => {
     fetch("http://bjth.itu.dk:5001/", {
@@ -42,23 +65,81 @@ export default function Home({ navigation }: Props) {
       });
   };
 
-  function parse(str: string) {
-    var y = str.substr(0, 4),
-      m = str.substr(4, 2),
-      d = str.substr(6, 2);
-    return `${y}-${m}-${d}`;
-  }
+  const learn = async () => {
+    setState({ ...state, loading: true });
+    if (positives.length === 0 && negatives.length === 0) {
+      Alert.alert(
+        "Error",
+        "You haven't selected any images to train the model, press 'NEW RANDOM SET' if you want new images presented."
+      );
+      return;
+    }
+    //Update seen array with the images we saw in the current iteration
+    var temp = seen.concat(images);
+    setSeen(temp);
 
-  function isUpperCase(str: string) {
-    return /[A-Z]/.test(str);
-  }
+    axios({
+      method: "post",
+      url: "http://bjth.itu.dk:5001/learn",
+      data: JSON.stringify({
+        pos: positives.map((item) => item.exqId),
+        neg: negatives.map((item) => item.exqId),
+        seen: seen.map((item) => item.exqId),
+        excludedVids: [],
+        queryByImage: -1,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": "*",
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        var objects: Obj[] = [];
+        for (let i = 0; i < res.data.img_locations.length; i++) {
+          let loc = res.data.img_locations[i];
+          //Maybe get the foldername from here
+          let suggestion = res.data.sugg[i];
+          var newObj: Obj = {
+            exqId: suggestion,
+            thumbnail: formatToLocation(loc),
+          };
+          objects.push(newObj);
+        }
+        setImages(objects);
+        setState({ ...state, loading: false });
+      })
+      .catch((err) => {
+        console.log(err);
+        setState({ ...state, loading: false });
+      });
+
+    // fetch("http://bjth.itu.dk:5001/learn", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   data: body,
+    // })
+    //   .then((res) => {
+    //     console.log(JSON.stringify(res));
+    //   })
+    //   .catch((err) => {
+    //     console.error("Error:", err);
+    //   });
+  };
 
   const initModel = async () => {
+    setState({ ...state, loading: true });
+    setPositives([]);
+    setNegatives([]);
+    setImages([]);
     var arr = [];
     while (arr.length < 50) {
-      var randomnumber = Math.floor(Math.random() * Math.floor(191524)) + 1;
-      if (arr.indexOf(randomnumber) > -1) continue;
-      arr[arr.length] = randomnumber;
+      var randomNumber = Math.floor(Math.random() * Math.floor(191524)) + 1;
+      if (arr.indexOf(randomNumber) > -1) continue;
+      arr[arr.length] = randomNumber;
     }
     fetch("http://bjth.itu.dk:5001/initModel", {
       method: "POST",
@@ -69,39 +150,46 @@ export default function Home({ navigation }: Props) {
     })
       .then((resp) => resp.json())
       .then((res) => {
+        console.log(res);
         var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
 
+        var objects: Obj[] = [];
 
-        var paths = [];
         for (let i = 0; i < res.img_locations.length; i++) {
           var rootPath = "../../../assets/BSCBilleder/images";
-          var fileName = res.img_locations[i];
+          var fileName = formatToLocation(res.img_locations[i]);
           var result = regex.exec(res.img_locations[i]);
           //@ts-ignore
           var folderName = result[0].replace("_", "");
-          var capitalOrNot = isUpperCase(fileName) ? ".JPG" : ".jpg";
 
-          var filePath = `${rootPath}/${parse(
-            folderName
-          )}/${fileName}${capitalOrNot}`;
-          paths.push(filePath);
-          console.log(paths[i]);
-          //import("/Users/emilknudsen/Desktop/BSCBilleder/images/2015-02-23/")
-          // var temp = res.img_locations[i].split("_");
-          // var folderName = temp[0];
-          // var date = parse(folderName)
-          // console.log(folderName)
-          // console.log(date);
+          for (let i = 0; i < res.mediainfo[folderName].shots.length; i++) {
+            var obj = res.mediainfo[folderName].shots[i];
+
+            if (obj.thumbnail === fileName) {
+              var newObj: Obj;
+              //console.log("Fundet");
+              //console.log(obj.thumbnail);
+              //console.log(obj.exqId);
+              newObj = {
+                shotId: obj.shotId,
+                exqId: obj.exqId,
+                folderName: folderName,
+                thumbnail: obj.thumbnail,
+              };
+              //console.log(newObj);
+              objects.push(newObj);
+            }
+          }
+
+          //console.log(fileName + capitalOrNot);
+
+          // var filePath = `${rootPath}/${formatDate(
+          //   folderName
+          // )}/${fileName}${capitalOrNot}`;
+          // paths.push(filePath);
         }
-        console.log("PATH")
-        console.log(paths[0])
-        setPath(paths[0])
-
-        //setImages(paths)
-        setState({...state, loading: false, images: paths as any})
-
-        //Make new string which is the folder name
-        // - Split on "_" and reformat the first position to "YYYY-MM-DD"
+        setImages(objects);
+        setState({ ...state, loading: false });
       })
       .catch((err) => {
         console.error("Error:", err);
@@ -109,16 +197,31 @@ export default function Home({ navigation }: Props) {
   };
 
   useEffect(() => {
+    initModel();
     const unsubscribe = navigation.addListener("focus", () => {});
 
     return unsubscribe;
   }, [navigation]);
 
-  const data = ["../../../assets/BSCBilleder/images/2018-05-22/B00005972_21I6X0_20180522_112602E.JPG", "../../../assets/BSCBilleder/images/2015-03-16/b00002298_21i6bq_20150316_145858e.jpg", "../../../assets/BSCBilleder/images/2018-05-26/B00003681_21I6X0_20180526_094519E.JPG", "../../../assets/BSCBilleder/images/2018-05-06/B00008766_21I6X0_20180506_160205E.JPG", "../../../assets/BSCBilleder/images/2018-05-08/B00001150_21I6X0_20180508_190424E.JPG"];
+  const removeElmFromArr = (item: Obj, arr: Obj[]) => {
+    const index = arr.indexOf(item);
+    var temp = [...arr];
+    temp.splice(index, 1);
+    return temp;
+  };
 
   return (
-    <Container>
-      <Header title="XQC" onPress={() => navigation.goBack()} menu />
+    <Container loading={state.loading} loadingTitle={state.loadingTitle}>
+      <Header
+        title="XQC"
+        onPress={() => navigation.goBack()}
+        menu
+        onMenuPressed={() => setState({ ...state, menu: true })}
+      />
+      {state.menu && (
+        <Menu onClose={() => setState({ ...state, menu: false })} />
+      )}
+
       {/* <ScrollView style={{ flex: 1 }}>
         <Button onPress={() => testConnection()} title="Hent" />
         <Button onPress={() => initExquisitor()} title="Init" />
@@ -130,47 +233,80 @@ export default function Home({ navigation }: Props) {
           source={{url: images[0]} as any} 
         />
       )*/}
-{/* {!state.loading && 
+      {/* {!state.loading && 
   <Image style={{width: 200, height: 200}} source={require(images[20])} />
 } */}
 
-  
-  <Image style={{width: 200, height: 200}} source={require("../../../assets/BSCBilleder/images/2018-05-22/B00005972_21I6X0_20180522_112602E.JPG")} />
+      {/* <Image style={{width: 200, height: 200}} source={require("../../../assets/BSCBilleder/images/2018-05-22/B00005972_21I6X0_20180522_112602E.JPG")} />
   <Image style={{width: 200, height: 200}} source={require("../../../assets/BSCBilleder/images/2015-03-16/b00002298_21i6bq_20150316_145858e.jpg")} />
   <Image style={{width: 200, height: 200}} source={require("../../../assets/BSCBilleder/images/2018-05-26/B00003681_21I6X0_20180526_094519E.JPG")} />
-  
+   */}
+      {images.length > 0 && (
+        <FlatList
+          columnWrapperStyle={{ justifyContent: "space-between" }}
+          data={images}
+          numColumns={4}
+          keyExtractor={(item) => item.exqId.toString()}
+          renderItem={({ item, index }) => {
+            return (
+              <View
+                style={[
+                  styles.box,
+                  selected.includes(item)
+                    ? { backgroundColor: colors.gray }
+                    : {},
+                ]}
+              >
+                {/* //@ts-ignore */}
+                <Text.Button>{item.exqId}</Text.Button>
+                <ImageOverlay
+                  onPressNegative={() => {
+                    //Check if it is in positives
+                    if (positives.includes(item)) {
+                      //If it is in negatives, remove it and add to positives
+                      setPositives(removeElmFromArr(item, positives));
+                    }
 
-  
+                    if (negatives.includes(item)) {
+                      //If the item is already in it, we would like to delete it
+                      setNegatives(removeElmFromArr(item, negatives));
+                    } else {
+                      //Add to positives
+                      var newArray = [...negatives, item];
+                      setNegatives(newArray);
+                    }
+                  }}
+                  onPressPositive={() => {
+                    //Check if it is in negatives
+                    if (negatives.includes(item)) {
+                      //If it is in negatives, remove it and add to positives
+                      setNegatives(removeElmFromArr(item, negatives));
+                    }
 
+                    if (positives.includes(item)) {
+                      //If the item is already in it, we would like to delete it
+                      setPositives(removeElmFromArr(item, positives));
+                    } else {
+                      //Add to positives
+                      var newArray = [...positives, item];
+                      setPositives(newArray);
+                    }
+                  }}
+                  negativeSelected={negatives.includes(item)}
+                  positiveSelected={positives.includes(item)}
+                />
+              </View>
+            );
+          }}
+        />
+      )}
 
-      {/* <FlatList
-        columnWrapperStyle={{ justifyContent: "space-between" }}
-        data={data}
-        numColumns={2}
-        renderItem={({ item, index }) => {
-          return (
-            <TouchableOpacity
-              onPress={() => {
-                if (selected.includes(item)) {
-                  const index = selected.indexOf(item);
-                  var temp = [...selected];
-                  temp.splice(index, 1);
-                  setSelected(temp);
-                } else {
-                  var newArray = [...selected, item];
-                  setSelected(newArray);
-                }
-              }}
-              key={item}
-              style={[
-                styles.box,
-                selected.includes(item) ? { backgroundColor: colors.gray } : {},
-              ]}
-            ></TouchableOpacity>
-          );
-        }}
-      /> */}
       <View style={styles.buttons}>
+        <IconButton
+          title="+/-"
+          onPress={() => navigation.navigate("PosAndNeg")}
+          secondary
+        />
         <IconButton
           title="NEW RANDOM SET"
           onPress={() => initModel()}
@@ -178,11 +314,7 @@ export default function Home({ navigation }: Props) {
           style={{ marginLeft: 10, marginRight: 10 }}
           secondary
         />
-        <IconButton
-          title="TRAIN"
-          onPress={() => console.log("Train")}
-          type="sync"
-        />
+        <IconButton title="TRAIN" onPress={() => learn()} type="sync" />
       </View>
     </Container>
   );
@@ -190,7 +322,7 @@ export default function Home({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   box: {
-    width: "48%",
+    width: "24%",
     backgroundColor: "#393939",
     height: 180,
     marginTop: 10,

@@ -10,7 +10,7 @@ interface Props {
   onPress: (event: React.MouseEvent<HTMLButtonElement>) => void;
   secondary?: boolean;
   style?: CSSProperties;
-  type?: "sync" | "random";
+  type?: "sync" | "random" | undefined;
 }
 
 export default function IconButton({
@@ -82,5 +82,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1.6,
+    borderColor: colors.background,
   },
 });

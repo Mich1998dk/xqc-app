@@ -7,6 +7,12 @@ import AppLoading from "expo-app-loading";
 import Navigation from "./src/navigation/Navigation";
 import { store } from "./src/redux/store";
 import { Provider } from "react-redux";
+import { Obj } from "./src/utils/types";
+
+const initalState = {
+  positives: [] as Obj[],
+  negatives: [] as Obj[],
+};
 
 export default function App() {
   const [appReady, setAppReady] = useState(false);

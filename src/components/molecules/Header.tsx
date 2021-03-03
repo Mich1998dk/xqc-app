@@ -8,9 +8,16 @@ interface Props {
   onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   style?: CSSProperties;
   menu?: boolean;
+  onMenuPressed?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export default function ModeOption({ title, onPress, style, menu }: Props) {
+export default function ModeOption({
+  title,
+  onPress,
+  style,
+  menu,
+  onMenuPressed,
+}: Props) {
   return (
     <View style={[styles.container, style as any]}>
       <View style={{ zIndex: 2 }}>
@@ -19,11 +26,7 @@ export default function ModeOption({ title, onPress, style, menu }: Props) {
       <View style={styles.title}>
         <Text.Header>{title}</Text.Header>
       </View>
-      {menu && (
-        <View>
-          <Icon type="menu" />
-        </View>
-      )}
+      {menu && <Icon onPress={onMenuPressed as any} type="menu" />}
     </View>
   );
 }

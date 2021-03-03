@@ -16,6 +16,7 @@ interface Props {
   loading?: boolean;
   isKeyBoardAvoiding?: boolean;
   style?: CSSProperties;
+  loadingTitle?: string;
 }
 
 export default function Container({
@@ -23,6 +24,7 @@ export default function Container({
   loading,
   isKeyBoardAvoiding,
   style,
+  loadingTitle,
 }: Props) {
   return (
     <SafeAreaView style={styles.container}>
@@ -38,7 +40,7 @@ export default function Container({
         <View style={[styles.content, style as any]}>{children}</View>
       )}
 
-      {loading && <Loader />}
+      {loading && <Loader loadingTitle={loadingTitle} />}
     </SafeAreaView>
   );
 }
