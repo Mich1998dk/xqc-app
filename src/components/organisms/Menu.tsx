@@ -9,22 +9,28 @@ import { Ionicons } from "@expo/vector-icons";
 
 interface Props {
   onClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickReset: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickSaveModel: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export default function Menu({ onClose }: Props) {
+export default function Menu({
+  onClose,
+  onClickReset,
+  onClickSaveModel,
+}: Props) {
   return (
     <Animatable.View style={styles.container} animation="fadeIn" duration={240}>
       <Animatable.View animation="zoomIn" duration={240}>
         <View style={{ marginBottom: 20 }}>
           <ModeOption
             style={{ width: 300 }}
-            title="OPTION 1"
-            onPress={() => console.log("option 1")}
+            title="RESET MODEL"
+            onPress={onClickReset as any}
           />
           <ModeOption
             style={{ width: 300 }}
-            title="OPTION 2"
-            onPress={() => console.log("option 2")}
+            title="SAVE MODEL"
+            onPress={onClickSaveModel as any}
           />
         </View>
 

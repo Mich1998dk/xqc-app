@@ -11,6 +11,8 @@ import {
   SET_SEEN,
   SET_LOADING,
   UPDATE_SEEN,
+  SET_MEDIA_INFO,
+  RESET_MODEL,
 } from "./action-types";
 import {
   addImages,
@@ -25,9 +27,11 @@ import {
   removePositive,
   removeNegative,
   updateSeen,
+  setMediaInfo,
+  resetModel,
 } from "./actions";
 import { URL } from "../utils/constants";
-import { Obj, State } from "../utils/types";
+import { Obj, State, MediaInfo } from "../utils/types";
 import moment from "moment";
 import axios from "axios";
 
@@ -45,6 +49,7 @@ const initialState: State = {
   images: [],
   seen: [],
   loading: false,
+  mediaInfo: [],
 };
 
 export const reducer = (state = initialState, action: any) => {
@@ -94,6 +99,9 @@ export const reducer = (state = initialState, action: any) => {
     }
     case UPDATE_SEEN: {
       return { ...state, seen: state.seen.concat(state.images) };
+    }
+    case SET_MEDIA_INFO: {
+      return { ...state, mediaInfo: action.payload };
     }
     default:
       return state;
@@ -192,6 +200,85 @@ export const learnModelAsync = () => async (dispatch: any, getState: any) => {
     });
 };
 
+export const resetModelAsync = () => async (dispatch: any, getState: any) => {
+  dispatch(setLoading(true));
+  dispatch(setImages([]));
+  await fetch(`${URL}/resetModel`, {
+    method: "get",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      if (res.reset !== "successful") return;
+      dispatch(setNegative([]));
+      dispatch(setPositive([]));
+      dispatch(randomSetAsync());
+      dispatch(setLoading(false));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const randomSetAsync = () => async (dispatch: any, getState: any) => {
+  dispatch(setLoading(true));
+
+  await dispatch(updateSeen());
+  await dispatch(setImages([]));
+
+  const arr = initArray();
+
+  await fetch(`${URL}/randomSet`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ids: arr,
+    }),
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
+      var imageObjects: Obj[] = [];
+
+      for (let i = 0; i < res.img_locations.length; i++) {
+        var rootPath = "../../../assets/BSCBilleder/images";
+        var fileName = formatToLocation(res.img_locations[i]);
+        var result = regex.exec(res.img_locations[i]);
+        //@ts-ignore
+        var folderName = result[0].replace("_", "");
+
+        const mediaInfo = getState().mediaInfo;
+
+        for (let i = 0; i < mediaInfo[folderName].shots.length; i++) {
+          var obj = mediaInfo[folderName].shots[i];
+
+          if (obj.thumbnail === fileName) {
+            var newObj: Obj;
+            newObj = {
+              shotId: obj.shotId,
+              exqId: obj.exqId,
+              folderName: folderName,
+              thumbnail: obj.thumbnail,
+            };
+
+            imageObjects.push(newObj);
+          }
+        }
+      }
+      console.log(imageObjects);
+      dispatch(setImages(imageObjects));
+      dispatch(setLoading(false));
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch(setLoading(false));
+    });
+};
+
 export const initModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
   dispatch(setImages([]));
@@ -208,6 +295,8 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
   })
     .then((resp) => resp.json())
     .then((res) => {
+      dispatch(setMediaInfo(res.mediainfo));
+
       var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
       var imageObjects: Obj[] = [];
 

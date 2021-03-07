@@ -11,6 +11,8 @@ import {
   SET_SEEN,
   SET_LOADING,
   UPDATE_SEEN,
+  SET_MEDIA_INFO,
+  RESET_MODEL,
 } from "./action-types";
 import { Obj } from "../utils/types";
 
@@ -71,4 +73,13 @@ export const addImages = (images: Obj[]) => ({
 export const setImages = (images: Obj[]) => ({
   type: SET_IMAGES,
   payload: images,
+});
+
+export const setMediaInfo = (info: any) => ({
+  type: SET_MEDIA_INFO,
+  payload: info,
+});
+
+export const resetModel = () => ({
+  type: RESET_MODEL,
 });

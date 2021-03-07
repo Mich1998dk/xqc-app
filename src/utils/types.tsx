@@ -22,4 +22,15 @@ export type State = {
   seen: Obj[];
   images: Obj[];
   loading: boolean;
+  mediaInfo: any;
+};
+
+export type MediaInfo = {
+  folder: Folder;
+};
+
+export type Folder = {
+  description: string;
+  folder: string;
+  shots: Obj[];
 };
