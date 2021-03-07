@@ -217,6 +217,7 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
         var result = regex.exec(res.img_locations[i]);
         //@ts-ignore
         var folderName = result[0].replace("_", "");
+        console.log(folderName);
 
         for (let i = 0; i < res.mediainfo[folderName].shots.length; i++) {
           var obj = res.mediainfo[folderName].shots[i];

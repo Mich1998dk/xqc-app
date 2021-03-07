@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   FlatList,
   View,
+  Image,
   Alert,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -169,6 +170,7 @@ export default function Home({ navigation }: Props) {
           var result = regex.exec(res.img_locations[i]);
           //@ts-ignore
           var folderName = result[0].replace("_", "");
+          console.log(folderName);
 
           for (let i = 0; i < res.mediainfo[folderName].shots.length; i++) {
             var obj = res.mediainfo[folderName].shots[i];
@@ -219,6 +221,12 @@ export default function Home({ navigation }: Props) {
     return temp;
   };
 
+  function formatFolder(folderName : any) {
+    console.log(folderName.substring(0,4) + "-" + folderName.substring(4,6) + "-" + folderName.substring(6,8));
+    return folderName.substring(0,4) + "-" + folderName.substring(4,6) + "-" + folderName.substring(6,8);
+
+  } 
+
   return (
     <Container loading={redux.loading} loadingTitle={state.loadingTitle}>
       <Header
@@ -267,7 +275,7 @@ export default function Home({ navigation }: Props) {
                 ]}
               >
                 {/* //@ts-ignore */}
-                <Text.Button>{item.exqId}</Text.Button>
+                <Image style={{width: 200, height: 200}} source={{ uri: 'http://bjth.itu.dk:5002/'+ formatFolder(item.folderName) + '/' + item.thumbnail}}/>
                 <ImageOverlay
                   onPressNegative={() => {
                     dispatch(negativeExamplePressed(item));
