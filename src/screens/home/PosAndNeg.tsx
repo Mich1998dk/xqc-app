@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Image } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
@@ -55,7 +55,17 @@ export default function PosAndNeg({ navigation }: Props) {
           return (
             <View style={styles.box}>
               {/* //@ts-ignore */}
-              <Text.Button>{item.exqId}</Text.Button>
+              <Image
+                style={{
+                  width: "100%",
+                  height: 200,
+                  resizeMode: "stretch",
+                  borderRadius: 12,
+                }}
+                source={{
+                  uri: item.imageURI,
+                }}
+              />
               <RMOverlay
                 onClick={() => {
                   if (state.selected === "negative") {

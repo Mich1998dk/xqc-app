@@ -54,3 +54,13 @@ export const Header = (props: Props) => (
     ]}
   />
 );
+
+export const Small = (props: Props) => (
+  <Text
+    {...props}
+    style={[
+      { fontFamily: fonts.med, fontSize: sizes.base12, color: colors.white },
+      props.style,
+    ]}
+  />
+);

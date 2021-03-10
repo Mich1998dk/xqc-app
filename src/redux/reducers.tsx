@@ -40,6 +40,7 @@ import {
   formatToLocation,
   isUpperCase,
   initArray,
+  formatFolderName,
 } from "../utils/helpers";
 import { Alert } from "react-native";
 
@@ -183,11 +184,21 @@ export const learnModelAsync = () => async (dispatch: any, getState: any) => {
         let loc = res.data.img_locations[i];
         //Maybe get the foldername from here
         let suggestion = res.data.sugg[i];
+
+        var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
+
+        var regexResult = regex.exec(loc);
+        //@ts-ignore
+        var folderName = regexResult[0].replace("_", "");
+
         var newObj: Obj = {
           exqId: suggestion,
           thumbnail: formatToLocation(loc),
           folderName: "",
           shotId: -1,
+          imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
+            folderName
+          )}/${formatToLocation(loc)}`,
         };
         objects.push(newObj);
       }
@@ -263,13 +274,15 @@ export const randomSetAsync = () => async (dispatch: any, getState: any) => {
               exqId: obj.exqId,
               folderName: folderName,
               thumbnail: obj.thumbnail,
+              imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
+                folderName
+              )}/${obj.thumbnail}`,
             };
 
             imageObjects.push(newObj);
           }
         }
       }
-      console.log(imageObjects);
       dispatch(setImages(imageObjects));
       dispatch(setLoading(false));
     })
@@ -296,6 +309,7 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
     .then((resp) => resp.json())
     .then((res) => {
       dispatch(setMediaInfo(res.mediainfo));
+      console.log(res.mediainfo);
 
       var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
       var imageObjects: Obj[] = [];
@@ -306,18 +320,21 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
         var result = regex.exec(res.img_locations[i]);
         //@ts-ignore
         var folderName = result[0].replace("_", "");
-        console.log(folderName);
 
         for (let i = 0; i < res.mediainfo[folderName].shots.length; i++) {
           var obj = res.mediainfo[folderName].shots[i];
 
           if (obj.thumbnail === fileName) {
             var newObj: Obj;
+
             newObj = {
               shotId: obj.shotId,
               exqId: obj.exqId,
               folderName: folderName,
               thumbnail: obj.thumbnail,
+              imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
+                folderName
+              )}/${obj.thumbnail}`,
             };
 
             imageObjects.push(newObj);

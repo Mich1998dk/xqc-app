@@ -38,7 +38,7 @@ export default function Welcome({ navigation }: Props) {
         <Button
           secondary
           title="LOAD MODEL"
-          onPress={() => console.log("hej")}
+          onPress={() => navigation.navigate("LoadModal")}
         />
       </View>
     </Container>

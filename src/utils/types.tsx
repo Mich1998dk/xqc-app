@@ -7,6 +7,9 @@ export type HomeStackParamList = {
   ChooseMode: undefined;
   Welcome: undefined;
   PosAndNeg: undefined;
+  LoadModal: undefined;
+  ModelName: undefined;
+  SpeedMode: undefined;
 };
 
 export type Obj = {
@@ -14,6 +17,7 @@ export type Obj = {
   thumbnail: string;
   shotId?: number;
   folderName?: string;
+  imageURI?: string;
 };
 
 export type State = {
@@ -33,4 +37,12 @@ export type Folder = {
   description: string;
   folder: string;
   shots: Obj[];
+};
+
+export type Model = {
+  name: string;
+  mode: "STANDARD" | "SPEED";
+  positives: Obj[];
+  negatives: Obj[];
+  seen: Obj[];
 };

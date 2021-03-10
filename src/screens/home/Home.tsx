@@ -59,23 +59,6 @@ export default function Home({ navigation }: Props) {
     return unsubscribe;
   }, [navigation]);
 
-  function formatFolder(folderName: any) {
-    console.log(
-      folderName.substring(0, 4) +
-        "-" +
-        folderName.substring(4, 6) +
-        "-" +
-        folderName.substring(6, 8)
-    );
-    return (
-      folderName.substring(0, 4) +
-      "-" +
-      folderName.substring(4, 6) +
-      "-" +
-      folderName.substring(6, 8)
-    );
-  }
-
   return (
     <Container loading={redux.loading} loadingTitle={state.loadingTitle}>
       <Header
@@ -92,6 +75,7 @@ export default function Home({ navigation }: Props) {
           }}
           onClickSaveModel={() => {
             setState({ ...state, menu: false });
+            navigation.navigate("ModelName");
           }}
           onClose={() => setState({ ...state, menu: false })}
         />
@@ -115,13 +99,14 @@ export default function Home({ navigation }: Props) {
               >
                 {/* //@ts-ignore */}
                 <Image
-                  style={{ width: 200, height: 200 }}
+                  style={{
+                    width: "100%",
+                    height: 200,
+                    resizeMode: "stretch",
+                    borderRadius: 12,
+                  }}
                   source={{
-                    uri:
-                      "http://bjth.itu.dk:5002/" +
-                      formatFolder(item.folderName) +
-                      "/" +
-                      item.thumbnail,
+                    uri: item.imageURI,
                   }}
                 />
                 <ImageOverlay
@@ -144,8 +129,6 @@ export default function Home({ navigation }: Props) {
         <IconButton
           title="+/-"
           onPress={() => {
-            console.log(redux.seen);
-
             navigation.navigate("PosAndNeg");
           }}
           secondary
@@ -171,11 +154,11 @@ const styles = StyleSheet.create({
   box: {
     width: "24%",
     backgroundColor: "#393939",
-    height: 180,
     marginTop: 10,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+    height: 200,
   },
   buttons: {
     position: "absolute",

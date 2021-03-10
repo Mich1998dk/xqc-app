@@ -32,12 +32,16 @@ export default function ChooseMode({ navigation }: Props) {
           title="STANDARD MODE"
           onPress={() => navigation.navigate("Home")}
         />
-        <Text.Regular style={{ paddingHorizontal: 6 }}>
+        <Text.Regular style={{ paddingHorizontal: 6, marginBottom: 30 }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
           aliquip ex ea commodo consequat.
         </Text.Regular>
+        <ModeOption
+          title="SPEED MODE"
+          onPress={() => navigation.navigate("SpeedMode")}
+        />
       </ScrollView>
     </Container>
   );
