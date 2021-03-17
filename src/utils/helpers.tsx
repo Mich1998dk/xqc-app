@@ -53,12 +53,9 @@ export function formatFolderName(folderName: any) {
 export function formatBackendDataToImageObjects(res: any) {
   var objects: Obj[] = [];
   for (let i = 0; i < res.data.img_locations.length; i++) {
-    let loc = res.data.img_locations[i];
     let suggestion = res.data.sugg[i];
-    var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
-    var regexResult = regex.exec(loc);
-    //@ts-ignore
-    var folderName = regexResult[0].replace("_", "");
+    let loc = res.data.img_locations[i];
+    var folderName = formatImgLocationToFolderName(loc);
 
     var newObj: Obj = {
       exqId: suggestion,
@@ -76,16 +73,14 @@ export function formatBackendDataToImageObjects(res: any) {
 
 export function formatObjectsFromMediaInfo(
   mediaInfo: any,
-  Imglocations: string[]
+  imglocations: string[]
 ) {
   var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
   var imageObjects: Obj[] = [];
 
-  for (let i = 0; i < Imglocations.length; i++) {
-    var fileName = formatToLocation(Imglocations[i]);
-    var result = regex.exec(Imglocations[i]);
-    //@ts-ignore
-    var folderName = result[0].replace("_", "");
+  for (let i = 0; i < imglocations.length; i++) {
+    var fileName = formatToLocation(imglocations[i]);
+    var folderName = formatImgLocationToFolderName(imglocations[i]);
 
     for (let i = 0; i < mediaInfo[folderName].shots.length; i++) {
       var obj = mediaInfo[folderName].shots[i];
@@ -114,4 +109,11 @@ export const customAlert = (message: string, error?: boolean) => {
   Platform.OS === "web"
     ? alert(message)
     : Alert.alert(error ? "Error" : "Success", message);
+};
+
+export const formatImgLocationToFolderName = (loc: string) => {
+  var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
+  var regexResult = regex.exec(loc);
+  var folderName = regexResult![0].replace("_", "");
+  return folderName;
 };

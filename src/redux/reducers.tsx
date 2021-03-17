@@ -57,6 +57,7 @@ import {
   formatBackendDataToImageObjects,
   getNumberOfImageByPlatformAndMode,
   formatObjectsFromMediaInfo,
+  formatImgLocationToFolderName,
 } from "../utils/helpers";
 
 const initialState: State = {
@@ -332,40 +333,12 @@ export const randomSetAsync = () => async (dispatch: any, getState: any) => {
   })
     .then((resp) => resp.json())
     .then((res) => {
-      var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
       const mediaInfo = getState().mediaInfo;
-      var imageObjects: Obj[] = (imageObjects = formatObjectsFromMediaInfo(
+      var imageObjects: Obj[] = formatObjectsFromMediaInfo(
         mediaInfo,
-        res
-      ));
+        res.img_locations
+      );
 
-      for (let i = 0; i < res.img_locations.length; i++) {
-        var fileName = formatToLocation(res.img_locations[i]);
-        var result = regex.exec(res.img_locations[i]);
-        //@ts-ignore
-        var folderName = result[0].replace("_", "");
-
-        const mediaInfo = getState().mediaInfo;
-
-        for (let i = 0; i < mediaInfo[folderName].shots.length; i++) {
-          var obj = mediaInfo[folderName].shots[i];
-
-          if (obj.thumbnail === fileName) {
-            var newObj: Obj;
-            newObj = {
-              shotId: obj.shotId,
-              exqId: obj.exqId,
-              folderName: folderName,
-              thumbnail: obj.thumbnail,
-              imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
-                folderName
-              )}/${obj.thumbnail}`,
-            };
-
-            imageObjects.push(newObj);
-          }
-        }
-      }
       dispatch(updateSeen(imageObjects));
       dispatch(setImages(imageObjects));
       dispatch(setLoading(false));
@@ -394,35 +367,10 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
     .then((res) => {
       dispatch(setMediaInfo(res.mediainfo));
 
-      var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
-      var imageObjects: Obj[] = [];
-
-      for (let i = 0; i < res.img_locations.length; i++) {
-        var fileName = formatToLocation(res.img_locations[i]);
-        var result = regex.exec(res.img_locations[i]);
-        //@ts-ignore
-        var folderName = result[0].replace("_", "");
-
-        for (let i = 0; i < res.mediainfo[folderName].shots.length; i++) {
-          var obj = res.mediainfo[folderName].shots[i];
-
-          if (obj.thumbnail === fileName) {
-            var newObj: Obj;
-
-            newObj = {
-              shotId: obj.shotId,
-              exqId: obj.exqId,
-              folderName: folderName,
-              thumbnail: obj.thumbnail,
-              imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
-                folderName
-              )}/${obj.thumbnail}`,
-            };
-
-            imageObjects.push(newObj);
-          }
-        }
-      }
+      var imageObjects: Obj[] = formatObjectsFromMediaInfo(
+        res.mediainfo,
+        res.img_locations
+      );
 
       dispatch(updateSeen(imageObjects));
       dispatch(setImages(imageObjects));
@@ -457,14 +405,9 @@ export const replaceImageAsync = (index: number) => async (
   learn(pos, neg, seen, getState().mode)
     .then((res) => {
       let loc = res.data.img_locations[0];
-
       let suggestion = res.data.sugg[0];
 
-      var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
-
-      var regexResult = regex.exec(loc);
-      //@ts-ignore
-      var folderName = regexResult[0].replace("_", "");
+      var folderName = formatImgLocationToFolderName(loc);
 
       var newObj: Obj = {
         exqId: suggestion,
