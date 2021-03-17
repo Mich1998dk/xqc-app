@@ -13,8 +13,28 @@ import {
   UPDATE_SEEN,
   SET_MEDIA_INFO,
   RESET_MODEL,
+  SET_IMAGE_FOR_PROJECTION,
+  SET_POSITIVE_PROJECTION,
+  SET_NEGATIVE_PROJECTION,
+  REPLACE_IMAGE,
+  SET_MODE,
 } from "./action-types";
 import { Obj } from "../utils/types";
+
+export const setImageForProjection = (obj: Obj) => ({
+  type: SET_IMAGE_FOR_PROJECTION,
+  payload: obj,
+});
+
+export const setPositiveProjection = (pos: Obj[]) => ({
+  type: SET_POSITIVE_PROJECTION,
+  payload: pos,
+});
+
+export const setNegativeProjection = (neg: Obj[]) => ({
+  type: SET_NEGATIVE_PROJECTION,
+  payload: neg,
+});
 
 export const setLoading = (bool: boolean) => ({
   type: SET_LOADING,
@@ -61,8 +81,9 @@ export const setSeen = (seen: Obj[]) => ({
   payload: seen,
 });
 
-export const updateSeen = () => ({
+export const updateSeen = (seen: Obj[]) => ({
   type: UPDATE_SEEN,
+  payload: seen,
 });
 
 export const addImages = (images: Obj[]) => ({
@@ -82,4 +103,14 @@ export const setMediaInfo = (info: any) => ({
 
 export const resetModel = () => ({
   type: RESET_MODEL,
+});
+
+export const replaceImage = (newImage: Obj, index: number) => ({
+  type: REPLACE_IMAGE,
+  payload: { newImage: newImage, index: index },
+});
+
+export const setMode = (mode: "standard" | "speed" | "projection") => ({
+  type: SET_MODE,
+  payload: mode,
 });

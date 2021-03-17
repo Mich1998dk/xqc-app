@@ -11,12 +11,16 @@ interface Props {
   onClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onClickReset: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onClickSaveModel: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickQuickSave?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  canQuickSave?: boolean;
 }
 
 export default function Menu({
   onClose,
   onClickReset,
   onClickSaveModel,
+  onClickQuickSave,
+  canQuickSave,
 }: Props) {
   return (
     <Animatable.View style={styles.container} animation="fadeIn" duration={240}>
@@ -29,9 +33,16 @@ export default function Menu({
           />
           <ModeOption
             style={{ width: 300 }}
-            title="SAVE MODEL"
+            title="SAVE MODEL AS"
             onPress={onClickSaveModel as any}
           />
+          {canQuickSave && (
+            <ModeOption
+              style={{ width: 300 }}
+              title="QUICK SAVE"
+              onPress={onClickQuickSave as any}
+            />
+          )}
         </View>
 
         <TouchableOpacity

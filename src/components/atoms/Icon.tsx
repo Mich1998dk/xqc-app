@@ -3,9 +3,10 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import { fonts, colors, sizes } from "../../utils/theme";
 import { Text } from "../atoms/index";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
-  type: "menu" | "back";
+  type: "menu" | "back" | "delete";
   onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -19,6 +20,14 @@ export default function Icon({ type, onPress }: Props) {
           <MaterialIcons
             name="keyboard-arrow-left"
             size={26}
+            color={colors.accent}
+          />
+        );
+      case "delete":
+        return (
+          <MaterialCommunityIcons
+            name="delete"
+            size={24}
             color={colors.accent}
           />
         );

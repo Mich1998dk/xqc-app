@@ -8,7 +8,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
 import {} from "../../redux/reducers";
 import { colors, fonts } from "../../utils/theme";
-import { saveModelInAsyncStorage } from "../../utils/storage";
+import { saveModelInAsyncStorage, checkName } from "../../utils/storage";
+import { customAlert } from "../../utils/helpers";
 
 type ModelNameProps = StackNavigationProp<HomeStackParamList, "ModelName">;
 
@@ -32,18 +33,28 @@ export default function ChooseMode({ navigation }: Props) {
 
   const save = async () => {
     if (state.name.length === 0) {
-      alert("hov du");
+      customAlert("Your must have a name!", true);
+      return;
     }
+    if (await checkName(state.name)) {
+      customAlert("This name already exists!");
+      setState({ ...state, name: "" });
+      return;
+    }
+
     const model: Model = {
       mode: "STANDARD",
       name: state.name,
       negatives: redux.negatives,
       positives: redux.positives,
       seen: redux.seen,
+      lastSeen: redux.images,
+      created: new Date(),
     };
 
     await saveModelInAsyncStorage(model);
-    alert("Done!");
+    customAlert("Your model has been saved!");
+    navigation.goBack();
   };
 
   return (

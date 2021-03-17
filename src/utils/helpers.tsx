@@ -1,4 +1,8 @@
-import { Obj } from "../utils/types";
+import { Platform, Alert } from "react-native";
+import { MediaInfo, Mode, Obj } from "../utils/types";
+import { useSelector } from "react-redux";
+import { State } from "./types";
+import { store } from "../redux/store";
 
 export function formatDate(str: string) {
   var y = str.substr(0, 4),
@@ -16,14 +20,24 @@ export function formatToLocation(fileName: string) {
   return res;
 }
 
-export function initArray() {
+export function initArray(mode: Mode) {
   var arr = [];
-  while (arr.length < 50) {
+
+  while (arr.length < getNumberOfImageByPlatformAndMode(mode)) {
     var randomNumber = Math.floor(Math.random() * Math.floor(191524)) + 1;
     if (arr.indexOf(randomNumber) > -1) continue;
     arr[arr.length] = randomNumber;
   }
   return arr;
+}
+
+export function getNumberOfImageByPlatformAndMode(mode: Mode) {
+  const isWeb = Platform.OS === "web";
+  if (mode === "speed") {
+    if (isWeb) return 16;
+    else return 6;
+  }
+  return 50;
 }
 
 export function formatFolderName(folderName: any) {
@@ -40,11 +54,8 @@ export function formatBackendDataToImageObjects(res: any) {
   var objects: Obj[] = [];
   for (let i = 0; i < res.data.img_locations.length; i++) {
     let loc = res.data.img_locations[i];
-    //Maybe get the foldername from here
     let suggestion = res.data.sugg[i];
-
     var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
-
     var regexResult = regex.exec(loc);
     //@ts-ignore
     var folderName = regexResult[0].replace("_", "");
@@ -62,3 +73,45 @@ export function formatBackendDataToImageObjects(res: any) {
   }
   return objects;
 }
+
+export function formatObjectsFromMediaInfo(
+  mediaInfo: any,
+  Imglocations: string[]
+) {
+  var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
+  var imageObjects: Obj[] = [];
+
+  for (let i = 0; i < Imglocations.length; i++) {
+    var fileName = formatToLocation(Imglocations[i]);
+    var result = regex.exec(Imglocations[i]);
+    //@ts-ignore
+    var folderName = result[0].replace("_", "");
+
+    for (let i = 0; i < mediaInfo[folderName].shots.length; i++) {
+      var obj = mediaInfo[folderName].shots[i];
+
+      if (obj.thumbnail === fileName) {
+        var newObj: Obj;
+
+        newObj = {
+          shotId: obj.shotId,
+          exqId: obj.exqId,
+          folderName: folderName,
+          thumbnail: obj.thumbnail,
+          imageURI: `http://bjth.itu.dk:5002/${formatFolderName(folderName)}/${
+            obj.thumbnail
+          }`,
+        };
+
+        imageObjects.push(newObj);
+      }
+    }
+  }
+  return imageObjects;
+}
+
+export const customAlert = (message: string, error?: boolean) => {
+  Platform.OS === "web"
+    ? alert(message)
+    : Alert.alert(error ? "Error" : "Success", message);
+};

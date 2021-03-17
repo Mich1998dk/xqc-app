@@ -6,10 +6,12 @@ import {
   View,
   Image,
   Alert,
+  Platform,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
+import { RouteProp } from "@react-navigation/native";
 import {
   Header,
   Button,
@@ -27,43 +29,64 @@ import {
   resetModelAsync,
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
-import { formatDate, isUpperCase, formatToLocation } from "../../utils/helpers";
+import { customAlert } from "../../utils/helpers";
 import { Menu } from "../../components/organisms/index";
-import { Obj } from "../../utils/types";
-
+import { Obj, Model } from "../../utils/types";
+import { saveModelInAsyncStorage } from "../../utils/storage";
 import axios from "axios";
+import { setSeen } from "../../redux/actions";
+import moment from "moment";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
+type RouteProps = RouteProp<HomeStackParamList, "Home">;
 
 type Props = {
   navigation: HomeProps;
+  route: RouteProps;
 };
 
-export default function Home({ navigation }: Props) {
+export default function Home({ navigation, route }: Props) {
+  const { loadModel } = route.params;
+
   const [state, setState] = useState({
-    loading: true,
     loadingTitle: "Initiating the model..",
     menu: false,
-    mediaInfo: null,
   });
   const [selected, setSelected] = useState<Obj[]>([]);
-
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
   useEffect(() => {
-    //initModel();
-    dispatch(initModelAsync());
+    if (loadModel === undefined) {
+      dispatch(initModelAsync());
+    }
     const unsubscribe = navigation.addListener("focus", () => {});
-
     return unsubscribe;
   }, [navigation]);
+
+  const quickSaveModel = async () => {
+    const model: Model = {
+      mode: "STANDARD",
+      name: loadModel?.name!,
+      negatives: redux.negatives,
+      positives: redux.positives,
+      seen: redux.seen,
+      lastSeen: redux.images,
+      created: new Date(loadModel?.created!),
+    };
+
+    await saveModelInAsyncStorage(model);
+    customAlert("Your model has been saved!");
+  };
 
   return (
     <Container loading={redux.loading} loadingTitle={state.loadingTitle}>
       <Header
         title="XQC"
-        onPress={() => navigation.goBack()}
+        onPress={() => {
+          dispatch(setSeen([]));
+          navigation.goBack();
+        }}
         menu
         onMenuPressed={() => setState({ ...state, menu: true })}
       />
@@ -77,6 +100,10 @@ export default function Home({ navigation }: Props) {
             setState({ ...state, menu: false });
             navigation.navigate("ModelName");
           }}
+          canQuickSave={loadModel !== undefined}
+          onClickQuickSave={() => {
+            quickSaveModel();
+          }}
           onClose={() => setState({ ...state, menu: false })}
         />
       )}
@@ -85,7 +112,7 @@ export default function Home({ navigation }: Props) {
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
           data={redux.images}
-          numColumns={4}
+          numColumns={Platform.OS === "web" ? 4 : 2}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
             return (
@@ -152,7 +179,7 @@ export default function Home({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   box: {
-    width: "24%",
+    width: Platform.OS === "web" ? "24%" : "46%",
     backgroundColor: "#393939",
     marginTop: 10,
     borderRadius: 12,

@@ -6,10 +6,12 @@ import {
   View,
   Image,
   Alert,
+  Platform,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
+import { RouteProp } from "@react-navigation/native";
 import {
   Header,
   Button,
@@ -25,51 +27,79 @@ import {
   learnModelAsync,
   randomSetAsync,
   resetModelAsync,
-  replaceImageAsync,
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
-import { formatDate, isUpperCase, formatToLocation } from "../../utils/helpers";
+import { customAlert } from "../../utils/helpers";
 import { Menu } from "../../components/organisms/index";
-import { Obj } from "../../utils/types";
-
+import { Obj, Model } from "../../utils/types";
+import { saveModelInAsyncStorage } from "../../utils/storage";
 import axios from "axios";
+import { setImageForProjection, setSeen } from "../../redux/actions";
+import moment from "moment";
+import { makeProjection } from "../../redux/reducers";
 
-type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
+type HomeProps = StackNavigationProp<HomeStackParamList, "ProjectionMode">;
 
 type Props = {
   navigation: HomeProps;
 };
 
-export default function SpeedMode({ navigation }: Props) {
+export default function ProjectionMode({ navigation }: Props) {
   const [state, setState] = useState({
-    loading: true,
-    loadingTitle: "Initiating the model..",
-    mediaInfo: null,
+    menu: false,
   });
   const [selected, setSelected] = useState<Obj[]>([]);
-
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
+
+  console.log(redux.negatives.length);
+  console.log(redux.positives.length);
+  console.log(redux.seen.length);
 
   useEffect(() => {
     dispatch(initModelAsync());
     const unsubscribe = navigation.addListener("focus", () => {});
-
     return unsubscribe;
   }, [navigation]);
 
   return (
-    <Container loading={redux.loading} loadingTitle={state.loadingTitle}>
-      <Header title="SPEED MODE" onPress={() => navigation.goBack()} />
+    <Container loading={redux.loading} loadingTitle="Loading..">
+      <Header
+        onPress={() => {
+          dispatch(setSeen([]));
+          navigation.goBack();
+        }}
+        menu
+        onMenuPressed={() => setState({ ...state, menu: true })}
+      />
+      {state.menu && (
+        <Menu
+          onClickReset={() => {
+            setState({ ...state, menu: false });
+            //dispatch(resetModelAsync());
+          }}
+          onClickSaveModel={() => {
+            setState({ ...state, menu: false });
+            //navigation.navigate("ModelName");
+          }}
+          onClose={() => setState({ ...state, menu: false })}
+        />
+      )}
+
       {redux.images.length > 0 && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
           data={redux.images}
-          numColumns={4}
+          numColumns={Platform.OS === "web" ? 4 : 2}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
             return (
-              <View
+              <TouchableOpacity
+                onPress={async () => {
+                  await dispatch(makeProjection(item));
+                  await dispatch(setImageForProjection(item));
+                  navigation.navigate("Projection", { uri: item.imageURI! });
+                }}
                 style={[
                   styles.box,
                   selected.includes(item)
@@ -89,19 +119,7 @@ export default function SpeedMode({ navigation }: Props) {
                     uri: item.imageURI,
                   }}
                 />
-                <ImageOverlay
-                  onPressNegative={() => {
-                    dispatch(negativeExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.images.indexOf(item)));
-                  }}
-                  onPressPositive={() => {
-                    dispatch(positiveExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.images.indexOf(item)));
-                  }}
-                  negativeSelected={redux.negatives.includes(item)}
-                  positiveSelected={redux.positives.includes(item)}
-                />
-              </View>
+              </TouchableOpacity>
             );
           }}
         />
@@ -109,16 +127,22 @@ export default function SpeedMode({ navigation }: Props) {
 
       <View style={styles.buttons}>
         <IconButton
-          title="NEW RANDOM SET"
-          onPress={() => dispatch(randomSetAsync())}
-          type="random"
-          style={{ marginLeft: 10, marginRight: 10 }}
+          title="+/-"
+          onPress={() => {
+            navigation.navigate("PosAndNeg");
+          }}
           secondary
         />
         <IconButton
-          title="UPDATE ALL"
-          type="update"
-          onPress={() => dispatch(learnModelAsync())}
+          title="NEW RANDOM SET"
+          onPress={() => {
+            console.log(redux);
+
+            //dispatch(randomSetAsync())
+          }}
+          type="random"
+          style={{ marginLeft: 10, marginRight: 10 }}
+          secondary
         />
       </View>
     </Container>
@@ -127,7 +151,7 @@ export default function SpeedMode({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   box: {
-    width: "24%",
+    width: Platform.OS === "web" ? "24%" : "46%",
     backgroundColor: "#393939",
     marginTop: 10,
     borderRadius: 12,

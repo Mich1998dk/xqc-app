@@ -3,13 +3,15 @@ export type NavigationParamList = {
 };
 
 export type HomeStackParamList = {
-  Home: undefined;
+  Home: { loadModel?: Model };
   ChooseMode: undefined;
   Welcome: undefined;
   PosAndNeg: undefined;
   LoadModal: undefined;
   ModelName: undefined;
   SpeedMode: undefined;
+  ProjectionMode: undefined;
+  Projection: { uri: string };
 };
 
 export type Obj = {
@@ -27,7 +29,13 @@ export type State = {
   images: Obj[];
   loading: boolean;
   mediaInfo: any;
+  positiveProjection: Obj[];
+  negativeProjection: Obj[];
+  imageForProjection: Obj | undefined;
+  mode: Mode;
 };
+
+export type Mode = "standard" | "speed" | "projection" | undefined;
 
 export type MediaInfo = {
   folder: Folder;
@@ -45,4 +53,6 @@ export type Model = {
   positives: Obj[];
   negatives: Obj[];
   seen: Obj[];
+  lastSeen: Obj[];
+  created: Date;
 };

@@ -1,12 +1,21 @@
 import AsyncStorage from "@react-native-community/async-storage";
+import { customAlert } from "./helpers";
 import { Model } from "./types";
 
 export const saveModelInAsyncStorage = (model: Model) => {
   AsyncStorage.setItem(model.name, JSON.stringify(model));
 };
 
-export const deleteModelInAsyncStorage = (model: Model) => {
-  AsyncStorage.removeItem(model.name);
+export const deleteModelInAsyncStorage = (name: string) => {
+  try {
+    AsyncStorage.removeItem(name);
+  } catch (error) {
+    customAlert(error);
+  }
+};
+
+export const clearStorage = () => {
+  AsyncStorage.clear();
 };
 
 export const getModelsInAsyncStorage = async () => {
@@ -19,4 +28,14 @@ export const getModelsInAsyncStorage = async () => {
     models.push(JSON.parse(model));
   }
   return models;
+};
+
+export const checkName = async (name: string) => {
+  const keys = await AsyncStorage.getAllKeys();
+  for (let i = 0; i < keys.length; i++) {
+    if (keys[i] === name) {
+      return true;
+    }
+  }
+  return false;
 };
