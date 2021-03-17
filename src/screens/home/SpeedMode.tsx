@@ -6,6 +6,7 @@ import {
   View,
   Image,
   Alert,
+  Platform,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
@@ -65,7 +66,7 @@ export default function SpeedMode({ navigation }: Props) {
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
           data={redux.images}
-          numColumns={4}
+          numColumns={Platform.OS === "web" ? 4 : 2}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
             return (
@@ -127,7 +128,7 @@ export default function SpeedMode({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   box: {
-    width: "24%",
+    width: Platform.OS === "web" ? "24%" : "46%",
     backgroundColor: "#393939",
     marginTop: 10,
     borderRadius: 12,
