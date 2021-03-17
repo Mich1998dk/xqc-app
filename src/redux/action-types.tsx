@@ -14,6 +14,7 @@ export const SET_SEEN = "SET_SEEN";
 export const UPDATE_SEEN = "UPDATE_SEEN";
 
 export const ADD_IMAGES = "ADD_IMAGES";
+export const REPLACE_IMAGE = "REPLACE_IMAGE";
 export const SET_IMAGES = "SET_IMAGES";
 
 export const SET_MEDIA_INFO = "SET_MEDIA_INFO";

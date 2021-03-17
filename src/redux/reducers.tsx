@@ -13,6 +13,7 @@ import {
   UPDATE_SEEN,
   SET_MEDIA_INFO,
   RESET_MODEL,
+  REPLACE_IMAGE,
 } from "./action-types";
 import {
   addImages,
@@ -26,6 +27,7 @@ import {
   setLoading,
   removePositive,
   removeNegative,
+  replaceImage,
   updateSeen,
   setMediaInfo,
   resetModel,
@@ -89,6 +91,16 @@ export const reducer = (state = initialState, action: any) => {
     case ADD_IMAGES: {
       return { ...state, images: [...state.images, action.payload] };
     }
+    case REPLACE_IMAGE: {
+      console.log(action.payload.index);
+      console.log("billeder inden replace:" + JSON.stringify(state.images));
+      var tempArray = state.images;
+      tempArray[action.payload.index] = action.payload.newImage; 
+      return {
+        ...state, 
+        images: tempArray,
+      };
+    }
     case SET_IMAGES: {
       return { ...state, images: action.payload };
     }
@@ -147,7 +159,69 @@ export const positiveExamplePressed = (item: Obj) => async (
   }
 };
 
-export const learnModelAsync = () => async (dispatch: any, getState: any) => {
+export const repImage = (index: number) => async (dispatch : any, getState : any) => {
+  dispatch(setLoading(true));
+  var pos = getState().positives.map((item: Obj) => item.exqId);
+  var neg = getState().negatives.map((item: Obj) => item.exqId);
+  var seen = getState().seen.map((item: Obj) => item.exqId);
+  console.log( pos );
+  console.log(neg);
+  console.log(seen);
+  
+
+
+
+  let objects: Obj[] = [];
+  await axios({
+    method: "post",
+    url: `${URL}/learn`,
+    data: JSON.stringify({
+      pos: getState().positives.map((item: Obj) => item.exqId),
+      neg: getState().negatives.map((item: Obj) => item.exqId),
+      seen: getState().seen.map((item: Obj) => item.exqId),
+      excludedVids: [],
+      queryByImage: -1,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Credentials": "*",
+      "Access-Control-Allow-Origin": "*",
+    },
+  })
+    .then((res) => {
+      let loc = res.data.img_locations[0];
+      console.log("location på bedste billede: " + loc);
+        //Maybe get the foldername from here
+        let suggestion = res.data.sugg[0];
+
+        var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
+
+        var regexResult = regex.exec(loc);
+        //@ts-ignore
+        var folderName = regexResult[0].replace("_", "");
+
+        var newObj: Obj = {
+          exqId: suggestion,
+          thumbnail: formatToLocation(loc),
+          folderName: "",
+          shotId: -1,
+          imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
+            folderName
+          )}/${formatToLocation(loc)}`,
+        };
+        objects.push(newObj);
+        dispatch(replaceImage(newObj, index));
+        dispatch(setLoading(false));
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch(setLoading(false));
+    });
+    await dispatch(setSeen([...getState().seen, objects]));
+
+}
+
+export const learnModelAsync = (mode : "Speed" | "Standard") => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
 
   if (getState().positives.length === 0 && getState().negatives.length === 0) {
@@ -157,8 +231,7 @@ export const learnModelAsync = () => async (dispatch: any, getState: any) => {
     );
     return;
   }
-  //Update seen with the current iteration of the model, afterwards we fetch new examples
-  await dispatch(updateSeen());
+  
   //Clear the current images, and wait for the new ones..
   await dispatch(setImages([]));
 
@@ -170,7 +243,7 @@ export const learnModelAsync = () => async (dispatch: any, getState: any) => {
       neg: getState().negatives.map((item: Obj) => item.exqId),
       seen: getState().seen.map((item: Obj) => item.exqId),
       excludedVids: [],
-      queryByImage: -1,
+      queryByImage:  -1,
     }),
     headers: {
       "Content-Type": "application/json",
@@ -209,7 +282,10 @@ export const learnModelAsync = () => async (dispatch: any, getState: any) => {
       console.log(err);
       dispatch(setLoading(false));
     });
+    //Update seen with the current iteration of the model, afterwards we fetch new examples
+  await dispatch(updateSeen());
 };
+
 
 export const resetModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));

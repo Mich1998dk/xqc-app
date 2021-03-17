@@ -3,6 +3,7 @@ import {
   ADD_NEGATIVE,
   ADD_IMAGES,
   ADD_SEEN,
+  REPLACE_IMAGE,
   REMOVE_NEGATIVE,
   REMOVE_POSITIVE,
   SET_POSITIVE,
@@ -61,13 +62,19 @@ export const setSeen = (seen: Obj[]) => ({
   payload: seen,
 });
 
-export const updateSeen = () => ({
+export const updateSeen = (seen: Obj[]) => ({
   type: UPDATE_SEEN,
+  payload: seen
 });
 
 export const addImages = (images: Obj[]) => ({
   type: ADD_IMAGES,
   payload: images,
+});
+
+export const replaceImage = (newImage: Obj, index : number) => ({
+  type: REPLACE_IMAGE,
+  payload: {newImage: newImage, index: index}
 });
 
 export const setImages = (images: Obj[]) => ({

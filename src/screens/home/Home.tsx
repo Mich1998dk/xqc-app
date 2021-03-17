@@ -142,7 +142,7 @@ export default function Home({ navigation }: Props) {
         />
         <IconButton
           title="TRAIN"
-          onPress={() => dispatch(learnModelAsync())}
+          onPress={() => dispatch(learnModelAsync("Standard"))}
           type="sync"
         />
       </View>
