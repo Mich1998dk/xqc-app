@@ -1,14 +1,22 @@
 import React, { useEffect, useState, useContext } from "react";
-import { StyleSheet, FlatList, View, Image, Platform } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  View,
+  Image,
+  Alert,
+  Platform,
+} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
+import { Text } from "../../components/atoms/index";
 import { RouteProp } from "@react-navigation/native";
 import {
   Header,
   Button,
   IconButton,
   ImageOverlay,
-  ImageContainer,
 } from "../../components/molecules/index";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
@@ -22,43 +30,43 @@ import {
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
 import { customAlert } from "../../utils/helpers";
-import { Menu, Search } from "../../components/organisms/index";
+import { Menu } from "../../components/organisms/index";
 import { Obj, Model } from "../../utils/types";
 import { saveModelInAsyncStorage } from "../../utils/storage";
-import { setSeen } from "../../redux/actions";
+import axios from "axios";
+import { setImageForProjection, setSeen } from "../../redux/actions";
+import moment from "moment";
+import { makeProjection } from "../../redux/reducers";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 
-type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
-type RouteProps = RouteProp<HomeStackParamList, "Home">;
+type HomeProps = StackNavigationProp<HomeStackParamList, "ProjectionMode">;
+type RouteProps = RouteProp<HomeStackParamList, "ProjectionMode">;
 
 type Props = {
   navigation: HomeProps;
   route: RouteProps;
 };
 
-export default function Home({ navigation, route }: Props) {
-  const { loadModel } = route.params;
-
+export default function ProjectionMode({ navigation, route }: Props) {
   const [state, setState] = useState({
-    loadingTitle: "Initiating the model..",
     menu: false,
-    search: false,
   });
-  const [selected, setSelected] = useState<Obj[]>([]);
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
+  const { loadModel } = route.params;
 
   useEffect(() => {
     if (loadModel === undefined) {
       dispatch(initModelAsync());
     }
+
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
   }, [navigation]);
 
   const quickSaveModel = async () => {
     const model: Model = {
-      mode: "standard",
+      mode: "projection",
       name: loadModel?.name!,
       negatives: redux.negatives,
       positives: redux.positives,
@@ -72,29 +80,24 @@ export default function Home({ navigation, route }: Props) {
   };
 
   return (
-    <Container loading={redux.loading} loadingTitle={state.loadingTitle}>
+    <Container loading={redux.loading} loadingTitle="Loading..">
       <Header
-        title="XQC"
         onPress={() => {
           dispatch(setSeen([]));
           navigation.goBack();
         }}
-        menu
-        search
+        title="PROJECTION MODE"
+        onMenuPressed={() => setState({ ...state, menu: true })}
       />
-      {redux.search && (
-        <Search onClose={() => setState({ ...state, search: false })} />
-      )}
-
-      {redux.menu && (
+      {state.menu && (
         <Menu
           onClickReset={() => {
-            dispatch(resetModelAsync());
             setState({ ...state, menu: false });
+            dispatch(resetModelAsync());
           }}
           onClickSaveModel={() => {
             setState({ ...state, menu: false });
-            navigation.navigate("ModelName", { mode: "standard" });
+            navigation.navigate("ModelName", { mode: "projection" });
           }}
           canQuickSave={loadModel !== undefined}
           onClickQuickSave={() => {
@@ -108,18 +111,18 @@ export default function Home({ navigation, route }: Props) {
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
           data={redux.images}
-          style={{ paddingBottom: 80 }}
           numColumns={calculateColumnAmount()}
+          style={{ paddingBottom: 80 }}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
             return (
-              <View
-                style={[
-                  styles.box,
-                  selected.includes(item)
-                    ? { backgroundColor: colors.gray }
-                    : {},
-                ]}
+              <TouchableOpacity
+                onPress={async () => {
+                  await dispatch(makeProjection(item));
+                  await dispatch(setImageForProjection(item));
+                  navigation.navigate("Projection", { uri: item.imageURI! });
+                }}
+                style={styles.box}
               >
                 {/* //@ts-ignore */}
                 <Image
@@ -133,17 +136,7 @@ export default function Home({ navigation, route }: Props) {
                     uri: item.imageURI,
                   }}
                 />
-                <ImageOverlay
-                  onPressNegative={() => {
-                    dispatch(negativeExamplePressed(item));
-                  }}
-                  onPressPositive={() => {
-                    dispatch(positiveExamplePressed(item));
-                  }}
-                  negativeSelected={redux.negatives.includes(item)}
-                  positiveSelected={redux.positives.includes(item)}
-                />
-              </View>
+              </TouchableOpacity>
             );
           }}
         />
@@ -159,15 +152,14 @@ export default function Home({ navigation, route }: Props) {
         />
         <IconButton
           title="NEW RANDOM SET"
-          onPress={() => dispatch(randomSetAsync())}
+          onPress={() => {
+            console.log(redux);
+
+            //dispatch(randomSetAsync())
+          }}
           type="random"
           style={{ marginLeft: 10, marginRight: 10 }}
           secondary
-        />
-        <IconButton
-          title="TRAIN"
-          onPress={() => dispatch(learnModelAsync())}
-          type="sync"
         />
       </View>
     </Container>

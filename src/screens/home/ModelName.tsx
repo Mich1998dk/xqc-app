@@ -8,18 +8,24 @@ import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
 import {} from "../../redux/reducers";
 import { colors, fonts } from "../../utils/theme";
-import { saveModelInAsyncStorage } from "../../utils/storage";
+import { saveModelInAsyncStorage, checkName } from "../../utils/storage";
+import { customAlert } from "../../utils/helpers";
+import { RouteProp } from "@react-navigation/native";
 
 type ModelNameProps = StackNavigationProp<HomeStackParamList, "ModelName">;
+type RouteProps = RouteProp<HomeStackParamList, "ModelName">;
 
 type Props = {
   navigation: ModelNameProps;
+  route: RouteProps;
 };
 
-export default function ChooseMode({ navigation }: Props) {
+export default function ChooseMode({ navigation, route }: Props) {
   const [state, setState] = useState({ loading: false, name: "" });
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
+  const { mode } = route.params;
+  console.log(mode);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
@@ -32,18 +38,28 @@ export default function ChooseMode({ navigation }: Props) {
 
   const save = async () => {
     if (state.name.length === 0) {
-      alert("hov du");
+      customAlert("error", "Your must have a name!");
+      return;
     }
+    if (await checkName(state.name)) {
+      customAlert("error", "This name already exists!");
+      setState({ ...state, name: "" });
+      return;
+    }
+
     const model: Model = {
-      mode: "STANDARD",
+      mode: redux.mode,
       name: state.name,
       negatives: redux.negatives,
       positives: redux.positives,
       seen: redux.seen,
+      lastSeen: redux.images,
+      created: new Date(),
     };
 
     await saveModelInAsyncStorage(model);
-    alert("Done!");
+    customAlert("success", "Your model has been saved!");
+    navigation.goBack();
   };
 
   return (

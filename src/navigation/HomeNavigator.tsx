@@ -9,6 +9,8 @@ import {
   LoadModel,
   SpeedMode,
   ModelName,
+  ProjectionMode,
+  Projection,
 } from "../screens/home/index";
 
 const Stack = createStackNavigator<HomeStackParamList>();
@@ -23,6 +25,11 @@ export default function Navigation() {
       <Stack.Screen name="LoadModal" component={LoadModel}></Stack.Screen>
       <Stack.Screen name="ModelName" component={ModelName}></Stack.Screen>
       <Stack.Screen name="SpeedMode" component={SpeedMode}></Stack.Screen>
+      <Stack.Screen
+        name="ProjectionMode"
+        component={ProjectionMode}
+      ></Stack.Screen>
+      <Stack.Screen name="Projection" component={Projection}></Stack.Screen>
     </Stack.Navigator>
   );
 }

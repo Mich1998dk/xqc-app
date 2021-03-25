@@ -4,12 +4,24 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
 import { Model } from "../../utils/types";
-import { Header, ModelOption } from "../../components/molecules/index";
+import { Button, Header, ModelOption } from "../../components/molecules/index";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
-import { getModelsInAsyncStorage } from "../../utils/storage";
-import {} from "../../redux/reducers";
+import {
+  getModelsInAsyncStorage,
+  clearStorage,
+  deleteModelInAsyncStorage,
+} from "../../utils/storage";
+import { deleteModelAsync } from "../../redux/reducers";
 import { FlatList } from "react-native-gesture-handler";
+
+import {
+  setImages,
+  setNegative,
+  setPositive,
+  setSeen,
+} from "../../redux/actions";
+import { customAlert } from "../../utils/helpers";
 
 type LoadModelProps = StackNavigationProp<HomeStackParamList, "LoadModal">;
 
@@ -27,7 +39,14 @@ export default function ChooseMode({ navigation }: Props) {
     var models = await getModelsInAsyncStorage();
     setModels(models);
     setState({ ...state, loading: false });
-    console.log(models);
+  };
+
+  const deleteModel = (item: string) => {
+    var filtered = models.filter(
+      (elm) => elm.name.toLowerCase() !== item.toLowerCase()
+    );
+    deleteModelInAsyncStorage(item);
+    setModels(filtered);
   };
 
   useEffect(() => {
@@ -47,12 +66,27 @@ export default function ChooseMode({ navigation }: Props) {
       )}
       <FlatList
         data={models}
+        style={{ paddingBottom: 80 }}
         renderItem={({ item, index }) => {
           return (
             <ModelOption
               key={index}
               model={item}
-              onPress={() => console.log("hej")}
+              onDelete={() => {
+                deleteModel(item.name);
+              }}
+              onPress={() => {
+                dispatch(setNegative(item.negatives));
+                dispatch(setPositive(item.positives));
+                dispatch(setSeen(item.seen));
+                dispatch(setImages(item.lastSeen));
+                if (item.mode === "standard") {
+                  navigation.navigate("Home", { loadModel: item });
+                }
+                if (item.mode === "projection") {
+                  navigation.navigate("ProjectionMode", { loadModel: item });
+                }
+              }}
             />
           );
         }}

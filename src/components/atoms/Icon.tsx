@@ -3,15 +3,25 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import { fonts, colors, sizes } from "../../utils/theme";
 import { Text } from "../atoms/index";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
-  type: "menu" | "back";
+  type: "menu" | "back" | "delete" | "time" | "search";
   onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  marginRight?: boolean;
 }
 
-export default function Icon({ type, onPress }: Props) {
+export default function Icon({ type, onPress, marginRight }: Props) {
   const iconSwitch = () => {
     switch (type) {
+      case "time":
+        return (
+          <Ionicons name="ios-timer-outline" size={26} color={colors.accent} />
+        );
+      case "search":
+        return (
+          <Ionicons name="search-outline" size={26} color={colors.accent} />
+        );
       case "menu":
         return <Ionicons name="ios-menu" size={26} color={colors.accent} />;
       case "back":
@@ -19,6 +29,14 @@ export default function Icon({ type, onPress }: Props) {
           <MaterialIcons
             name="keyboard-arrow-left"
             size={26}
+            color={colors.accent}
+          />
+        );
+      case "delete":
+        return (
+          <MaterialCommunityIcons
+            name="delete"
+            size={24}
             color={colors.accent}
           />
         );
@@ -31,7 +49,7 @@ export default function Icon({ type, onPress }: Props) {
   return (
     <TouchableOpacity
       onPress={onPress as any}
-      style={styles.container}
+      style={[styles.container, marginRight ? { marginRight: 10 } : {}]}
       activeOpacity={0.5}
     >
       {iconSwitch()}

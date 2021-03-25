@@ -6,6 +6,7 @@ import IconButton from "./IconButton";
 import ImageOverlay from "./ImageOverlay";
 import RMOverlay from "./RMOverlay";
 import ModelOption from "./ModelOption";
+import ImageContainer from "./ImageContainer";
 
 export {
   Loader,
@@ -16,4 +17,5 @@ export {
   ImageOverlay,
   RMOverlay,
   ModelOption,
+  ImageContainer,
 };

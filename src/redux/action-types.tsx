@@ -19,3 +19,16 @@ export const SET_IMAGES = "SET_IMAGES";
 export const SET_MEDIA_INFO = "SET_MEDIA_INFO";
 
 export const RESET_MODEL = "RESET_MODEL";
+
+export const SET_IMAGE_FOR_PROJECTION = "SET_IMAGE_FOR_PROJECTION";
+export const SET_POSITIVE_PROJECTION = "SET_POSITIVE_PROJECTION";
+export const SET_NEGATIVE_PROJECTION = "SET_NEGATIVE_PROJECTION";
+
+export const REPLACE_IMAGE = "REPLACE_IMAGE";
+
+export const SET_MODE = "SET_MODE";
+
+export const SET_TERMS = "SET_TERMS";
+
+export const SET_SEARCH = "SET_SEARCH";
+export const SET_MENU = "SET_MENU";

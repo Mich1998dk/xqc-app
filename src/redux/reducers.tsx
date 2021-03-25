@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import {
   ADD_POSITIVE,
   SET_POSITIVE,
@@ -13,6 +14,14 @@ import {
   UPDATE_SEEN,
   SET_MEDIA_INFO,
   RESET_MODEL,
+  SET_IMAGE_FOR_PROJECTION,
+  SET_POSITIVE_PROJECTION,
+  SET_NEGATIVE_PROJECTION,
+  REPLACE_IMAGE,
+  SET_MODE,
+  SET_TERMS,
+  SET_MENU,
+  SET_SEARCH,
 } from "./action-types";
 import {
   addImages,
@@ -29,11 +38,18 @@ import {
   updateSeen,
   setMediaInfo,
   resetModel,
+  setPositiveProjection,
+  setNegativeProjection,
+  setImageForProjection,
+  replaceImage,
+  setTerms,
 } from "./actions";
 import { URL } from "../utils/constants";
 import { Obj, State, MediaInfo } from "../utils/types";
 import moment from "moment";
 import axios from "axios";
+import { learn } from "../utils/api";
+import { deleteModelInAsyncStorage } from "../utils/storage";
 
 import {
   formatDate,
@@ -41,8 +57,12 @@ import {
   isUpperCase,
   initArray,
   formatFolderName,
+  customAlert,
+  formatBackendDataToImageObjects,
+  getNumberOfImageByPlatformAndMode,
+  formatObjectsFromMediaInfo,
+  formatImgLocationToFolderName,
 } from "../utils/helpers";
-import { Alert } from "react-native";
 
 const initialState: State = {
   positives: [],
@@ -50,11 +70,24 @@ const initialState: State = {
   images: [],
   seen: [],
   loading: false,
-  mediaInfo: [],
+  mediaInfo: undefined,
+  positiveProjection: [],
+  negativeProjection: [],
+  imageForProjection: undefined,
+  mode: undefined,
+  terms: undefined,
+  search: false,
+  menu: false,
 };
 
 export const reducer = (state = initialState, action: any) => {
   switch (action.type) {
+    case SET_SEARCH: {
+      return { ...state, search: action.payload };
+    }
+    case SET_MENU: {
+      return { ...state, menu: action.payload };
+    }
     case SET_LOADING: {
       return { ...state, loading: action.payload };
     }
@@ -99,10 +132,34 @@ export const reducer = (state = initialState, action: any) => {
       return { ...state, seen: action.payload };
     }
     case UPDATE_SEEN: {
-      return { ...state, seen: state.seen.concat(state.images) };
+      return { ...state, seen: state.seen.concat(action.payload) };
     }
     case SET_MEDIA_INFO: {
       return { ...state, mediaInfo: action.payload };
+    }
+    case SET_TERMS: {
+      return { ...state, terms: action.payload };
+    }
+    case SET_IMAGE_FOR_PROJECTION: {
+      return { ...state, imageForProjection: action.payload };
+    }
+    case SET_POSITIVE_PROJECTION: {
+      return { ...state, positiveProjection: action.payload };
+    }
+    case SET_NEGATIVE_PROJECTION: {
+      return { ...state, negativeProjection: action.payload };
+    }
+    case SET_MODE: {
+      return { ...state, mode: action.payload };
+    }
+    case REPLACE_IMAGE: {
+      var tempArray = state.images;
+      tempArray[action.payload.index] = action.payload.newImage;
+
+      return {
+        ...state,
+        images: tempArray,
+      };
     }
     default:
       return state;
@@ -147,61 +204,102 @@ export const positiveExamplePressed = (item: Obj) => async (
   }
 };
 
+export const learnWithProjectedImageAsync = (
+  label: "positive" | "negative"
+) => async (dispatch: any, getState: any) => {
+  dispatch(setLoading(true));
+
+  const pos: Obj[] = getState().positiveProjection;
+
+  const neg: Obj[] = getState().negativeProjection;
+
+  const img: Obj = getState().imageForProjection;
+
+  if (label == "negative") {
+    await dispatch(setNegative([...getState().negatives, img]));
+    dispatch(setImages(neg));
+    dispatch(updateSeen(neg));
+  }
+  if (label == "positive") {
+    await dispatch(setPositive([...getState().positives, img]));
+    dispatch(setImages(pos));
+    dispatch(updateSeen(pos));
+  }
+
+  dispatch(setNegativeProjection([]));
+  dispatch(setPositiveProjection([]));
+  dispatch(setLoading(false));
+};
+
+export const makeProjection = (obj: Obj) => async (
+  dispatch: any,
+  getState: any
+) => {
+  dispatch(setLoading(true));
+
+  //Prepare with the image in positives
+  const tempPos: Obj[] = [...getState().positives, obj];
+  const pos: number[] = tempPos.map((item: Obj) => item.exqId);
+  const currentNeg: number[] = getState().negatives.map(
+    (item: Obj) => item.exqId
+  );
+
+  //Prepare with the image in negatives
+  const tempNeg = [...getState().negatives, obj];
+  const neg: number[] = tempNeg.map((item: Obj) => item.exqId);
+  const currentPos: number[] = getState().positives.map(
+    (item: Obj) => item.exqId
+  );
+
+  //Prepare seen
+  const seen: number[] = getState().seen.map((item: Obj) => item.exqId);
+
+  //First learn with the current positives with the added image + the current negatives
+  await learn(pos, currentNeg, seen, getState().mode)
+    .then((res) => {
+      var posProjection = formatBackendDataToImageObjects(res);
+      dispatch(setPositiveProjection(posProjection));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  //Then learn with the current negatives with the added image + the current positives
+  await learn(currentPos, neg, seen, getState().mode)
+    .then((res) => {
+      var negProjection = formatBackendDataToImageObjects(res);
+      dispatch(setNegativeProjection(negProjection));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  dispatch(setLoading(false));
+};
+
 export const learnModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
 
   if (getState().positives.length === 0 && getState().negatives.length === 0) {
-    Alert.alert(
-      "Error",
+    customAlert(
+      "error",
       "You haven't selected any images to train the model, press 'NEW RANDOM SET' if you want new images presented."
     );
     return;
   }
-  //Update seen with the current iteration of the model, afterwards we fetch new examples
-  await dispatch(updateSeen());
+
   //Clear the current images, and wait for the new ones..
   await dispatch(setImages([]));
 
-  await axios({
-    method: "post",
-    url: `${URL}/learn`,
-    data: JSON.stringify({
-      pos: getState().positives.map((item: Obj) => item.exqId),
-      neg: getState().negatives.map((item: Obj) => item.exqId),
-      seen: getState().seen.map((item: Obj) => item.exqId),
-      excludedVids: [],
-      queryByImage: -1,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Credentials": "*",
-      "Access-Control-Allow-Origin": "*",
-    },
-  })
+  const pos = getState().positives.map((item: Obj) => item.exqId);
+  const neg = getState().negatives.map((item: Obj) => item.exqId);
+  const seen = getState().seen.map((item: Obj) => item.exqId);
+
+  learn(pos, neg, seen, getState().mode)
     .then((res) => {
-      var objects: Obj[] = [];
-      for (let i = 0; i < res.data.img_locations.length; i++) {
-        let loc = res.data.img_locations[i];
-        //Maybe get the foldername from here
-        let suggestion = res.data.sugg[i];
+      var objects: Obj[] = formatBackendDataToImageObjects(res);
 
-        var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
-
-        var regexResult = regex.exec(loc);
-        //@ts-ignore
-        var folderName = regexResult[0].replace("_", "");
-
-        var newObj: Obj = {
-          exqId: suggestion,
-          thumbnail: formatToLocation(loc),
-          folderName: "",
-          shotId: -1,
-          imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
-            folderName
-          )}/${formatToLocation(loc)}`,
-        };
-        objects.push(newObj);
-      }
+      dispatch(updateSeen(objects));
       dispatch(setImages(objects));
       dispatch(setLoading(false));
     })
@@ -236,10 +334,9 @@ export const resetModelAsync = () => async (dispatch: any, getState: any) => {
 export const randomSetAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
 
-  await dispatch(updateSeen());
   await dispatch(setImages([]));
 
-  const arr = initArray();
+  const arr = initArray(getState().mode);
 
   await fetch(`${URL}/randomSet`, {
     method: "post",
@@ -252,37 +349,13 @@ export const randomSetAsync = () => async (dispatch: any, getState: any) => {
   })
     .then((resp) => resp.json())
     .then((res) => {
-      var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
-      var imageObjects: Obj[] = [];
+      const mediaInfo = getState().mediaInfo;
+      var imageObjects: Obj[] = formatObjectsFromMediaInfo(
+        mediaInfo,
+        res.img_locations
+      );
 
-      for (let i = 0; i < res.img_locations.length; i++) {
-        var rootPath = "../../../assets/BSCBilleder/images";
-        var fileName = formatToLocation(res.img_locations[i]);
-        var result = regex.exec(res.img_locations[i]);
-        //@ts-ignore
-        var folderName = result[0].replace("_", "");
-
-        const mediaInfo = getState().mediaInfo;
-
-        for (let i = 0; i < mediaInfo[folderName].shots.length; i++) {
-          var obj = mediaInfo[folderName].shots[i];
-
-          if (obj.thumbnail === fileName) {
-            var newObj: Obj;
-            newObj = {
-              shotId: obj.shotId,
-              exqId: obj.exqId,
-              folderName: folderName,
-              thumbnail: obj.thumbnail,
-              imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
-                folderName
-              )}/${obj.thumbnail}`,
-            };
-
-            imageObjects.push(newObj);
-          }
-        }
-      }
+      dispatch(updateSeen(imageObjects));
       dispatch(setImages(imageObjects));
       dispatch(setLoading(false));
     })
@@ -292,61 +365,112 @@ export const randomSetAsync = () => async (dispatch: any, getState: any) => {
     });
 };
 
+export const initExquisitorAsync = () => async (
+  dispatch: any,
+  getState: any
+) => {
+  dispatch(setLoading(true));
+  await fetch(`${URL}/initExquisitor`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      dispatch(setMediaInfo(res.mediainfo));
+      dispatch(setTerms(res.vis_terms));
+      dispatch(setLoading(false));
+    })
+    .catch((err) => {
+      dispatch(setLoading(false));
+      customAlert("error", err);
+    });
+};
+
 export const initModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
   dispatch(setImages([]));
   dispatch(setNegative([]));
   dispatch(setPositive([]));
 
-  const initialArray = initArray();
-  await fetch(`${URL}/initModel`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ids: initialArray }),
-  })
-    .then((resp) => resp.json())
+  const initialArray = initArray(getState().mode);
+
+  if (getState().mediaInfo !== undefined) {
+    await dispatch(randomSetAsync());
+  } else {
+    await fetch(`${URL}/initModel`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ids: initialArray }),
+    })
+      .then((resp) => resp.json())
+      .then((res) => {
+        console.log(res);
+
+        dispatch(setMediaInfo(res.mediainfo));
+
+        var imageObjects: Obj[] = formatObjectsFromMediaInfo(
+          res.mediainfo,
+          res.img_locations
+        );
+
+        dispatch(updateSeen(imageObjects));
+        dispatch(setImages(imageObjects));
+        dispatch(setLoading(false));
+      })
+      .catch((err) => {
+        dispatch(setLoading(false));
+        console.log(err);
+      });
+  }
+  dispatch(setLoading(false));
+};
+
+export const deleteModelAsync = (name: string) => async (
+  dispatch: any,
+  getState: any
+) => {
+  deleteModelInAsyncStorage(name);
+};
+
+export const replaceImageAsync = (index: number) => async (
+  dispatch: any,
+  getState: any
+) => {
+  dispatch(setLoading(true));
+  var pos = getState().positives.map((item: Obj) => item.exqId);
+  var neg = getState().negatives.map((item: Obj) => item.exqId);
+  var seen = getState().seen.map((item: Obj) => item.exqId);
+
+  dispatch(setLoading(false));
+
+  let objects: Obj[] = [];
+
+  learn(pos, neg, seen, getState().mode)
     .then((res) => {
-      dispatch(setMediaInfo(res.mediainfo));
-      console.log(res.mediainfo);
+      let loc = res.data.img_locations[0];
+      let suggestion = res.data.sugg[0];
+      var folderName = formatImgLocationToFolderName(loc);
 
-      var regex = RegExp("(^[0-9]{8}|_[0-9]{8})");
-      var imageObjects: Obj[] = [];
-
-      for (let i = 0; i < res.img_locations.length; i++) {
-        var rootPath = "../../../assets/BSCBilleder/images";
-        var fileName = formatToLocation(res.img_locations[i]);
-        var result = regex.exec(res.img_locations[i]);
-        //@ts-ignore
-        var folderName = result[0].replace("_", "");
-
-        for (let i = 0; i < res.mediainfo[folderName].shots.length; i++) {
-          var obj = res.mediainfo[folderName].shots[i];
-
-          if (obj.thumbnail === fileName) {
-            var newObj: Obj;
-
-            newObj = {
-              shotId: obj.shotId,
-              exqId: obj.exqId,
-              folderName: folderName,
-              thumbnail: obj.thumbnail,
-              imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
-                folderName
-              )}/${obj.thumbnail}`,
-            };
-
-            imageObjects.push(newObj);
-          }
-        }
-      }
-
-      dispatch(setImages(imageObjects));
+      var newObj: Obj = {
+        exqId: suggestion,
+        thumbnail: formatToLocation(loc),
+        folderName: "",
+        shotId: 6,
+        imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
+          folderName
+        )}/${formatToLocation(loc)}`,
+      };
+      objects.push(newObj);
+      dispatch(replaceImage(newObj, index));
       dispatch(setLoading(false));
     })
     .catch((err) => {
-      dispatch(setLoading(false));
       console.log(err);
+      dispatch(setLoading(false));
     });
+  await dispatch(updateSeen(objects));
 };

@@ -10,7 +10,7 @@ interface Props {
   onPress: (event: React.MouseEvent<HTMLButtonElement>) => void;
   secondary?: boolean;
   style?: CSSProperties;
-  type?: "sync" | "random" | undefined;
+  type?: "sync" | "random" | "delete" | "update" | undefined;
 }
 
 export default function IconButton({
@@ -35,6 +35,15 @@ export default function IconButton({
         return (
           <Ionicons
             name="shuffle"
+            size={22}
+            color={secondary ? colors.accent : colors.white}
+            style={{ marginRight: 8 }}
+          />
+        );
+      case "update":
+        return (
+          <Ionicons
+            name="refresh"
             size={22}
             color={secondary ? colors.accent : colors.white}
             style={{ marginRight: 8 }}
@@ -76,8 +85,8 @@ export default function IconButton({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.accent,
-    height: 42,
-    paddingHorizontal: 12,
+    height: 40,
+    paddingHorizontal: 10,
     borderRadius: 16,
     flexDirection: "row",
     alignItems: "center",

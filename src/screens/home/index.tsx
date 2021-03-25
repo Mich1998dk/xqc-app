@@ -5,6 +5,8 @@ import PosAndNeg from "./PosAndNeg";
 import LoadModel from "./LoadModel";
 import ModelName from "./ModelName";
 import SpeedMode from "./SpeedMode";
+import ProjectionMode from "./ProjectionMode";
+import Projection from "./Projection";
 export {
   Welcome,
   ChooseMode,
@@ -13,4 +15,6 @@ export {
   LoadModel,
   ModelName,
   SpeedMode,
+  ProjectionMode,
+  Projection,
 };
