@@ -18,8 +18,21 @@ import {
   SET_NEGATIVE_PROJECTION,
   REPLACE_IMAGE,
   SET_MODE,
+  SET_TERMS,
+  SET_MENU,
+  SET_SEARCH,
 } from "./action-types";
 import { Obj } from "../utils/types";
+
+export const setSearch = (payload: boolean) => ({
+  type: SET_SEARCH,
+  payload: payload,
+});
+
+export const setMenu = (payload: boolean) => ({
+  type: SET_MENU,
+  payload: payload,
+});
 
 export const setImageForProjection = (obj: Obj) => ({
   type: SET_IMAGE_FOR_PROJECTION,
@@ -113,4 +126,9 @@ export const replaceImage = (newImage: Obj, index: number) => ({
 export const setMode = (mode: "standard" | "speed" | "projection") => ({
   type: SET_MODE,
   payload: mode,
+});
+
+export const setTerms = (terms: any) => ({
+  type: SET_TERMS,
+  payload: terms,
 });

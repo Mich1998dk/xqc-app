@@ -6,13 +6,22 @@ import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
-  type: "menu" | "back" | "delete";
+  type: "menu" | "back" | "delete" | "time" | "search";
   onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  marginRight?: boolean;
 }
 
-export default function Icon({ type, onPress }: Props) {
+export default function Icon({ type, onPress, marginRight }: Props) {
   const iconSwitch = () => {
     switch (type) {
+      case "time":
+        return (
+          <Ionicons name="ios-timer-outline" size={26} color={colors.accent} />
+        );
+      case "search":
+        return (
+          <Ionicons name="search-outline" size={26} color={colors.accent} />
+        );
       case "menu":
         return <Ionicons name="ios-menu" size={26} color={colors.accent} />;
       case "back":
@@ -40,7 +49,7 @@ export default function Icon({ type, onPress }: Props) {
   return (
     <TouchableOpacity
       onPress={onPress as any}
-      style={styles.container}
+      style={[styles.container, marginRight ? { marginRight: 10 } : {}]}
       activeOpacity={0.5}
     >
       {iconSwitch()}

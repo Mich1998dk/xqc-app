@@ -37,30 +37,47 @@ import axios from "axios";
 import { setImageForProjection, setSeen } from "../../redux/actions";
 import moment from "moment";
 import { makeProjection } from "../../redux/reducers";
+import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "ProjectionMode">;
+type RouteProps = RouteProp<HomeStackParamList, "ProjectionMode">;
 
 type Props = {
   navigation: HomeProps;
+  route: RouteProps;
 };
 
-export default function ProjectionMode({ navigation }: Props) {
+export default function ProjectionMode({ navigation, route }: Props) {
   const [state, setState] = useState({
     menu: false,
   });
-  const [selected, setSelected] = useState<Obj[]>([]);
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
-
-  console.log(redux.negatives.length);
-  console.log(redux.positives.length);
-  console.log(redux.seen.length);
+  const { loadModel } = route.params;
 
   useEffect(() => {
-    dispatch(initModelAsync());
+    if (loadModel === undefined) {
+      dispatch(initModelAsync());
+    }
+
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
   }, [navigation]);
+
+  const quickSaveModel = async () => {
+    const model: Model = {
+      mode: "projection",
+      name: loadModel?.name!,
+      negatives: redux.negatives,
+      positives: redux.positives,
+      seen: redux.seen,
+      lastSeen: redux.images,
+      created: new Date(loadModel?.created!),
+    };
+
+    await saveModelInAsyncStorage(model);
+    customAlert("success", "Your model has been saved!");
+  };
 
   return (
     <Container loading={redux.loading} loadingTitle="Loading..">
@@ -69,18 +86,22 @@ export default function ProjectionMode({ navigation }: Props) {
           dispatch(setSeen([]));
           navigation.goBack();
         }}
-        menu
+        title="PROJECTION MODE"
         onMenuPressed={() => setState({ ...state, menu: true })}
       />
       {state.menu && (
         <Menu
           onClickReset={() => {
             setState({ ...state, menu: false });
-            //dispatch(resetModelAsync());
+            dispatch(resetModelAsync());
           }}
           onClickSaveModel={() => {
             setState({ ...state, menu: false });
-            //navigation.navigate("ModelName");
+            navigation.navigate("ModelName", { mode: "projection" });
+          }}
+          canQuickSave={loadModel !== undefined}
+          onClickQuickSave={() => {
+            quickSaveModel();
           }}
           onClose={() => setState({ ...state, menu: false })}
         />
@@ -90,7 +111,8 @@ export default function ProjectionMode({ navigation }: Props) {
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
           data={redux.images}
-          numColumns={Platform.OS === "web" ? 4 : 2}
+          numColumns={calculateColumnAmount()}
+          style={{ paddingBottom: 80 }}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
             return (
@@ -100,12 +122,7 @@ export default function ProjectionMode({ navigation }: Props) {
                   await dispatch(setImageForProjection(item));
                   navigation.navigate("Projection", { uri: item.imageURI! });
                 }}
-                style={[
-                  styles.box,
-                  selected.includes(item)
-                    ? { backgroundColor: colors.gray }
-                    : {},
-                ]}
+                style={styles.box}
               >
                 {/* //@ts-ignore */}
                 <Image
@@ -151,7 +168,7 @@ export default function ProjectionMode({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   box: {
-    width: Platform.OS === "web" ? "24%" : "46%",
+    width: calculateImageWidth(),
     backgroundColor: "#393939",
     marginTop: 10,
     borderRadius: 12,

@@ -12,6 +12,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
 import {} from "../../redux/reducers";
+import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { removeNegative, removePositive } from "../../redux/actions";
 
 type PosAndNegProps = StackNavigationProp<HomeStackParamList, "Welcome">;
@@ -32,7 +33,7 @@ export default function PosAndNeg({ navigation }: Props) {
 
   return (
     <Container>
-      <Header title="Mapped images" onPress={() => navigation.goBack()} />
+      <Header title="Labeled images" onPress={() => navigation.goBack()} />
       <View style={styles.buttonContainer}>
         <IconButton
           title="NEGATIVE"
@@ -49,7 +50,8 @@ export default function PosAndNeg({ navigation }: Props) {
       <FlatList
         columnWrapperStyle={{ justifyContent: "space-between" }}
         data={state.selected === "negative" ? redux.negatives : redux.positives}
-        numColumns={4}
+        numColumns={calculateColumnAmount()}
+        style={{ paddingBottom: 80 }}
         keyExtractor={(item) => item.exqId.toString()}
         renderItem={({ item, index }) => {
           return (
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   box: {
-    width: "24%",
+    width: calculateImageWidth(),
     backgroundColor: "#393939",
     height: 180,
     marginTop: 10,

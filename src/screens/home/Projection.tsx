@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
 import { learnWithProjectedImageAsync } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
-
+import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Obj, Model } from "../../utils/types";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Projection">;
@@ -76,7 +76,8 @@ export default function ProjectionMode({ navigation, route }: Props) {
             ? redux.negativeProjection
             : redux.positiveProjection
         }
-        numColumns={Platform.OS === "web" ? 4 : 2}
+        style={{ paddingBottom: 80 }}
+        numColumns={calculateColumnAmount()}
         keyExtractor={(item) => item.exqId.toString()}
         renderItem={({ item, index }) => {
           return (
@@ -114,7 +115,7 @@ export default function ProjectionMode({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   box: {
-    width: Platform.OS === "web" ? "24%" : "46%",
+    width: calculateImageWidth(),
     backgroundColor: "#393939",
     marginTop: 10,
     borderRadius: 12,

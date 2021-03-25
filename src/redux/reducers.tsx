@@ -19,6 +19,9 @@ import {
   SET_NEGATIVE_PROJECTION,
   REPLACE_IMAGE,
   SET_MODE,
+  SET_TERMS,
+  SET_MENU,
+  SET_SEARCH,
 } from "./action-types";
 import {
   addImages,
@@ -39,6 +42,7 @@ import {
   setNegativeProjection,
   setImageForProjection,
   replaceImage,
+  setTerms,
 } from "./actions";
 import { URL } from "../utils/constants";
 import { Obj, State, MediaInfo } from "../utils/types";
@@ -66,15 +70,24 @@ const initialState: State = {
   images: [],
   seen: [],
   loading: false,
-  mediaInfo: [],
+  mediaInfo: undefined,
   positiveProjection: [],
   negativeProjection: [],
   imageForProjection: undefined,
   mode: undefined,
+  terms: undefined,
+  search: false,
+  menu: false,
 };
 
 export const reducer = (state = initialState, action: any) => {
   switch (action.type) {
+    case SET_SEARCH: {
+      return { ...state, search: action.payload };
+    }
+    case SET_MENU: {
+      return { ...state, menu: action.payload };
+    }
     case SET_LOADING: {
       return { ...state, loading: action.payload };
     }
@@ -123,6 +136,9 @@ export const reducer = (state = initialState, action: any) => {
     }
     case SET_MEDIA_INFO: {
       return { ...state, mediaInfo: action.payload };
+    }
+    case SET_TERMS: {
+      return { ...state, terms: action.payload };
     }
     case SET_IMAGE_FOR_PROJECTION: {
       return { ...state, imageForProjection: action.payload };
@@ -266,8 +282,8 @@ export const learnModelAsync = () => async (dispatch: any, getState: any) => {
 
   if (getState().positives.length === 0 && getState().negatives.length === 0) {
     customAlert(
-      "You haven't selected any images to train the model, press 'NEW RANDOM SET' if you want new images presented.",
-      true
+      "error",
+      "You haven't selected any images to train the model, press 'NEW RANDOM SET' if you want new images presented."
     );
     return;
   }
@@ -349,6 +365,29 @@ export const randomSetAsync = () => async (dispatch: any, getState: any) => {
     });
 };
 
+export const initExquisitorAsync = () => async (
+  dispatch: any,
+  getState: any
+) => {
+  dispatch(setLoading(true));
+  await fetch(`${URL}/initExquisitor`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      dispatch(setMediaInfo(res.mediainfo));
+      dispatch(setTerms(res.vis_terms));
+      dispatch(setLoading(false));
+    })
+    .catch((err) => {
+      dispatch(setLoading(false));
+      customAlert("error", err);
+    });
+};
+
 export const initModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
   dispatch(setImages([]));
@@ -356,30 +395,38 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setPositive([]));
 
   const initialArray = initArray(getState().mode);
-  await fetch(`${URL}/initModel`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ids: initialArray }),
-  })
-    .then((resp) => resp.json())
-    .then((res) => {
-      dispatch(setMediaInfo(res.mediainfo));
 
-      var imageObjects: Obj[] = formatObjectsFromMediaInfo(
-        res.mediainfo,
-        res.img_locations
-      );
-
-      dispatch(updateSeen(imageObjects));
-      dispatch(setImages(imageObjects));
-      dispatch(setLoading(false));
+  if (getState().mediaInfo !== undefined) {
+    await dispatch(randomSetAsync());
+  } else {
+    await fetch(`${URL}/initModel`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ids: initialArray }),
     })
-    .catch((err) => {
-      dispatch(setLoading(false));
-      console.log(err);
-    });
+      .then((resp) => resp.json())
+      .then((res) => {
+        console.log(res);
+
+        dispatch(setMediaInfo(res.mediainfo));
+
+        var imageObjects: Obj[] = formatObjectsFromMediaInfo(
+          res.mediainfo,
+          res.img_locations
+        );
+
+        dispatch(updateSeen(imageObjects));
+        dispatch(setImages(imageObjects));
+        dispatch(setLoading(false));
+      })
+      .catch((err) => {
+        dispatch(setLoading(false));
+        console.log(err);
+      });
+  }
+  dispatch(setLoading(false));
 };
 
 export const deleteModelAsync = (name: string) => async (
@@ -406,7 +453,6 @@ export const replaceImageAsync = (index: number) => async (
     .then((res) => {
       let loc = res.data.img_locations[0];
       let suggestion = res.data.sugg[0];
-
       var folderName = formatImgLocationToFolderName(loc);
 
       var newObj: Obj = {

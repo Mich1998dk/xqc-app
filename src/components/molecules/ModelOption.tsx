@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { fonts, colors, sizes } from "../../utils/theme";
 import { Text, Icon } from "../atoms/index";
-import { Model } from "../../utils/types";
+import { Mode, Model } from "../../utils/types";
 import moment from "moment";
 
 interface Props {
@@ -20,9 +20,20 @@ export default function ModeOption({ onPress, onDelete, style, model }: Props) {
       color: colors.white,
     },
     { title: "SEEN", value: model.seen.length, color: colors.white },
-    { title: "POSITIVES", value: model.positives.length, color: colors.green },
-    { title: "NEGATIVES", value: model.negatives.length, color: colors.red },
+    { title: "POS", value: model.positives.length, color: colors.green },
+    { title: "NEG", value: model.negatives.length, color: colors.red },
   ];
+
+  const renderMode = () => {
+    switch (model.mode) {
+      case "standard":
+        return "STANDARD";
+      case "projection":
+        return "PROJECTION";
+      default:
+        return "STANDARD";
+    }
+  };
 
   return (
     <TouchableOpacity
@@ -32,14 +43,14 @@ export default function ModeOption({ onPress, onDelete, style, model }: Props) {
     >
       <View style={styles.top}>
         <Text.ButtonSecondary>{model.name.toUpperCase()}</Text.ButtonSecondary>
-        <Text.Small style={{ opacity: 0.3 }}>{model.mode} MODE</Text.Small>
+        <Text.Small style={{ opacity: 0.3 }}>{renderMode()} MODE</Text.Small>
       </View>
       <View style={styles.bottom}>
         <View style={{ flexDirection: "row" }}>
           {stats.map((item, index) => {
             return (
               <View key={index} style={styles.stat}>
-                <Text.Small style={{ opacity: 0.4 }}>{item.title}</Text.Small>
+                <Text.Small style={{ opacity: 0.3 }}>{item.title}</Text.Small>
                 <Text.Header style={{ color: item.color, fontSize: 20 }}>
                   {item.value}
                 </Text.Header>
@@ -79,6 +90,6 @@ const styles = StyleSheet.create({
   },
   stat: {
     flexDirection: "column",
-    marginRight: 35,
+    marginRight: 20,
   },
 });

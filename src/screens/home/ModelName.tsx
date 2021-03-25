@@ -10,17 +10,22 @@ import {} from "../../redux/reducers";
 import { colors, fonts } from "../../utils/theme";
 import { saveModelInAsyncStorage, checkName } from "../../utils/storage";
 import { customAlert } from "../../utils/helpers";
+import { RouteProp } from "@react-navigation/native";
 
 type ModelNameProps = StackNavigationProp<HomeStackParamList, "ModelName">;
+type RouteProps = RouteProp<HomeStackParamList, "ModelName">;
 
 type Props = {
   navigation: ModelNameProps;
+  route: RouteProps;
 };
 
-export default function ChooseMode({ navigation }: Props) {
+export default function ChooseMode({ navigation, route }: Props) {
   const [state, setState] = useState({ loading: false, name: "" });
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
+  const { mode } = route.params;
+  console.log(mode);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
@@ -33,17 +38,17 @@ export default function ChooseMode({ navigation }: Props) {
 
   const save = async () => {
     if (state.name.length === 0) {
-      customAlert("Your must have a name!", true);
+      customAlert("error", "Your must have a name!");
       return;
     }
     if (await checkName(state.name)) {
-      customAlert("This name already exists!");
+      customAlert("error", "This name already exists!");
       setState({ ...state, name: "" });
       return;
     }
 
     const model: Model = {
-      mode: "STANDARD",
+      mode: redux.mode,
       name: state.name,
       negatives: redux.negatives,
       positives: redux.positives,
@@ -53,7 +58,7 @@ export default function ChooseMode({ navigation }: Props) {
     };
 
     await saveModelInAsyncStorage(model);
-    customAlert("Your model has been saved!");
+    customAlert("success", "Your model has been saved!");
     navigation.goBack();
   };
 

@@ -10,7 +10,7 @@ export const deleteModelInAsyncStorage = (name: string) => {
   try {
     AsyncStorage.removeItem(name);
   } catch (error) {
-    customAlert(error);
+    customAlert("error", error);
   }
 };
 

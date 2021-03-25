@@ -105,10 +105,10 @@ export function formatObjectsFromMediaInfo(
   return imageObjects;
 }
 
-export const customAlert = (message: string, error?: boolean) => {
+export const customAlert = (title: "error" | "success", message: string) => {
   Platform.OS === "web"
     ? alert(message)
-    : Alert.alert(error ? "Error" : "Success", message);
+    : Alert.alert(title === "error" ? "Error" : "Success!", message);
 };
 
 export const formatImgLocationToFolderName = (loc: string) => {

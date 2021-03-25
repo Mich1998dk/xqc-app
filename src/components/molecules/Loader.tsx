@@ -12,7 +12,7 @@ interface Props {
 export default function Loader({ loadingTitle }: Props) {
   return (
     <Animatable.View style={styles.container} animation="fadeIn" duration={200}>
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size="large" color="#fff" />
       <View style={{ marginTop: 10 }}>
         <Text.Button>{loadingTitle ? loadingTitle : "Loading.."}</Text.Button>
       </View>

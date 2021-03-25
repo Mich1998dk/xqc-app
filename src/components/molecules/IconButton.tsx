@@ -85,8 +85,8 @@ export default function IconButton({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.accent,
-    height: 42,
-    paddingHorizontal: 12,
+    height: 40,
+    paddingHorizontal: 10,
     borderRadius: 16,
     flexDirection: "row",
     alignItems: "center",

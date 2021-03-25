@@ -1,22 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  View,
-  Image,
-  Alert,
-  Platform,
-} from "react-native";
+import { StyleSheet, FlatList, View, Image, Platform } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
-import { Text } from "../../components/atoms/index";
 import { RouteProp } from "@react-navigation/native";
 import {
   Header,
   Button,
   IconButton,
   ImageOverlay,
+  ImageContainer,
 } from "../../components/molecules/index";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
@@ -30,12 +22,11 @@ import {
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
 import { customAlert } from "../../utils/helpers";
-import { Menu } from "../../components/organisms/index";
+import { Menu, Search } from "../../components/organisms/index";
 import { Obj, Model } from "../../utils/types";
 import { saveModelInAsyncStorage } from "../../utils/storage";
-import axios from "axios";
 import { setSeen } from "../../redux/actions";
-import moment from "moment";
+import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
 type RouteProps = RouteProp<HomeStackParamList, "Home">;
@@ -51,6 +42,7 @@ export default function Home({ navigation, route }: Props) {
   const [state, setState] = useState({
     loadingTitle: "Initiating the model..",
     menu: false,
+    search: false,
   });
   const [selected, setSelected] = useState<Obj[]>([]);
   const dispatch = useDispatch();
@@ -66,7 +58,7 @@ export default function Home({ navigation, route }: Props) {
 
   const quickSaveModel = async () => {
     const model: Model = {
-      mode: "STANDARD",
+      mode: "standard",
       name: loadModel?.name!,
       negatives: redux.negatives,
       positives: redux.positives,
@@ -76,7 +68,7 @@ export default function Home({ navigation, route }: Props) {
     };
 
     await saveModelInAsyncStorage(model);
-    customAlert("Your model has been saved!");
+    customAlert("success", "Your model has been saved!");
   };
 
   return (
@@ -88,9 +80,13 @@ export default function Home({ navigation, route }: Props) {
           navigation.goBack();
         }}
         menu
-        onMenuPressed={() => setState({ ...state, menu: true })}
+        search
       />
-      {state.menu && (
+      {redux.search && (
+        <Search onClose={() => setState({ ...state, search: false })} />
+      )}
+
+      {redux.menu && (
         <Menu
           onClickReset={() => {
             dispatch(resetModelAsync());
@@ -98,7 +94,7 @@ export default function Home({ navigation, route }: Props) {
           }}
           onClickSaveModel={() => {
             setState({ ...state, menu: false });
-            navigation.navigate("ModelName");
+            navigation.navigate("ModelName", { mode: "standard" });
           }}
           canQuickSave={loadModel !== undefined}
           onClickQuickSave={() => {
@@ -112,7 +108,8 @@ export default function Home({ navigation, route }: Props) {
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
           data={redux.images}
-          numColumns={Platform.OS === "web" ? 4 : 2}
+          style={{ paddingBottom: 80 }}
+          numColumns={calculateColumnAmount()}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
             return (
@@ -179,7 +176,7 @@ export default function Home({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   box: {
-    width: Platform.OS === "web" ? "24%" : "46%",
+    width: calculateImageWidth(),
     backgroundColor: "#393939",
     marginTop: 10,
     borderRadius: 12,

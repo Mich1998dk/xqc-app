@@ -21,6 +21,7 @@ import {
   setPositive,
   setSeen,
 } from "../../redux/actions";
+import { customAlert } from "../../utils/helpers";
 
 type LoadModelProps = StackNavigationProp<HomeStackParamList, "LoadModal">;
 
@@ -38,7 +39,6 @@ export default function ChooseMode({ navigation }: Props) {
     var models = await getModelsInAsyncStorage();
     setModels(models);
     setState({ ...state, loading: false });
-    console.log(models);
   };
 
   const deleteModel = (item: string) => {
@@ -66,6 +66,7 @@ export default function ChooseMode({ navigation }: Props) {
       )}
       <FlatList
         data={models}
+        style={{ paddingBottom: 80 }}
         renderItem={({ item, index }) => {
           return (
             <ModelOption
@@ -79,7 +80,12 @@ export default function ChooseMode({ navigation }: Props) {
                 dispatch(setPositive(item.positives));
                 dispatch(setSeen(item.seen));
                 dispatch(setImages(item.lastSeen));
-                navigation.navigate("Home", { loadModel: item });
+                if (item.mode === "standard") {
+                  navigation.navigate("Home", { loadModel: item });
+                }
+                if (item.mode === "projection") {
+                  navigation.navigate("ProjectionMode", { loadModel: item });
+                }
               }}
             />
           );

@@ -36,12 +36,12 @@ export default function ChooseMode({ navigation }: Props) {
             navigation.navigate("Home", { loadModel: undefined });
           }}
         />
-        {/* <Text.Regular style={{ paddingHorizontal: 6, marginBottom: 30 }}>
+        <Text.Regular style={{ paddingHorizontal: 6, marginBottom: 30 }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
           aliquip ex ea commodo consequat.
-        </Text.Regular> */}
+        </Text.Regular>
         <ModeOption
           title="SPEED MODE"
           onPress={() => {
@@ -49,13 +49,25 @@ export default function ChooseMode({ navigation }: Props) {
             navigation.navigate("SpeedMode");
           }}
         />
+        <Text.Regular style={{ paddingHorizontal: 6, marginBottom: 30 }}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat.
+        </Text.Regular>
         <ModeOption
           title="PROJECTION MODE"
           onPress={() => {
             dispatch(setMode("projection"));
-            navigation.navigate("ProjectionMode");
+            navigation.navigate("ProjectionMode", { loadModel: undefined });
           }}
         />
+        <Text.Regular style={{ paddingHorizontal: 6, marginBottom: 30 }}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat.
+        </Text.Regular>
       </ScrollView>
     </Container>
   );

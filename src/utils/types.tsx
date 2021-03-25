@@ -8,9 +8,9 @@ export type HomeStackParamList = {
   Welcome: undefined;
   PosAndNeg: undefined;
   LoadModal: undefined;
-  ModelName: undefined;
+  ModelName: { mode: Mode };
   SpeedMode: undefined;
-  ProjectionMode: undefined;
+  ProjectionMode: { loadModel?: Model };
   Projection: { uri: string };
 };
 
@@ -33,6 +33,9 @@ export type State = {
   negativeProjection: Obj[];
   imageForProjection: Obj | undefined;
   mode: Mode;
+  terms: any;
+  search: boolean;
+  menu: boolean;
 };
 
 export type Mode = "standard" | "speed" | "projection" | undefined;
@@ -49,7 +52,7 @@ export type Folder = {
 
 export type Model = {
   name: string;
-  mode: "STANDARD" | "SPEED";
+  mode: Mode;
   positives: Obj[];
   negatives: Obj[];
   seen: Obj[];
