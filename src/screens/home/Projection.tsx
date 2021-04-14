@@ -11,6 +11,7 @@ import { learnWithProjectedImageAsync } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Obj, Model } from "../../utils/types";
+import { ButtonBar } from "../../components/organisms";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Projection">;
 type RouteProps = RouteProp<HomeStackParamList, "Projection">;
@@ -35,7 +36,7 @@ export default function ProjectionMode({ navigation, route }: Props) {
   }, [navigation]);
 
   return (
-    <Container loading={redux.loading} loadingTitle="Loading..">
+    <Container>
       <Header
         title="Projection"
         onPress={() => {
@@ -98,7 +99,6 @@ export default function ProjectionMode({ navigation, route }: Props) {
           );
         }}
       />
-
       <View style={styles.buttons}>
         <IconButton
           title="CONFIRM CHOICE"
@@ -106,7 +106,6 @@ export default function ProjectionMode({ navigation, route }: Props) {
             navigation.goBack();
             dispatch(learnWithProjectedImageAsync(selected));
           }}
-          style={{ marginLeft: 10, marginRight: 10 }}
         />
       </View>
     </Container>

@@ -1,43 +1,31 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
   View,
   Image,
-  Alert,
-  Platform,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
-import { Text } from "../../components/atoms/index";
 import { RouteProp } from "@react-navigation/native";
-import {
-  Header,
-  Button,
-  IconButton,
-  ImageOverlay,
-} from "../../components/molecules/index";
+import { Header, IconButton } from "../../components/molecules/index";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
 import {
+  getImageInfo,
   initModelAsync,
-  negativeExamplePressed,
-  positiveExamplePressed,
-  learnModelAsync,
   randomSetAsync,
-  resetModelAsync,
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
-import { customAlert } from "../../utils/helpers";
-import { Menu } from "../../components/organisms/index";
-import { Obj, Model } from "../../utils/types";
-import { saveModelInAsyncStorage } from "../../utils/storage";
-import axios from "axios";
-import { setImageForProjection, setSeen } from "../../redux/actions";
-import moment from "moment";
+import {
+  setImageForProjection,
+  setSeen,
+  setSelectedFilter,
+} from "../../redux/actions";
 import { makeProjection } from "../../redux/reducers";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
+import { ButtonBar } from "../../components/organisms";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "ProjectionMode">;
 type RouteProps = RouteProp<HomeStackParamList, "ProjectionMode">;
@@ -48,9 +36,6 @@ type Props = {
 };
 
 export default function ProjectionMode({ navigation, route }: Props) {
-  const [state, setState] = useState({
-    menu: false,
-  });
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
   const { loadModel } = route.params;
@@ -59,53 +44,24 @@ export default function ProjectionMode({ navigation, route }: Props) {
     if (loadModel === undefined) {
       dispatch(initModelAsync());
     }
-
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
   }, [navigation]);
 
-  const quickSaveModel = async () => {
-    const model: Model = {
-      mode: "projection",
-      name: loadModel?.name!,
-      negatives: redux.negatives,
-      positives: redux.positives,
-      seen: redux.seen,
-      lastSeen: redux.images,
-      created: new Date(loadModel?.created!),
-    };
-
-    await saveModelInAsyncStorage(model);
-    customAlert("success", "Your model has been saved!");
-  };
-
   return (
-    <Container loading={redux.loading} loadingTitle="Loading..">
+    <Container navigation={navigation} model={loadModel}>
       <Header
         onPress={() => {
           dispatch(setSeen([]));
+          dispatch(setSelectedFilter({ activities: [], locations: [] }));
           navigation.goBack();
         }}
         title="PROJECTION MODE"
-        onMenuPressed={() => setState({ ...state, menu: true })}
+        menu
+        search
+        filter
+        onPressFilter={() => navigation.navigate("Filter")}
       />
-      {state.menu && (
-        <Menu
-          onClickReset={() => {
-            setState({ ...state, menu: false });
-            dispatch(resetModelAsync());
-          }}
-          onClickSaveModel={() => {
-            setState({ ...state, menu: false });
-            navigation.navigate("ModelName", { mode: "projection" });
-          }}
-          canQuickSave={loadModel !== undefined}
-          onClickQuickSave={() => {
-            quickSaveModel();
-          }}
-          onClose={() => setState({ ...state, menu: false })}
-        />
-      )}
 
       {redux.images.length > 0 && (
         <FlatList
@@ -118,6 +74,7 @@ export default function ProjectionMode({ navigation, route }: Props) {
             return (
               <TouchableOpacity
                 onPress={async () => {
+                  //await dispatch(getImageInfo(item.exqId));
                   await dispatch(makeProjection(item));
                   await dispatch(setImageForProjection(item));
                   navigation.navigate("Projection", { uri: item.imageURI! });
@@ -141,27 +98,7 @@ export default function ProjectionMode({ navigation, route }: Props) {
           }}
         />
       )}
-
-      <View style={styles.buttons}>
-        <IconButton
-          title="+/-"
-          onPress={() => {
-            navigation.navigate("PosAndNeg");
-          }}
-          secondary
-        />
-        <IconButton
-          title="NEW RANDOM SET"
-          onPress={() => {
-            console.log(redux);
-
-            //dispatch(randomSetAsync())
-          }}
-          type="random"
-          style={{ marginLeft: 10, marginRight: 10 }}
-          secondary
-        />
-      </View>
+      <ButtonBar navigation={navigation} posAndNeg randomSet />
     </Container>
   );
 }
@@ -175,16 +112,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: 200,
-  },
-  buttons: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 64,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.background,
   },
 });

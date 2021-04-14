@@ -21,12 +21,42 @@ import {
   SET_TERMS,
   SET_MENU,
   SET_SEARCH,
+  SET_FILTER,
+  SET_TEMP_FILTER,
+  SET_SEARCH_DATA,
+  SET_USER,
+  SET_SELECTED_FILTER,
 } from "./action-types";
-import { Obj } from "../utils/types";
+import { Obj, Filter, SelectedFilter } from "../utils/types";
 
 export const setSearch = (payload: boolean) => ({
   type: SET_SEARCH,
   payload: payload,
+});
+
+export const setUser = (user: string) => ({
+  type: SET_USER,
+  payload: user,
+});
+
+export const setSearchData = (payload: string[]) => ({
+  type: SET_SEARCH_DATA,
+  payload: payload,
+});
+
+export const setSelectedFilter = (filter: Filter) => ({
+  type: SET_SELECTED_FILTER,
+  payload: filter,
+});
+
+export const setFilter = (filter: Filter) => ({
+  type: SET_FILTER,
+  payload: filter,
+});
+
+export const setTempFilter = (filter: SelectedFilter) => ({
+  type: SET_TEMP_FILTER,
+  payload: filter,
 });
 
 export const setMenu = (payload: boolean) => ({

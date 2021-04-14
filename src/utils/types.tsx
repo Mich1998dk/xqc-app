@@ -9,9 +9,11 @@ export type HomeStackParamList = {
   PosAndNeg: undefined;
   LoadModal: undefined;
   ModelName: { mode: Mode };
-  SpeedMode: undefined;
+  SpeedMode: { loadModel?: Model };
   ProjectionMode: { loadModel?: Model };
   Projection: { uri: string };
+  Filter: undefined;
+  Search: undefined;
 };
 
 export type Obj = {
@@ -33,9 +35,14 @@ export type State = {
   negativeProjection: Obj[];
   imageForProjection: Obj | undefined;
   mode: Mode;
-  terms: any;
+  terms: string[];
   search: boolean;
   menu: boolean;
+  filter: Filter;
+  selectedFilter: SelectedFilter;
+  tempFilter: SelectedFilter;
+  searchData: string[];
+  user: string;
 };
 
 export type Mode = "standard" | "speed" | "projection" | undefined;
@@ -58,4 +65,14 @@ export type Model = {
   seen: Obj[];
   lastSeen: Obj[];
   created: Date;
+};
+
+export type Filter = {
+  activities: string[];
+  locations: string[];
+};
+
+export type SelectedFilter = {
+  activities: number[];
+  locations: number[];
 };

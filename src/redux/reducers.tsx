@@ -22,6 +22,11 @@ import {
   SET_TERMS,
   SET_MENU,
   SET_SEARCH,
+  SET_FILTER,
+  SET_TEMP_FILTER,
+  SET_SEARCH_DATA,
+  SET_USER,
+  SET_SELECTED_FILTER,
 } from "./action-types";
 import {
   addImages,
@@ -43,6 +48,9 @@ import {
   setImageForProjection,
   replaceImage,
   setTerms,
+  setFilter,
+  setUser,
+  setSelectedFilter,
 } from "./actions";
 import { URL } from "../utils/constants";
 import { Obj, State, MediaInfo } from "../utils/types";
@@ -75,15 +83,35 @@ const initialState: State = {
   negativeProjection: [],
   imageForProjection: undefined,
   mode: undefined,
-  terms: undefined,
+  terms: [],
   search: false,
   menu: false,
+  filter: { activities: [], locations: [] },
+  selectedFilter: { activities: [], locations: [] },
+  tempFilter: { activities: [], locations: [] },
+  searchData: [],
+  user: "",
 };
 
 export const reducer = (state = initialState, action: any) => {
   switch (action.type) {
     case SET_SEARCH: {
       return { ...state, search: action.payload };
+    }
+    case SET_USER: {
+      return { ...state, user: action.payload };
+    }
+    case SET_SEARCH_DATA: {
+      return { ...state, searchData: action.payload };
+    }
+    case SET_FILTER: {
+      return { ...state, filter: action.payload };
+    }
+    case SET_SELECTED_FILTER: {
+      return { ...state, selectedFilter: action.payload };
+    }
+    case SET_TEMP_FILTER: {
+      return { ...state, tempFilter: action.payload };
     }
     case SET_MENU: {
       return { ...state, menu: action.payload };
@@ -164,6 +192,113 @@ export const reducer = (state = initialState, action: any) => {
     default:
       return state;
   }
+};
+
+export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
+  await fetch(`${URL}/resetFilters`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user: getState().user,
+      model: 0,
+    }),
+  })
+    .then((res) => {
+      dispatch(setSelectedFilter({ activities: [], locations: [] }));
+      customAlert("success", "Filters has been reset!");
+    })
+    .catch((err) => {
+      customAlert("error", "Something went wrong resetting the filters.");
+    });
+};
+
+export const applyFiltersAsync = () => async (dispatch: any, getState: any) => {
+  dispatch(setLoading(true));
+
+  await fetch(`${URL}/applyFilters`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ts: parseInt(new Date().getTime().toString()),
+      user: getState().user,
+      model: 0,
+      locations: getState().tempFilter.locations,
+      activities: getState().tempFilter.activities,
+      hours: Array.from(Array(24).keys()),
+      days: 1,
+      years: 2018,
+    }),
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      console.log(res);
+      dispatch(setSelectedFilter(getState().tempFilter));
+      customAlert("success", "The new filters has been set!");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  dispatch(setLoading(false));
+};
+
+export const getImageInfo = (id: number) => async (
+  dispatch: any,
+  getState: any
+) => {
+  await fetch(`${URL}/getImageInfo`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: id,
+    }),
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const searchAsync = (term: string) => async (
+  dispatch: any,
+  getState: any
+) => {
+  dispatch(setLoading(true));
+
+  await fetch(`${URL}/getSearchItems`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      terms: [term],
+      mod: "vis",
+      page_items: 50,
+    }),
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      const images = formatObjectsFromMediaInfo(
+        getState().mediaInfo,
+        res.imgLocations
+      );
+      dispatch(setImages(images));
+      dispatch(updateSeen(images));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  dispatch(setLoading(false));
 };
 
 export const negativeExamplePressed = (item: Obj) => async (
@@ -255,7 +390,7 @@ export const makeProjection = (obj: Obj) => async (
   const seen: number[] = getState().seen.map((item: Obj) => item.exqId);
 
   //First learn with the current positives with the added image + the current negatives
-  await learn(pos, currentNeg, seen, getState().mode)
+  await learn(pos, currentNeg, seen, getState().mode, getState().user)
     .then((res) => {
       var posProjection = formatBackendDataToImageObjects(res);
       dispatch(setPositiveProjection(posProjection));
@@ -265,7 +400,7 @@ export const makeProjection = (obj: Obj) => async (
     });
 
   //Then learn with the current negatives with the added image + the current positives
-  await learn(currentPos, neg, seen, getState().mode)
+  await learn(currentPos, neg, seen, getState().mode, getState().user)
     .then((res) => {
       var negProjection = formatBackendDataToImageObjects(res);
       dispatch(setNegativeProjection(negProjection));
@@ -285,6 +420,7 @@ export const learnModelAsync = () => async (dispatch: any, getState: any) => {
       "error",
       "You haven't selected any images to train the model, press 'NEW RANDOM SET' if you want new images presented."
     );
+    dispatch(setLoading(false));
     return;
   }
 
@@ -295,7 +431,7 @@ export const learnModelAsync = () => async (dispatch: any, getState: any) => {
   const neg = getState().negatives.map((item: Obj) => item.exqId);
   const seen = getState().seen.map((item: Obj) => item.exqId);
 
-  learn(pos, neg, seen, getState().mode)
+  learn(pos, neg, seen, getState().mode, getState().user)
     .then((res) => {
       var objects: Obj[] = formatBackendDataToImageObjects(res);
 
@@ -329,6 +465,7 @@ export const resetModelAsync = () => async (dispatch: any, getState: any) => {
     .catch((err) => {
       console.log(err);
     });
+  customAlert("success", "Your model has been reset!");
 };
 
 export const randomSetAsync = () => async (dispatch: any, getState: any) => {
@@ -378,6 +515,13 @@ export const initExquisitorAsync = () => async (
   })
     .then((resp) => resp.json())
     .then((res) => {
+      console.log("INIT");
+      console.log(res);
+      dispatch(
+        setFilter({ activities: res.activities, locations: res.locations })
+      );
+      dispatch(setUser(res.user));
+
       dispatch(setMediaInfo(res.mediainfo));
       dispatch(setTerms(res.vis_terms));
       dispatch(setLoading(false));
@@ -396,36 +540,44 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
 
   const initialArray = initArray(getState().mode);
 
-  if (getState().mediaInfo !== undefined) {
-    await dispatch(randomSetAsync());
-  } else {
-    await fetch(`${URL}/initModel`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ids: initialArray }),
+  // if (getState().mediaInfo !== undefined) {
+  //   await dispatch(randomSetAsync());
+  // } else {
+
+  const body = JSON.stringify({
+    ids: initialArray,
+    user: getState().user,
+    model: 0,
+  });
+  console.log(body);
+
+  await fetch(`${URL}/initModel`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: body,
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      console.log(res);
+
+      dispatch(setMediaInfo(res.mediainfo));
+
+      var imageObjects: Obj[] = formatObjectsFromMediaInfo(
+        res.mediainfo,
+        res.img_locations
+      );
+
+      dispatch(updateSeen(imageObjects));
+      dispatch(setImages(imageObjects));
+      dispatch(setLoading(false));
     })
-      .then((resp) => resp.json())
-      .then((res) => {
-        console.log(res);
-
-        dispatch(setMediaInfo(res.mediainfo));
-
-        var imageObjects: Obj[] = formatObjectsFromMediaInfo(
-          res.mediainfo,
-          res.img_locations
-        );
-
-        dispatch(updateSeen(imageObjects));
-        dispatch(setImages(imageObjects));
-        dispatch(setLoading(false));
-      })
-      .catch((err) => {
-        dispatch(setLoading(false));
-        console.log(err);
-      });
-  }
+    .catch((err) => {
+      dispatch(setLoading(false));
+      console.log(err);
+    });
+  //}
   dispatch(setLoading(false));
 };
 
@@ -449,7 +601,7 @@ export const replaceImageAsync = (index: number) => async (
 
   let objects: Obj[] = [];
 
-  learn(pos, neg, seen, getState().mode)
+  learn(pos, neg, seen, getState().mode, getState().user)
     .then((res) => {
       let loc = res.data.img_locations[0];
       let suggestion = res.data.sugg[0];
@@ -460,7 +612,7 @@ export const replaceImageAsync = (index: number) => async (
         thumbnail: formatToLocation(loc),
         folderName: "",
         shotId: 6,
-        imageURI: `http://bjth.itu.dk:5002/${formatFolderName(
+        imageURI: `http://bjth.itu.dk:5003/${formatFolderName(
           folderName
         )}/${formatToLocation(loc)}`,
       };

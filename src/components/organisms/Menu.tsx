@@ -8,9 +8,9 @@ import { ModeOption } from "../molecules/index";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { setMenu } from "../../redux/actions";
+import { Model } from "../../utils/types";
 
 interface Props {
-  onClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onClickReset: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onClickSaveModel: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onClickQuickSave?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -18,7 +18,6 @@ interface Props {
 }
 
 export default function Menu({
-  onClose,
   onClickReset,
   onClickSaveModel,
   onClickQuickSave,
@@ -55,7 +54,6 @@ export default function Menu({
           activeOpacity={0.7}
         >
           <Ionicons name="close-circle-sharp" size={36} color={colors.white} />
-          {/* <Text.Button>Close</Text.Button> */}
         </TouchableOpacity>
       </Animatable.View>
     </Animatable.View>

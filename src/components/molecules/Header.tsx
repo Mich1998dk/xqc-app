@@ -4,14 +4,21 @@ import { fonts, colors, sizes } from "../../utils/theme";
 import { Text, Icon } from "../atoms/index";
 import { useDispatch } from "react-redux";
 import { setMenu, setSearch } from "../../redux/actions";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { HomeStackParamList } from "../../utils/types";
+import Navigation from "../../navigation/HomeNavigator";
+
+type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
 
 interface Props {
   title?: string;
   onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onPressFilter?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   style?: CSSProperties;
   menu?: boolean;
   search?: boolean;
   time?: boolean;
+  filter?: boolean;
 }
 
 export default function ModeOption({
@@ -21,18 +28,25 @@ export default function ModeOption({
   menu,
   time,
   search,
+  filter,
+  onPressFilter,
 }: Props) {
   const dispatch = useDispatch();
 
   return (
     <View style={[styles.container, style as any]}>
       <View style={{ zIndex: 2 }}>
-        <Icon type="back" onPress={onPress!} />
+        <Icon type="back" onPress={onPress as any} />
       </View>
       <View style={styles.title}>
-        <Text.Header>{title}</Text.Header>
+        <Text.Header style={{ fontSize: 18 }}>{title}</Text.Header>
       </View>
       <View style={{ flexDirection: "row" }}>
+        <View>
+          {filter && (
+            <Icon onPress={onPressFilter as any} type="filter" marginRight />
+          )}
+        </View>
         <View>
           {search && (
             <Icon

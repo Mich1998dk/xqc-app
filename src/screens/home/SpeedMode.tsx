@@ -30,64 +30,45 @@ import {
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
 import { formatDate, isUpperCase, formatToLocation } from "../../utils/helpers";
-import { Menu } from "../../components/organisms/index";
+import { ButtonBar, Menu } from "../../components/organisms/index";
 import { Obj } from "../../utils/types";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
-import moment from "moment";
+import { RouteProp } from "@react-navigation/native";
+import { setSeen, setSelectedFilter } from "../../redux/actions";
 
-type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
+type HomeProps = StackNavigationProp<HomeStackParamList, "SpeedMode">;
+type RouteProps = RouteProp<HomeStackParamList, "SpeedMode">;
 
 type Props = {
   navigation: HomeProps;
+  route: RouteProps;
 };
 
-export default function SpeedMode({ navigation }: Props) {
-  const [state, setState] = useState({
-    loading: true,
-    loadingTitle: "Initiating the model..",
-    mediaInfo: null,
-  });
-  const [time, setTime] = useState({ h: 0, m: 0, s: 0 });
-
-  const start = () => {
-    run();
-    setInterval(run, 10);
-  };
-
-  var updatedS = time.s,
-    updatedM = time.m,
-    updatedH = time.h;
-
-  const run = () => {
-    if (updatedM === 60) {
-      updatedH++;
-      updatedM = 0;
-    }
-    if (updatedS === 60) {
-      updatedM++;
-      updatedS = 0;
-    }
-
-    return setTime({ h: updatedH, m: updatedM, s: updatedS });
-  };
-
+export default function SpeedMode({ navigation, route }: Props) {
+  const { loadModel } = route.params;
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
   useEffect(() => {
-    dispatch(initModelAsync());
-    start();
-    const unsubscribe = navigation.addListener("focus", () => {});
+    if (loadModel === undefined) {
+      dispatch(initModelAsync());
+    }
 
+    const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
   }, [navigation]);
 
   return (
-    <Container loading={redux.loading} loadingTitle={state.loadingTitle}>
+    <Container navigation={navigation} model={loadModel}>
       <Header
-        title={`${time.h}:${time.m}:${time.s}`}
-        onPress={() => navigation.goBack()}
-        onTimePressed={() => "Start time"}
+        title="SPEED"
+        onPress={() => {
+          dispatch(setSeen([]));
+          dispatch(setSelectedFilter({ activities: [], locations: [] }));
+          navigation.goBack();
+        }}
+        search
+        menu
       />
       {redux.images.length > 0 && (
         <FlatList
@@ -128,21 +109,7 @@ export default function SpeedMode({ navigation }: Props) {
           }}
         />
       )}
-
-      <View style={styles.buttons}>
-        <IconButton
-          title="NEW RANDOM SET"
-          onPress={() => dispatch(randomSetAsync())}
-          type="random"
-          style={{ marginLeft: 10, marginRight: 10 }}
-          secondary
-        />
-        <IconButton
-          title="UPDATE ALL"
-          type="update"
-          onPress={() => dispatch(learnModelAsync())}
-        />
-      </View>
+      <ButtonBar navigation={navigation} randomSet update />
     </Container>
   );
 }

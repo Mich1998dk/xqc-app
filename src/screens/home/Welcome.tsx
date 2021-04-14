@@ -20,7 +20,7 @@ export default function Welcome({ navigation }: Props) {
   const redux = useSelector((state: State) => state);
 
   useEffect(() => {
-    //dispatch(initExquisitorAsync());
+    dispatch(initExquisitorAsync());
     const unsubscribe = navigation.addListener("focus", () => {});
 
     return unsubscribe;

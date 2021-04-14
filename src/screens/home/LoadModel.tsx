@@ -22,6 +22,7 @@ import {
   setSeen,
 } from "../../redux/actions";
 import { customAlert } from "../../utils/helpers";
+import AsyncStorage from "@react-native-community/async-storage";
 
 type LoadModelProps = StackNavigationProp<HomeStackParamList, "LoadModal">;
 
@@ -37,7 +38,10 @@ export default function ChooseMode({ navigation }: Props) {
 
   const getModels = async () => {
     var models = await getModelsInAsyncStorage();
-    setModels(models);
+
+    if (models) setModels(models);
+    else setModels([]);
+
     setState({ ...state, loading: false });
   };
 
@@ -64,34 +68,39 @@ export default function ChooseMode({ navigation }: Props) {
           No saved models yet :(
         </Text.Button>
       )}
-      <FlatList
-        data={models}
-        style={{ paddingBottom: 80 }}
-        renderItem={({ item, index }) => {
-          return (
-            <ModelOption
-              key={index}
-              model={item}
-              onDelete={() => {
-                deleteModel(item.name);
-              }}
-              onPress={() => {
-                dispatch(setNegative(item.negatives));
-                dispatch(setPositive(item.positives));
-                dispatch(setSeen(item.seen));
-                dispatch(setImages(item.lastSeen));
-                if (item.mode === "standard") {
-                  navigation.navigate("Home", { loadModel: item });
-                }
-                if (item.mode === "projection") {
-                  navigation.navigate("ProjectionMode", { loadModel: item });
-                }
-              }}
-            />
-          );
-        }}
-        keyExtractor={(key) => key.name}
-      />
+      {models.length > 0 && (
+        <FlatList
+          data={models}
+          style={{ paddingBottom: 80 }}
+          renderItem={({ item, index }) => {
+            return (
+              <ModelOption
+                key={index}
+                model={item}
+                onDelete={() => {
+                  deleteModel(item.name);
+                }}
+                onPress={() => {
+                  dispatch(setNegative(item.negatives));
+                  dispatch(setPositive(item.positives));
+                  dispatch(setSeen(item.seen));
+                  dispatch(setImages(item.lastSeen));
+                  if (item.mode === "standard") {
+                    navigation.navigate("Home", { loadModel: item });
+                  }
+                  if (item.mode === "projection") {
+                    navigation.navigate("ProjectionMode", { loadModel: item });
+                  }
+                  if (item.mode === "speed") {
+                    navigation.navigate("SpeedMode", { loadModel: item });
+                  }
+                }}
+              />
+            );
+          }}
+          keyExtractor={(key) => key.name}
+        />
+      )}
     </Container>
   );
 }

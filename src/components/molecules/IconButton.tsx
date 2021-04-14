@@ -40,6 +40,16 @@ export default function IconButton({
             style={{ marginRight: 8 }}
           />
         );
+
+      case "delete":
+        return (
+          <Ionicons
+            name="close"
+            size={22}
+            color={secondary ? colors.accent : colors.white}
+            style={{ marginRight: 8 }}
+          />
+        );
       case "update":
         return (
           <Ionicons

@@ -2,11 +2,11 @@ import React, { CSSProperties } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { fonts, colors, sizes } from "../../utils/theme";
 import { Text } from "../atoms/index";
-import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons, FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
-  type: "menu" | "back" | "delete" | "time" | "search";
+  type: "menu" | "back" | "delete" | "time" | "search" | "filter";
   onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   marginRight?: boolean;
 }
@@ -40,6 +40,8 @@ export default function Icon({ type, onPress, marginRight }: Props) {
             color={colors.accent}
           />
         );
+      case "filter":
+        return <FontAwesome name="filter" size={24} color={colors.accent} />;
       default:
         <Text.Button>NA</Text.Button>;
         break;

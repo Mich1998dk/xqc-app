@@ -25,7 +25,6 @@ export default function ChooseMode({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
   const { mode } = route.params;
-  console.log(mode);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});

@@ -46,7 +46,7 @@ export default function ChooseMode({ navigation }: Props) {
           title="SPEED MODE"
           onPress={() => {
             dispatch(setMode("speed"));
-            navigation.navigate("SpeedMode");
+            navigation.navigate("SpeedMode", { loadModel: undefined });
           }}
         />
         <Text.Regular style={{ paddingHorizontal: 6, marginBottom: 30 }}>

@@ -30,6 +30,8 @@ export default function ModeOption({ onPress, onDelete, style, model }: Props) {
         return "STANDARD";
       case "projection":
         return "PROJECTION";
+      case "speed":
+        return "SPEED";
       default:
         return "STANDARD";
     }

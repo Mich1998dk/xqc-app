@@ -7,25 +7,54 @@ import {
   Platform,
 } from "react-native";
 import { Loader } from "../components/molecules/index";
-import { colors, sizes, fonts } from "../utils/theme";
-import i18n from "i18n-js";
+import { Menu, Search } from "../components/organisms/index";
+import { colors } from "../utils/theme";
 import { StatusBar } from "expo-status-bar";
+import { useSelector, useDispatch } from "react-redux";
+import { Model, State } from "../utils/types";
+import { resetModelAsync } from "../redux/reducers";
+import { setMenu } from "../redux/actions";
+import { saveModelInAsyncStorage } from "../utils/storage";
+import { customAlert } from "../utils/helpers";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { HomeStackParamList } from "../utils/types";
+
+type HomeProps = StackNavigationProp<HomeStackParamList>;
 
 interface Props {
   children: React.ReactNode;
-  loading?: boolean;
   isKeyBoardAvoiding?: boolean;
   style?: CSSProperties;
-  loadingTitle?: string;
+  model?: Model;
+  navigation?: HomeProps;
 }
 
 export default function Container({
   children,
-  loading,
   isKeyBoardAvoiding,
   style,
-  loadingTitle,
+  model,
+  navigation,
 }: Props) {
+  const redux = useSelector((state: State) => state);
+  const dispatch = useDispatch();
+
+  const quickSaveModel = async () => {
+    const tempModel: Model = {
+      mode: "standard",
+      name: model?.name!,
+      negatives: redux.negatives,
+      positives: redux.positives,
+      seen: redux.seen,
+      lastSeen: redux.images,
+      created: new Date(model?.created!),
+    };
+
+    await saveModelInAsyncStorage(tempModel);
+    customAlert("success", "Your model has been saved!");
+    dispatch(setMenu(false));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
@@ -40,7 +69,24 @@ export default function Container({
         <View style={[styles.content, style as any]}>{children}</View>
       )}
 
-      {loading && <Loader loadingTitle={loadingTitle} />}
+      {redux.loading && <Loader loadingTitle="Please wait.." />}
+      {redux.search && <Search />}
+      {redux.menu && (
+        <Menu
+          onClickReset={() => {
+            dispatch(resetModelAsync());
+            dispatch(setMenu(false));
+          }}
+          onClickSaveModel={() => {
+            dispatch(setMenu(false));
+            navigation!.navigate("ModelName", { mode: redux.mode });
+          }}
+          canQuickSave={model !== undefined}
+          onClickQuickSave={() => {
+            quickSaveModel();
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

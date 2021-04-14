@@ -6,7 +6,7 @@ export const colors = {
   white: "#FFFFFF",
   gray: "#8D8D8D",
   box: "#272727",
-  loader_bg: "rgba(28, 28, 28, 0.90)",
+  loader_bg: "rgba(28, 28, 28, 0.98)",
   positiveOverlay: "rgba(98, 224, 122, 0.45)",
   negativeOverlay: "rgba(237, 93, 93, 0.45)",
   red: "#DB5858",
