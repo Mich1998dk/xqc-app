@@ -13,7 +13,7 @@ export type HomeStackParamList = {
   ProjectionMode: { loadModel?: Model };
   Projection: { uri: string };
   Filter: undefined;
-  Search: undefined;
+  Search: { mode: "terms" | "locations" };
 };
 
 export type Obj = {
@@ -37,12 +37,15 @@ export type State = {
   mode: Mode;
   terms: string[];
   search: boolean;
+  searchResults: Obj[];
   menu: boolean;
   filter: Filter;
   selectedFilter: SelectedFilter;
   tempFilter: SelectedFilter;
+  timePicker: boolean;
   searchData: string[];
   user: string;
+  timerStatus: boolean;
 };
 
 export type Mode = "standard" | "speed" | "projection" | undefined;
@@ -75,4 +78,7 @@ export type Filter = {
 export type SelectedFilter = {
   activities: number[];
   locations: number[];
+  days: number[];
+  years: number[];
+  time: { start: number; end: number };
 };

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, FlatList, View, Image } from "react-native";
+import { StyleSheet, FlatList, View, Image, ScrollView } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
 import { RouteProp } from "@react-navigation/native";
@@ -10,10 +10,12 @@ import {
   initModelAsync,
   negativeExamplePressed,
   positiveExamplePressed,
+  reset,
 } from "../../redux/reducers";
-import { ButtonBar } from "../../components/organisms/index";
-import { setSeen, setSelectedFilter } from "../../redux/actions";
+import { ButtonBar, ImageRenderer } from "../../components/organisms/index";
+import { setSearchData, setSeen, setSelectedFilter } from "../../redux/actions";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
+import { Text } from "../../components/atoms";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
 type RouteProps = RouteProp<HomeStackParamList, "Home">;
@@ -41,52 +43,26 @@ export default function Home({ navigation, route }: Props) {
       <Header
         title="STANDARD"
         onPress={() => {
+          dispatch(reset());
           navigation.goBack();
-          dispatch(setSelectedFilter({ activities: [], locations: [] }));
-          dispatch(setSeen([]));
         }}
         menu
         filter
         onPressFilter={() => navigation.navigate("Filter")}
         search
+        onPressSearch={() => {
+          dispatch(setSearchData(redux.terms));
+          navigation.navigate("Search", { mode: "terms" });
+        }}
       />
+      <ScrollView>
+        {redux.images.length > 0 && <ImageRenderer data={redux.images} />}
+      </ScrollView>
 
-      {redux.images.length > 0 && (
-        <FlatList
-          columnWrapperStyle={{ justifyContent: "space-between" }}
-          data={redux.images}
-          style={{ paddingBottom: 80 }}
-          numColumns={calculateColumnAmount()}
-          keyExtractor={(item) => item.exqId.toString()}
-          renderItem={({ item, index }) => {
-            return (
-              <View style={styles.box}>
-                {/* //@ts-ignore */}
-                <Image
-                  style={{
-                    width: "100%",
-                    height: 200,
-                    resizeMode: "stretch",
-                    borderRadius: 12,
-                  }}
-                  source={{
-                    uri: item.imageURI,
-                  }}
-                />
-                <ImageOverlay
-                  onPressNegative={() => {
-                    dispatch(negativeExamplePressed(item));
-                  }}
-                  onPressPositive={() => {
-                    dispatch(positiveExamplePressed(item));
-                  }}
-                  negativeSelected={redux.negatives.includes(item)}
-                  positiveSelected={redux.positives.includes(item)}
-                />
-              </View>
-            );
-          }}
-        />
+      {redux.images.length === 0 && !redux.loading && (
+        <Text.Regular style={{ alignSelf: "center" }}>
+          No results - maybe your filter is too strict
+        </Text.Regular>
       )}
       <ButtonBar navigation={navigation} posAndNeg randomSet train />
     </Container>

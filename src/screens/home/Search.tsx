@@ -20,8 +20,9 @@ import {
   initModelAsync,
   negativeExamplePressed,
   positiveExamplePressed,
+  searchAsync,
 } from "../../redux/reducers";
-import { ButtonBar } from "../../components/organisms/index";
+import { ButtonBar, ImageRenderer } from "../../components/organisms/index";
 import { setSeen, setTempFilter } from "../../redux/actions";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Ionicons } from "@expo/vector-icons";
@@ -39,6 +40,7 @@ export default function Search({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
   const [state, setState] = useState({ search: "" });
+  const { mode } = route.params;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
@@ -71,34 +73,46 @@ export default function Search({ navigation, route }: Props) {
             ]}
           />
         </View>
-        <FlatList
-          data={redux.searchData
-            .filter((item) => item.includes(state.search.toLowerCase()))
-            .slice(0, 50)}
-          style={{ height: 600 }}
-          keyExtractor={(item) => item.toString()}
-          renderItem={({ item, index }) => {
-            return (
-              <TouchableHighlight
-                underlayColor={colors.box}
-                style={styles.result}
-                onPress={() => {
-                  dispatch(
-                    setTempFilter({
-                      ...redux.tempFilter,
-                      locations: [...redux.tempFilter.locations, index],
-                    })
-                  );
-                  navigation.goBack();
-                }}
-              >
-                <Text.Button style={{ fontSize: sizes.base16 }}>
-                  {item}
-                </Text.Button>
-              </TouchableHighlight>
-            );
-          }}
-        />
+        {(redux.searchResults.length === 0 || state.search.length > 0) && (
+          <FlatList
+            data={redux.searchData
+              .filter((item) => item.includes(state.search.toLowerCase()))
+              .slice(0, 50)}
+            style={{ height: 600 }}
+            keyExtractor={(item) => item.toString()}
+            renderItem={({ item, index }) => {
+              return (
+                <TouchableHighlight
+                  underlayColor={colors.box}
+                  style={styles.result}
+                  onPress={() => {
+                    if (mode === "terms") {
+                      dispatch(searchAsync(item));
+                      setState({ ...state, search: "" });
+                    }
+
+                    if (mode === "locations") {
+                      dispatch(
+                        setTempFilter({
+                          ...redux.tempFilter,
+                          locations: [...redux.tempFilter.locations, index],
+                        })
+                      );
+                      navigation.goBack();
+                    }
+                  }}
+                >
+                  <Text.Button style={{ fontSize: sizes.base16 }}>
+                    {item}
+                  </Text.Button>
+                </TouchableHighlight>
+              );
+            }}
+          />
+        )}
+        {redux.searchResults.length > 0 && state.search.length === 0 && (
+          <ImageRenderer data={redux.searchResults} />
+        )}
       </View>
     </Container>
   );

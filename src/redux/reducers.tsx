@@ -27,6 +27,9 @@ import {
   SET_SEARCH_DATA,
   SET_USER,
   SET_SELECTED_FILTER,
+  SET_SEARCH_RESULTS,
+  SET_TIME_PICKER,
+  SET_TIMER_STATUS,
 } from "./action-types";
 import {
   addImages,
@@ -51,6 +54,8 @@ import {
   setFilter,
   setUser,
   setSelectedFilter,
+  setSearchResults,
+  setTempFilter,
 } from "./actions";
 import { URL } from "../utils/constants";
 import { Obj, State, MediaInfo } from "../utils/types";
@@ -85,18 +90,42 @@ const initialState: State = {
   mode: undefined,
   terms: [],
   search: false,
+  searchResults: [],
+  searchData: [],
   menu: false,
   filter: { activities: [], locations: [] },
-  selectedFilter: { activities: [], locations: [] },
-  tempFilter: { activities: [], locations: [] },
-  searchData: [],
+  selectedFilter: {
+    activities: [],
+    locations: [],
+    days: [],
+    years: [],
+    time: { start: 0, end: 0 },
+  },
+  tempFilter: {
+    activities: [],
+    locations: [],
+    days: [],
+    years: [],
+    time: { start: 0, end: 0 },
+  },
   user: "",
+  timePicker: false,
+  timerStatus: true,
 };
 
 export const reducer = (state = initialState, action: any) => {
   switch (action.type) {
+    case SET_TIMER_STATUS: {
+      return { ...state, timerStatus: action.payload };
+    }
     case SET_SEARCH: {
       return { ...state, search: action.payload };
+    }
+    case SET_SEARCH_RESULTS: {
+      return { ...state, searchResults: action.payload };
+    }
+    case SET_TIME_PICKER: {
+      return { ...state, timePicker: action.payload };
     }
     case SET_USER: {
       return { ...state, user: action.payload };
@@ -194,6 +223,19 @@ export const reducer = (state = initialState, action: any) => {
   }
 };
 
+export const reset = () => async (dispatch: any, getState: any) => {
+  dispatch(setSeen([]));
+  dispatch(
+    setTempFilter({
+      activities: [],
+      locations: [],
+      days: [],
+      years: [],
+      time: { start: 0, end: 0 },
+    })
+  );
+};
+
 export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
   await fetch(`${URL}/resetFilters`, {
     method: "post",
@@ -206,7 +248,19 @@ export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
     }),
   })
     .then((res) => {
-      dispatch(setSelectedFilter({ activities: [], locations: [] }));
+      dispatch(
+        setSelectedFilter({
+          activities: [],
+          locations: [],
+          days: [],
+          years: [],
+          time: {
+            start: 0,
+            end: 0,
+          },
+        })
+      );
+      dispatch(setFilter({ activities: [], locations: [] }));
       customAlert("success", "Filters has been reset!");
     })
     .catch((err) => {
@@ -217,21 +271,53 @@ export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
 export const applyFiltersAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
 
+  var selecting = false;
+  var selected: number[] = [];
+  const start = getState().tempFilter.time.start;
+  const end = getState().tempFilter.time.end;
+
+  if (start == 0 && end == 0) {
+    selected = [];
+  } else if (start == 0 || end == 0) {
+    customAlert("error", "Both time slots needs to be filled");
+    dispatch(setLoading(false));
+    return;
+  } else {
+    if (start > end) {
+      customAlert("error", "Start cant be higher!!!");
+      dispatch(setLoading(false));
+      return;
+    }
+    for (let i = 0; i < 23; i++) {
+      if (i == end) {
+        break;
+      }
+      if (i + 1 == start || selecting) {
+        selecting = true;
+        selected.push(i);
+      }
+    }
+  }
+
+  const body = JSON.stringify({
+    ts: parseInt(new Date().getTime().toString()),
+    user: getState().user,
+    model: 0,
+    locations: getState().tempFilter.locations,
+    activities: getState().tempFilter.activities,
+    hours: selected,
+    days: getState().tempFilter.days,
+    years: getState().tempFilter.years,
+  });
+
+  console.log(body);
+
   await fetch(`${URL}/applyFilters`, {
     method: "post",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      ts: parseInt(new Date().getTime().toString()),
-      user: getState().user,
-      model: 0,
-      locations: getState().tempFilter.locations,
-      activities: getState().tempFilter.activities,
-      hours: Array.from(Array(24).keys()),
-      days: 1,
-      years: 2018,
-    }),
+    body: body,
   })
     .then((resp) => resp.json())
     .then((res) => {
@@ -291,7 +377,8 @@ export const searchAsync = (term: string) => async (
         getState().mediaInfo,
         res.imgLocations
       );
-      dispatch(setImages(images));
+      //dispatch(setImages(images));
+      dispatch(setSearchResults(images));
       dispatch(updateSeen(images));
     })
     .catch((err) => {
@@ -459,6 +546,7 @@ export const resetModelAsync = () => async (dispatch: any, getState: any) => {
       if (res.reset !== "successful") return;
       dispatch(setNegative([]));
       dispatch(setPositive([]));
+      dispatch(reset());
       dispatch(randomSetAsync());
       dispatch(setLoading(false));
     })
@@ -616,13 +704,15 @@ export const replaceImageAsync = (index: number) => async (
           folderName
         )}/${formatToLocation(loc)}`,
       };
+      dispatch(updateSeen([newObj]));
+
       objects.push(newObj);
       dispatch(replaceImage(newObj, index));
+
       dispatch(setLoading(false));
     })
     .catch((err) => {
       console.log(err);
       dispatch(setLoading(false));
     });
-  await dispatch(updateSeen(objects));
 };

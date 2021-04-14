@@ -117,3 +117,12 @@ export const formatImgLocationToFolderName = (loc: string) => {
   var folderName = regexResult![0].replace("_", "");
   return folderName;
 };
+
+export const formatTimeToPeriod = (num: number) => {
+  if (num == 0) return "";
+  if (num > 12) {
+    return (num - 12).toString() + " PM";
+  } else {
+    return num.toString() + " AM";
+  }
+};

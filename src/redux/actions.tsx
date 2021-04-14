@@ -26,11 +26,24 @@ import {
   SET_SEARCH_DATA,
   SET_USER,
   SET_SELECTED_FILTER,
+  SET_SEARCH_RESULTS,
+  SET_TIME_PICKER,
+  SET_TIMER_STATUS,
 } from "./action-types";
 import { Obj, Filter, SelectedFilter } from "../utils/types";
 
+export const setTimePicker = (payload: boolean) => ({
+  type: SET_TIME_PICKER,
+  payload: payload,
+});
+
 export const setSearch = (payload: boolean) => ({
   type: SET_SEARCH,
+  payload: payload,
+});
+
+export const setSearchResults = (payload: Obj[]) => ({
+  type: SET_SEARCH_RESULTS,
   payload: payload,
 });
 
@@ -39,12 +52,17 @@ export const setUser = (user: string) => ({
   payload: user,
 });
 
+export const setTimerStatus = (payload: boolean) => ({
+  type: SET_TIMER_STATUS,
+  payload: payload,
+});
+
 export const setSearchData = (payload: string[]) => ({
   type: SET_SEARCH_DATA,
   payload: payload,
 });
 
-export const setSelectedFilter = (filter: Filter) => ({
+export const setSelectedFilter = (filter: SelectedFilter) => ({
   type: SET_SELECTED_FILTER,
   payload: filter,
 });

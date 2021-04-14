@@ -27,14 +27,19 @@ import {
   randomSetAsync,
   resetModelAsync,
   replaceImageAsync,
+  reset,
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
 import { formatDate, isUpperCase, formatToLocation } from "../../utils/helpers";
-import { ButtonBar, Menu } from "../../components/organisms/index";
+import {
+  ButtonBar,
+  ImageRenderer,
+  Menu,
+} from "../../components/organisms/index";
 import { Obj } from "../../utils/types";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { RouteProp } from "@react-navigation/native";
-import { setSeen, setSelectedFilter } from "../../redux/actions";
+import { setSearchData, setSeen, setSelectedFilter } from "../../redux/actions";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "SpeedMode">;
 type RouteProps = RouteProp<HomeStackParamList, "SpeedMode">;
@@ -48,6 +53,7 @@ export default function SpeedMode({ navigation, route }: Props) {
   const { loadModel } = route.params;
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
+  const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
     if (loadModel === undefined) {
@@ -58,57 +64,45 @@ export default function SpeedMode({ navigation, route }: Props) {
     return unsubscribe;
   }, [navigation]);
 
+  useEffect(() => {
+    if (!redux.loading) {
+      const interval = setInterval(() => {
+        setSeconds((seconds) => seconds + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+
+    const unsubscribe = navigation.addListener("focus", () => {});
+    return unsubscribe;
+  }, [redux.loading]);
+
   return (
     <Container navigation={navigation} model={loadModel}>
       <Header
         title="SPEED"
         onPress={() => {
-          dispatch(setSeen([]));
-          dispatch(setSelectedFilter({ activities: [], locations: [] }));
+          dispatch(reset());
           navigation.goBack();
         }}
+        filter
+        onPressFilter={() => navigation.navigate("Filter")}
         search
+        onPressSearch={() => {
+          dispatch(setSearchData(redux.terms));
+          navigation.navigate("Search", { mode: "terms" });
+        }}
         menu
+        time
       />
-      {redux.images.length > 0 && (
-        <FlatList
-          columnWrapperStyle={{ justifyContent: "space-between" }}
-          data={redux.images}
-          style={{ paddingBottom: 80 }}
-          numColumns={calculateColumnAmount()}
-          keyExtractor={(item) => item.exqId.toString()}
-          renderItem={({ item, index }) => {
-            return (
-              <View style={[styles.box]}>
-                {/* //@ts-ignore */}
-                <Image
-                  style={{
-                    width: "100%",
-                    height: 200,
-                    resizeMode: "stretch",
-                    borderRadius: 12,
-                  }}
-                  source={{
-                    uri: item.imageURI,
-                  }}
-                />
-                <ImageOverlay
-                  onPressNegative={() => {
-                    dispatch(negativeExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.images.indexOf(item)));
-                  }}
-                  onPressPositive={() => {
-                    dispatch(positiveExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.images.indexOf(item)));
-                  }}
-                  negativeSelected={redux.negatives.includes(item)}
-                  positiveSelected={redux.positives.includes(item)}
-                />
-              </View>
-            );
-          }}
-        />
+      {redux.timerStatus && (
+        <Text.Button style={{ alignSelf: "center" }}>{seconds}</Text.Button>
       )}
+      {redux.images.length === 0 && !redux.loading && (
+        <Text.Regular style={{ alignSelf: "center" }}>
+          No results - maybe your filter is too strict
+        </Text.Regular>
+      )}
+      {redux.images.length > 0 && <ImageRenderer data={redux.images} />}
       <ButtonBar navigation={navigation} randomSet update />
     </Container>
   );

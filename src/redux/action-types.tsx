@@ -31,6 +31,7 @@ export const SET_MODE = "SET_MODE";
 export const SET_TERMS = "SET_TERMS";
 
 export const SET_SEARCH = "SET_SEARCH";
+export const SET_SEARCH_RESULTS = "SET_SEARCH_RESULTS";
 export const SET_MENU = "SET_MENU";
 
 export const SET_FILTER = "SET_FILTER";
@@ -40,3 +41,7 @@ export const SET_SELECTED_FILTER = "SET_SELECTED_FILTER";
 export const SET_SEARCH_DATA = "SET_SEARCH_DATA";
 
 export const SET_USER = "SET_USER";
+
+export const SET_TIME_PICKER = "SET_TIME_PICKER";
+
+export const SET_TIMER_STATUS = "SET_TIMER_STATUS";

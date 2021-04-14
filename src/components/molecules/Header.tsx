@@ -2,10 +2,10 @@ import React, { CSSProperties } from "react";
 import { StyleSheet, View } from "react-native";
 import { fonts, colors, sizes } from "../../utils/theme";
 import { Text, Icon } from "../atoms/index";
-import { useDispatch } from "react-redux";
-import { setMenu, setSearch } from "../../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { setMenu, setSearch, setTimerStatus } from "../../redux/actions";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList } from "../../utils/types";
+import { HomeStackParamList, State } from "../../utils/types";
 import Navigation from "../../navigation/HomeNavigator";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
@@ -14,6 +14,7 @@ interface Props {
   title?: string;
   onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onPressFilter?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onPressSearch?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   style?: CSSProperties;
   menu?: boolean;
   search?: boolean;
@@ -30,8 +31,10 @@ export default function ModeOption({
   search,
   filter,
   onPressFilter,
+  onPressSearch,
 }: Props) {
   const dispatch = useDispatch();
+  const redux = useSelector((state: State) => state);
 
   return (
     <View style={[styles.container, style as any]}>
@@ -43,6 +46,15 @@ export default function ModeOption({
       </View>
       <View style={{ flexDirection: "row" }}>
         <View>
+          {time && (
+            <Icon
+              onPress={() => dispatch(setTimerStatus(!redux.timerStatus))}
+              type="time"
+              marginRight
+            />
+          )}
+        </View>
+        <View>
           {filter && (
             <Icon onPress={onPressFilter as any} type="filter" marginRight />
           )}
@@ -50,7 +62,7 @@ export default function ModeOption({
         <View>
           {search && (
             <Icon
-              onPress={() => dispatch(setSearch(true))}
+              onPress={onPressSearch} //() => dispatch(setSearch(true))
               type="search"
               marginRight
             />
