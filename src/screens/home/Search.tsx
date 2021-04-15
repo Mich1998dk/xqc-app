@@ -23,7 +23,7 @@ import {
   searchAsync,
 } from "../../redux/reducers";
 import { ButtonBar, ImageRenderer } from "../../components/organisms/index";
-import { setSeen, setTempFilter } from "../../redux/actions";
+import { setSearchResults, setSeen, setTempFilter } from "../../redux/actions";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, fonts, sizes } from "../../utils/theme";
@@ -57,6 +57,7 @@ export default function Search({ navigation, route }: Props) {
       <Header
         title="Search"
         onPress={() => {
+          dispatch(setSearchResults([]));
           navigation.goBack();
         }}
       />

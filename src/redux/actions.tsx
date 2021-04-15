@@ -29,8 +29,9 @@ import {
   SET_SEARCH_RESULTS,
   SET_TIME_PICKER,
   SET_TIMER_STATUS,
+  SET_IMAGE_INFO,
 } from "./action-types";
-import { Obj, Filter, SelectedFilter } from "../utils/types";
+import { Obj, Filter, SelectedFilter, ImageInfo } from "../utils/types";
 
 export const setTimePicker = (payload: boolean) => ({
   type: SET_TIME_PICKER,
@@ -80,6 +81,11 @@ export const setTempFilter = (filter: SelectedFilter) => ({
 export const setMenu = (payload: boolean) => ({
   type: SET_MENU,
   payload: payload,
+});
+
+export const setImageInfo = (info: ImageInfo) => ({
+  type: SET_IMAGE_INFO,
+  payload: info,
 });
 
 export const setImageForProjection = (obj: Obj) => ({

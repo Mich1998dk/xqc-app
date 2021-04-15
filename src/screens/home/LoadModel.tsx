@@ -12,11 +12,13 @@ import {
   clearStorage,
   deleteModelInAsyncStorage,
 } from "../../utils/storage";
-import { deleteModelAsync } from "../../redux/reducers";
+import { deleteModelAsync, initExistingModel } from "../../redux/reducers";
 import { FlatList } from "react-native-gesture-handler";
 
 import {
   setImages,
+  setLoading,
+  setMode,
   setNegative,
   setPositive,
   setSeen,
@@ -82,18 +84,20 @@ export default function ChooseMode({ navigation }: Props) {
                   deleteModel(item.name);
                 }}
                 onPress={async () => {
-                  console.log(item);
-
+                  dispatch(setLoading(true));
+                  await dispatch(initExistingModel(item.lastSeen));
+                  await dispatch(setImages(item.lastSeen));
                   await dispatch(setNegative(item.negatives));
                   await dispatch(setPositive(item.positives));
                   await dispatch(setSeen(item.seen));
-                  await dispatch(setImages([...item.lastSeen]));
                   await dispatch(setSelectedFilter(item.filter));
-
+                  dispatch(setLoading(false));
                   if (item.mode === "standard") {
+                    dispatch(setMode("standard"));
                     navigation.navigate("Home", { loadModel: item });
                   }
                   if (item.mode === "speed") {
+                    dispatch(setMode("speed"));
                     navigation.navigate("SpeedMode", { loadModel: item });
                   }
                 }}

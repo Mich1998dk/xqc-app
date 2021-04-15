@@ -30,6 +30,7 @@ import {
   SET_SEARCH_RESULTS,
   SET_TIME_PICKER,
   SET_TIMER_STATUS,
+  SET_IMAGE_INFO,
 } from "./action-types";
 import {
   addImages,
@@ -56,6 +57,7 @@ import {
   setSelectedFilter,
   setSearchResults,
   setTempFilter,
+  setImageInfo,
 } from "./actions";
 import { URL } from "../utils/constants";
 import { Obj, State, MediaInfo } from "../utils/types";
@@ -87,6 +89,7 @@ const initialState: State = {
   positiveProjection: [],
   negativeProjection: [],
   imageForProjection: undefined,
+  imageInfo: undefined,
   mode: undefined,
   terms: [],
   search: false,
@@ -196,6 +199,9 @@ export const reducer = (state = initialState, action: any) => {
     }
     case SET_TERMS: {
       return { ...state, terms: action.payload };
+    }
+    case SET_IMAGE_INFO: {
+      return { ...state, imageInfo: action.payload };
     }
     case SET_IMAGE_FOR_PROJECTION: {
       return { ...state, imageForProjection: action.payload };
@@ -348,6 +354,7 @@ export const getImageInfo = (id: number) => async (
     .then((resp) => resp.json())
     .then((res) => {
       console.log(res);
+      dispatch(setImageInfo(res));
     })
     .catch((err) => {
       console.log(err);
@@ -617,6 +624,34 @@ export const initExquisitorAsync = () => async (
     .catch((err) => {
       dispatch(setLoading(false));
       customAlert("error", err);
+    });
+};
+
+export const initExistingModel = (lastSeen: Obj[]) => async (
+  dispatch: any,
+  getState: any
+) => {
+  const body = JSON.stringify({
+    ids: lastSeen.map((item) => item.exqId),
+    user: getState().user,
+    model: 0,
+  });
+
+  await fetch(`${URL}/initModel`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: body,
+  })
+    .then((resp) => resp.json())
+    .then((res) => {
+      console.log(res);
+      dispatch(setLoading(false));
+    })
+    .catch((err) => {
+      dispatch(setLoading(false));
+      console.log(err);
     });
 };
 

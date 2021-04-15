@@ -14,6 +14,7 @@ import {
   Filter,
   Search,
   Info,
+  History,
 } from "../screens/home/index";
 
 const Stack = createStackNavigator<HomeStackParamList>();
@@ -36,6 +37,7 @@ export default function Navigation() {
       <Stack.Screen name="Filter" component={Filter}></Stack.Screen>
       <Stack.Screen name="Search" component={Search}></Stack.Screen>
       <Stack.Screen name="Info" component={Info}></Stack.Screen>
+      <Stack.Screen name="History" component={History}></Stack.Screen>
     </Stack.Navigator>
   );
 }

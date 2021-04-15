@@ -12,6 +12,7 @@ import { colors } from "../../utils/theme";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Obj, Model } from "../../utils/types";
 import { ButtonBar } from "../../components/organisms";
+import { Text } from "../../components/atoms";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Projection">;
 type RouteProps = RouteProp<HomeStackParamList, "Projection">;
@@ -40,18 +41,37 @@ export default function ProjectionMode({ navigation, route }: Props) {
         }}
       />
 
-      <Image
-        style={{
-          alignSelf: "center",
-          width: Platform.OS === "web" ? 350 : 250,
-          height: Platform.OS === "web" ? 300 : 200,
-          resizeMode: "stretch",
-          borderRadius: 12,
-        }}
-        source={{
-          uri: redux.imageForProjection?.imageURI,
-        }}
-      />
+      <View style={styles.imgInfo}>
+        <Image
+          style={{
+            alignSelf: "center",
+            width: Platform.OS === "web" ? 350 : 250,
+            height: Platform.OS === "web" ? 300 : 200,
+            resizeMode: "stretch",
+            borderRadius: 12,
+          }}
+          source={{
+            uri: redux.imageForProjection?.imageURI,
+          }}
+        />
+        <View style={styles.rightInfo}>
+          {redux.imageInfo?.day !== "unknown" && (
+            <Text.Button>Location: {redux.imageInfo?.day}</Text.Button>
+          )}
+          {redux.imageInfo?.hour && (
+            <Text.Button>Hour: {redux.imageInfo?.hour}</Text.Button>
+          )}
+          {redux.imageInfo?.year && (
+            <Text.Button>Year: {redux.imageInfo?.year}</Text.Button>
+          )}
+          {redux.imageInfo?.location !== "unknown" && (
+            <Text.Button>Location: {redux.imageInfo?.location}</Text.Button>
+          )}
+          {redux.imageInfo?.activity !== "unknown" && (
+            <Text.Button>Activity: {redux.imageInfo?.activity}</Text.Button>
+          )}
+        </View>
+      </View>
 
       <View style={styles.buttonContainer}>
         <IconButton
@@ -129,7 +149,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.background,
   },
-
+  imgInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  rightInfo: {
+    marginLeft: 20,
+    flexDirection: "column",
+  },
   buttonContainer: {
     flexDirection: "row",
     alignSelf: "center",

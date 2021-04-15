@@ -10,6 +10,7 @@ import Projection from "./Projection";
 import Filter from "./Filter";
 import Search from "./Search";
 import Info from "./Info";
+import History from "./History";
 export {
   Welcome,
   ChooseMode,
@@ -23,4 +24,5 @@ export {
   Filter,
   Search,
   Info,
+  History,
 };

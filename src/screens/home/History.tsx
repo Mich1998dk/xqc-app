@@ -24,56 +24,36 @@ import { setSearchData, setSeen, setSelectedFilter } from "../../redux/actions";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Text } from "../../components/atoms";
 
-type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
-type RouteProps = RouteProp<HomeStackParamList, "Home">;
+type HistoryProps = StackNavigationProp<HomeStackParamList, "History">;
+type RouteProps = RouteProp<HomeStackParamList, "History">;
 
 type Props = {
-  navigation: HomeProps;
+  navigation: HistoryProps;
   route: RouteProps;
 };
 
-export default function Home({ navigation, route }: Props) {
-  const { loadModel } = route.params;
+export default function History({ navigation }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
   useEffect(() => {
-    if (loadModel === undefined) {
-      dispatch(initModelAsync());
-    }
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
   }, [navigation]);
 
   return (
-    <Container model={loadModel} navigation={navigation}>
+    <Container>
       <Header
-        title={Platform.OS === "web" ? "PROJECTION" : ""}
+        title={"History"}
         onPress={() => {
-          dispatch(reset());
           navigation.goBack();
-        }}
-        menu
-        filter
-        onPressFilter={() => navigation.navigate("Filter")}
-        search
-        onPressSearch={() => {
-          dispatch(setSearchData(redux.terms));
-          navigation.navigate("Search", { mode: "terms" });
         }}
       />
       <ScrollView>
         {redux.images.length > 0 && (
-          <ImageRenderer navigation={navigation} data={redux.images} />
+          <ImageRenderer navigation={navigation as any} data={redux.seen} />
         )}
       </ScrollView>
-
-      {redux.images.length === 0 && !redux.loading && (
-        <Text.Regular style={{ alignSelf: "center" }}>
-          No results - maybe your filter is too strict
-        </Text.Regular>
-      )}
-      <ButtonBar navigation={navigation} posAndNeg randomSet train />
     </Container>
   );
 }

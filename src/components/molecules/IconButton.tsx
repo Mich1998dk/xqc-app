@@ -10,7 +10,7 @@ interface Props {
   onPress: (event: React.MouseEvent<HTMLButtonElement>) => void;
   secondary?: boolean;
   style?: CSSProperties;
-  type?: "sync" | "random" | "delete" | "update" | undefined;
+  type?: "sync" | "random" | "delete" | "update" | "history" | undefined;
 }
 
 export default function IconButton({
@@ -26,6 +26,15 @@ export default function IconButton({
         return (
           <Ionicons
             name="sync-outline"
+            size={22}
+            color={secondary ? colors.accent : colors.white}
+            style={{ marginRight: 8 }}
+          />
+        );
+      case "history":
+        return (
+          <Ionicons
+            name="eye-outline"
             size={22}
             color={secondary ? colors.accent : colors.white}
             style={{ marginRight: 8 }}

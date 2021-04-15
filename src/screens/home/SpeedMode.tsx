@@ -29,6 +29,7 @@ import {
   resetModelAsync,
   replaceImageAsync,
   reset,
+  initExistingModel,
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
 import {
@@ -98,7 +99,7 @@ export default function SpeedMode({ navigation, route }: Props) {
   return (
     <Container navigation={navigation} model={loadModel}>
       <Header
-        title="SPEED"
+        title={Platform.OS === "web" ? "SPEED" : ""}
         onPress={() => {
           dispatch(reset());
           navigation.goBack();
@@ -129,7 +130,7 @@ export default function SpeedMode({ navigation, route }: Props) {
         )}
       </ScrollView>
 
-      <ButtonBar navigation={navigation} randomSet update />
+      <ButtonBar navigation={navigation} randomSet update history />
     </Container>
   );
 }

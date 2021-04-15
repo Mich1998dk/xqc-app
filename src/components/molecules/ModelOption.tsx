@@ -13,8 +13,6 @@ interface Props {
 }
 
 export default function ModeOption({ onPress, onDelete, style, model }: Props) {
-  console.log(model);
-
   var stats = [
     {
       title: "CREATED",
@@ -29,7 +27,8 @@ export default function ModeOption({ onPress, onDelete, style, model }: Props) {
       value:
         model.filter.activities.length +
         model.filter.days.length +
-        model.filter.locations.length,
+        model.filter.locations.length +
+        model.filter.years.length,
       color: colors.white,
     },
   ];

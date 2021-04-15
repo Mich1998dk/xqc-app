@@ -24,6 +24,7 @@ interface Props {
   update?: boolean;
   confirm?: boolean;
   applyFilter?: boolean;
+  history?: boolean;
 }
 
 export default function ButtonBar({
@@ -32,7 +33,7 @@ export default function ButtonBar({
   randomSet,
   train,
   update,
-  confirm,
+  history,
   applyFilter,
 }: Props) {
   const dispatch = useDispatch();
@@ -45,6 +46,14 @@ export default function ButtonBar({
           onPress={() => {
             navigation.navigate("PosAndNeg");
           }}
+          secondary
+        />
+      )}
+      {history && (
+        <IconButton
+          title="HISTORY"
+          onPress={() => navigation.navigate("History")}
+          type="history"
           secondary
         />
       )}

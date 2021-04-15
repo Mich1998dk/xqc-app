@@ -17,6 +17,7 @@ import {
   positiveExamplePressed,
   replaceImageAsync,
   makeProjection,
+  getImageInfo,
 } from "../../redux/reducers";
 import { HomeStackParamList, State } from "../../utils/types";
 import { IconButton, ImageOverlay } from "../molecules";
@@ -50,6 +51,7 @@ export default function ImageRenderer({ data, navigation }: Props) {
               <TouchableOpacity
                 style={styles.box}
                 onPress={async () => {
+                  dispatch(getImageInfo(item.exqId));
                   await dispatch(makeProjection(item));
                   await dispatch(setImageForProjection(item));
                   navigation.navigate("Projection", { uri: item.imageURI! });

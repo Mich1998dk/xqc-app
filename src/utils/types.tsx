@@ -15,6 +15,7 @@ export type HomeStackParamList = {
   Filter: undefined;
   Search: { mode: "terms" | "locations" };
   Info: undefined;
+  History: undefined;
 };
 
 export type Obj = {
@@ -35,6 +36,7 @@ export type State = {
   positiveProjection: Obj[];
   negativeProjection: Obj[];
   imageForProjection: Obj | undefined;
+  imageInfo: ImageInfo | undefined;
   mode: Mode;
   terms: string[];
   search: boolean;
@@ -47,6 +49,15 @@ export type State = {
   searchData: string[];
   user: string;
   timerStatus: boolean;
+};
+
+export type ImageInfo = {
+  activity: string;
+  day: string;
+  hour: number;
+  location: string;
+  name: string;
+  year: number;
 };
 
 export type Mode = "standard" | "speed" | "projection" | undefined;
