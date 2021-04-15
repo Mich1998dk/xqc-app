@@ -40,7 +40,7 @@ type Props = {
 export default function Search({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
-  const [state, setState] = useState({ search: "" });
+  const [state, setState] = useState({ search: "", currentlySearched: "" });
   const { mode } = route.params;
 
   useEffect(() => {
@@ -73,7 +73,15 @@ export default function Search({ navigation, route }: Props) {
               Platform.OS === "web" ? webStyles : ({} as any),
             ]}
           />
+          
         </View>
+        {state.currentlySearched.length > 0 && (
+        <View>
+          <Text.Button style={{ alignSelf: "center", marginBottom: 10 }}>Showing results for '{state.currentlySearched}'</Text.Button>
+        </View>
+        )}
+        
+        
         {(redux.searchResults.length === 0 || state.search.length > 0) && (
           <FlatList
             data={redux.searchData
@@ -89,7 +97,7 @@ export default function Search({ navigation, route }: Props) {
                   onPress={() => {
                     if (mode === "terms") {
                       dispatch(searchAsync(item));
-                      setState({ ...state, search: "" });
+                      setState({ ...state, search: "", currentlySearched: item });
                     }
 
                     if (mode === "locations") {

@@ -59,7 +59,7 @@ export default function SpeedMode({ navigation, route }: Props) {
   const { loadModel } = route.params;
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
-  const [seconds, setSeconds] = useState(55);
+  const [seconds, setSeconds] = useState(0);
   const [min, setMin] = useState(0);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function SpeedMode({ navigation, route }: Props) {
 
   useEffect(() => {
     if (!redux.loading) {
-      var _s = 55;
+      var _s = 0;
       var _m = 0;
 
       const interval = setInterval(() => {
