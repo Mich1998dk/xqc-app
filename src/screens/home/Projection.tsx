@@ -26,10 +26,6 @@ export default function ProjectionMode({ navigation, route }: Props) {
   const redux = useSelector((state: State) => state);
   const [selected, setSelected] = useState<"positive" | "negative">("positive");
 
-  console.log(redux.positiveProjection);
-
-  const { uri } = route.params;
-
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
@@ -38,7 +34,7 @@ export default function ProjectionMode({ navigation, route }: Props) {
   return (
     <Container>
       <Header
-        title="Projection"
+        title="PROJECTION"
         onPress={() => {
           navigation.goBack();
         }}
@@ -47,8 +43,8 @@ export default function ProjectionMode({ navigation, route }: Props) {
       <Image
         style={{
           alignSelf: "center",
-          width: 350,
-          height: 300,
+          width: Platform.OS === "web" ? 350 : 250,
+          height: Platform.OS === "web" ? 300 : 200,
           resizeMode: "stretch",
           borderRadius: 12,
         }}

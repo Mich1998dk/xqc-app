@@ -27,6 +27,7 @@ import { setSeen, setTempFilter } from "../../redux/actions";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, fonts, sizes } from "../../utils/theme";
+import { ScrollView } from "react-native-gesture-handler";
 
 type SearchProps = StackNavigationProp<HomeStackParamList, "Search">;
 type RouteProps = RouteProp<HomeStackParamList, "Search">;
@@ -111,7 +112,9 @@ export default function Search({ navigation, route }: Props) {
           />
         )}
         {redux.searchResults.length > 0 && state.search.length === 0 && (
-          <ImageRenderer data={redux.searchResults} />
+          <ScrollView>
+            <ImageRenderer data={redux.searchResults} navigation={navigation} />
+          </ScrollView>
         )}
       </View>
     </Container>

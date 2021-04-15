@@ -41,7 +41,7 @@ export default function Home({ navigation, route }: Props) {
   return (
     <Container model={loadModel} navigation={navigation}>
       <Header
-        title="STANDARD"
+        title="PROJECTION"
         onPress={() => {
           dispatch(reset());
           navigation.goBack();
@@ -56,7 +56,9 @@ export default function Home({ navigation, route }: Props) {
         }}
       />
       <ScrollView>
-        {redux.images.length > 0 && <ImageRenderer data={redux.images} />}
+        {redux.images.length > 0 && (
+          <ImageRenderer navigation={navigation} data={redux.images} />
+        )}
       </ScrollView>
 
       {redux.images.length === 0 && !redux.loading && (

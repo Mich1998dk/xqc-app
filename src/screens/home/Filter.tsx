@@ -71,7 +71,7 @@ export default function Filter({ navigation, route }: Props) {
             }
           }}
           title={item.toUpperCase()}
-          style={{ marginRight: 6 }}
+          style={{ marginRight: 6, marginBottom: 8 }}
           secondary={!redux.tempFilter.activities.includes(index)}
         />
       );
@@ -96,7 +96,7 @@ export default function Filter({ navigation, route }: Props) {
             }}
             type="delete"
             title={item.toUpperCase()}
-            style={{ marginRight: 6 }}
+            style={{ marginRight: 6, marginBottom: 6 }}
           />
         );
       }
@@ -131,7 +131,7 @@ export default function Filter({ navigation, route }: Props) {
           }}
           secondary={!redux.tempFilter.years.includes(item.value)}
           title={item.year.toUpperCase()}
-          style={{ marginRight: 6 }}
+          style={{ marginRight: 6, marginBottom: 8 }}
         />
       );
     });
@@ -167,7 +167,7 @@ export default function Filter({ navigation, route }: Props) {
           }}
           secondary={!redux.tempFilter.days.includes(index)}
           title={item.toUpperCase()}
-          style={{ marginRight: 6 }}
+          style={{ marginRight: 6, marginBottom: 8 }}
         />
       );
     });
@@ -183,7 +183,7 @@ export default function Filter({ navigation, route }: Props) {
       <Text.Button>Days</Text.Button>
       <View style={styles.filters}>{renderDays()}</View>
 
-      <Text.Button>Time (interval)</Text.Button>
+      <Text.Button>Time of day (interval)</Text.Button>
       <View style={styles.timeContainer}>
         <Text.Regular>Between</Text.Regular>
         <TouchableOpacity
@@ -213,7 +213,7 @@ export default function Filter({ navigation, route }: Props) {
 
       {redux.timePicker && <TimePicker type={type} />}
 
-      <Text.Button>Location (Show only)</Text.Button>
+      <Text.Button>Location</Text.Button>
       <View style={styles.filters}>{renderLocations()}</View>
 
       <TouchableOpacity

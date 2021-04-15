@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   bottom: {
     flexDirection: "row",
     alignSelf: "center",
-    width: "50%",
+    width: Platform.OS === "web" ? "50%" : "100%",
     flexWrap: "wrap",
     alignItems: "center",
   },

@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, View, Image, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
   learnModelAsync,
@@ -10,17 +16,23 @@ import {
   negativeExamplePressed,
   positiveExamplePressed,
   replaceImageAsync,
+  makeProjection,
 } from "../../redux/reducers";
-import { State } from "../../utils/types";
+import { HomeStackParamList, State } from "../../utils/types";
 import { IconButton, ImageOverlay } from "../molecules";
 import { colors } from "../../utils/theme";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
+import { setImageForProjection } from "../../redux/actions";
+import { StackNavigationProp } from "@react-navigation/stack";
+
+type HomeProps = StackNavigationProp<HomeStackParamList>;
 
 interface Props {
   data: any;
+  navigation: HomeProps;
 }
 
-export default function ImageRenderer({ data }: Props) {
+export default function ImageRenderer({ data, navigation }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
@@ -35,7 +47,14 @@ export default function ImageRenderer({ data }: Props) {
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
             return (
-              <View style={styles.box}>
+              <TouchableOpacity
+                style={styles.box}
+                onPress={async () => {
+                  await dispatch(makeProjection(item));
+                  await dispatch(setImageForProjection(item));
+                  navigation.navigate("Projection", { uri: item.imageURI! });
+                }}
+              >
                 {/* //@ts-ignore */}
                 <Image
                   style={{
@@ -58,7 +77,7 @@ export default function ImageRenderer({ data }: Props) {
                   negativeSelected={redux.negatives.includes(item)}
                   positiveSelected={redux.positives.includes(item)}
                 />
-              </View>
+              </TouchableOpacity>
             );
           }}
         />

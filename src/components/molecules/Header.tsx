@@ -42,7 +42,7 @@ export default function ModeOption({
         <Icon type="back" onPress={onPress as any} />
       </View>
       <View style={styles.title}>
-        <Text.Header style={{ fontSize: 18 }}>{title}</Text.Header>
+        <Text.Header style={{ fontSize: 16 }}>{title}</Text.Header>
       </View>
       <View style={{ flexDirection: "row" }}>
         <View>

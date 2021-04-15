@@ -16,6 +16,7 @@ import {
   getImageInfo,
   initModelAsync,
   randomSetAsync,
+  reset,
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
 import {
@@ -52,8 +53,7 @@ export default function ProjectionMode({ navigation, route }: Props) {
     <Container navigation={navigation} model={loadModel}>
       <Header
         onPress={() => {
-          dispatch(setSeen([]));
-          dispatch(setSelectedFilter({ activities: [], locations: [] }));
+          dispatch(reset());
           navigation.goBack();
         }}
         title="PROJECTION MODE"

@@ -30,7 +30,7 @@ export default function ChooseMode({ navigation }: Props) {
       <Header title="Choose mode" onPress={() => navigation.goBack()} />
       <ScrollView style={{ paddingTop: 10 }}>
         <ModeOption
-          title="STANDARD MODE"
+          title="PROJECTION MODE (ACTIVE LEARNING)"
           onPress={() => {
             dispatch(setMode("standard"));
             navigation.navigate("Home", { loadModel: undefined });
@@ -43,7 +43,7 @@ export default function ChooseMode({ navigation }: Props) {
           aliquip ex ea commodo consequat.
         </Text.Regular>
         <ModeOption
-          title="SPEED MODE"
+          title="SPEED MODE (SEARCH ORIENTED)"
           onPress={() => {
             dispatch(setMode("speed"));
             navigation.navigate("SpeedMode", { loadModel: undefined });
@@ -55,7 +55,7 @@ export default function ChooseMode({ navigation }: Props) {
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
           aliquip ex ea commodo consequat.
         </Text.Regular>
-        <ModeOption
+        {/* <ModeOption
           title="PROJECTION MODE"
           onPress={() => {
             dispatch(setMode("projection"));
@@ -67,7 +67,7 @@ export default function ChooseMode({ navigation }: Props) {
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
           aliquip ex ea commodo consequat.
-        </Text.Regular>
+        </Text.Regular> */}
       </ScrollView>
     </Container>
   );

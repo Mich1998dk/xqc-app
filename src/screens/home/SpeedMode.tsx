@@ -31,7 +31,12 @@ import {
   reset,
 } from "../../redux/reducers";
 import { colors } from "../../utils/theme";
-import { formatDate, isUpperCase, formatToLocation } from "../../utils/helpers";
+import {
+  formatTime,
+  formatDate,
+  isUpperCase,
+  formatToLocation,
+} from "../../utils/helpers";
 import {
   ButtonBar,
   ImageRenderer,
@@ -54,7 +59,8 @@ export default function SpeedMode({ navigation, route }: Props) {
   const { loadModel } = route.params;
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
-  const [seconds, setSeconds] = useState(0);
+  const [seconds, setSeconds] = useState(55);
+  const [min, setMin] = useState(0);
 
   useEffect(() => {
     if (loadModel === undefined) {
@@ -67,8 +73,20 @@ export default function SpeedMode({ navigation, route }: Props) {
 
   useEffect(() => {
     if (!redux.loading) {
+      var _s = 55;
+      var _m = 0;
+
       const interval = setInterval(() => {
-        setSeconds((seconds) => seconds + 1);
+        if (seconds !== 60) {
+          setSeconds((sec) => sec + 1);
+          _s++;
+        }
+        if (_s == 60) {
+          setSeconds(0);
+          _s = 0;
+          setMin((min) => min + 1);
+          _m++;
+        }
       }, 1000);
       return () => clearInterval(interval);
     }
@@ -96,7 +114,9 @@ export default function SpeedMode({ navigation, route }: Props) {
         time
       />
       {redux.timerStatus && (
-        <Text.Button style={{ alignSelf: "center" }}>{seconds}</Text.Button>
+        <Text.Button style={{ alignSelf: "center" }}>
+          {formatTime(min) + ":" + formatTime(seconds)}
+        </Text.Button>
       )}
       {redux.images.length === 0 && !redux.loading && (
         <Text.Regular style={{ alignSelf: "center" }}>
@@ -104,7 +124,9 @@ export default function SpeedMode({ navigation, route }: Props) {
         </Text.Regular>
       )}
       <ScrollView>
-        {redux.images.length > 0 && <ImageRenderer data={redux.images} />}
+        {redux.images.length > 0 && (
+          <ImageRenderer navigation={navigation} data={redux.images} />
+        )}
       </ScrollView>
 
       <ButtonBar navigation={navigation} randomSet update />

@@ -126,3 +126,9 @@ export const formatTimeToPeriod = (num: number) => {
     return num.toString() + " AM";
   }
 };
+
+export const formatTime = (num: number) => {
+  const str = num.toString();
+  if (str.length === 1) return "0" + str;
+  else return str;
+};

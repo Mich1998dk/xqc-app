@@ -11,14 +11,9 @@ interface Props {
 
 export default function RMOverlay({ onClick }: Props) {
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={onClick as any}
-        style={styles.feedbackContainer}
-      >
-        <Text.Button>Remove</Text.Button>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity onPress={onClick as any} style={styles.container}>
+      <Text.Button>Remove</Text.Button>
+    </TouchableOpacity>
   );
 }
 
@@ -30,7 +25,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: "20%",
     flexDirection: "row",
-    backgroundColor: "#888",
+    backgroundColor: colors.loader_bg,
     borderBottomRightRadius: 12,
     borderBottomLeftRadius: 12,
     zIndex: 998,
