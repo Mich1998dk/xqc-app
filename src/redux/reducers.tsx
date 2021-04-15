@@ -484,7 +484,7 @@ export const makeProjection = (obj: Obj) => async (
   const seen: number[] = getState().seen.map((item: Obj) => item.exqId);
 
   //First learn with the current positives with the added image + the current negatives
-  await learn(pos, currentNeg, seen, getState().mode, getState().user)
+  await learn(pos, currentNeg, seen, "projection", getState().user)
     .then((res) => {
       var posProjection = formatBackendDataToImageObjects(res);
       dispatch(setPositiveProjection(posProjection));
@@ -494,7 +494,7 @@ export const makeProjection = (obj: Obj) => async (
     });
 
   //Then learn with the current negatives with the added image + the current positives
-  await learn(currentPos, neg, seen, getState().mode, getState().user)
+  await learn(currentPos, neg, seen, "projection", getState().user)
     .then((res) => {
       var negProjection = formatBackendDataToImageObjects(res);
       dispatch(setNegativeProjection(negProjection));
