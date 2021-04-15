@@ -38,6 +38,7 @@ export default function ChooseMode({ navigation }: Props) {
 
   const getModels = async () => {
     var models = await getModelsInAsyncStorage();
+    console.log(models);
 
     if (models) setModels(models);
     else setModels([]);

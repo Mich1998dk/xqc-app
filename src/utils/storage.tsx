@@ -20,6 +20,10 @@ export const clearStorage = () => {
 
 export const getModelsInAsyncStorage = async () => {
   const keys = await AsyncStorage.getAllKeys();
+  console.log("KEYS");
+
+  console.log(keys);
+
   if (keys.length === 0) return [];
   var models: Model[] = [];
   for (let i = 0; i < keys.length; i++) {

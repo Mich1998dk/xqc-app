@@ -79,6 +79,7 @@ export default function ButtonBar({
             title="APPLY FILTERS"
             onPress={() => {
               dispatch(applyFiltersAsync());
+              navigation.goBack();
             }}
           />
         </>
