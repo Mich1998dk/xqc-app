@@ -37,6 +37,10 @@ export function getNumberOfImageByPlatformAndMode(mode: Mode) {
     if (isWeb) return 16;
     else return 6;
   }
+  if (mode === "projection"){
+    if (isWeb) return 12;
+    else return 6;
+  }
   return 50;
 }
 
