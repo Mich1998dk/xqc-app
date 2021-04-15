@@ -7,6 +7,7 @@ import {
   Image,
   Alert,
   Platform,
+  ScrollView,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
@@ -102,7 +103,10 @@ export default function SpeedMode({ navigation, route }: Props) {
           No results - maybe your filter is too strict
         </Text.Regular>
       )}
-      {redux.images.length > 0 && <ImageRenderer data={redux.images} />}
+      <ScrollView>
+        {redux.images.length > 0 && <ImageRenderer data={redux.images} />}
+      </ScrollView>
+
       <ButtonBar navigation={navigation} randomSet update />
     </Container>
   );
