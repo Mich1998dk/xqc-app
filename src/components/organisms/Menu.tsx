@@ -14,6 +14,7 @@ interface Props {
   onClickReset: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onClickSaveModel: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onClickQuickSave?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickHelp?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   canQuickSave?: boolean;
 }
 
@@ -22,6 +23,7 @@ export default function Menu({
   onClickSaveModel,
   onClickQuickSave,
   canQuickSave,
+  onClickHelp,
 }: Props) {
   const dispatch = useDispatch();
 
@@ -29,6 +31,11 @@ export default function Menu({
     <Animatable.View style={styles.container} animation="fadeIn" duration={240}>
       <Animatable.View animation="zoomIn" duration={240}>
         <View style={{ marginBottom: 20 }}>
+          <ModeOption
+            style={{ width: 300 }}
+            title="HELP"
+            onPress={onClickHelp as any}
+          />
           <ModeOption
             style={{ width: 300 }}
             title="RESET MODEL"

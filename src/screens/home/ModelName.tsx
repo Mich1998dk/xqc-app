@@ -53,8 +53,12 @@ export default function ChooseMode({ navigation, route }: Props) {
       positives: redux.positives,
       seen: redux.seen,
       lastSeen: redux.images,
+      filter: redux.selectedFilter,
       created: new Date(),
     };
+
+    console.log("MODEL");
+    console.log(model);
 
     await saveModelInAsyncStorage(model);
     customAlert("success", "Your model has been saved!");

@@ -48,6 +48,7 @@ export default function Container({
       seen: redux.seen,
       lastSeen: redux.images,
       created: new Date(model?.created!),
+      filter: redux.tempFilter,
     };
 
     await saveModelInAsyncStorage(tempModel);
@@ -73,6 +74,10 @@ export default function Container({
       {redux.search && <Search />}
       {redux.menu && (
         <Menu
+          onClickHelp={() => {
+            dispatch(setMenu(false));
+            navigation?.navigate("Info");
+          }}
           onClickReset={() => {
             dispatch(resetModelAsync());
             dispatch(setMenu(false));

@@ -20,6 +20,7 @@ import {
   setNegative,
   setPositive,
   setSeen,
+  setSelectedFilter,
 } from "../../redux/actions";
 import { customAlert } from "../../utils/helpers";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -38,7 +39,6 @@ export default function ChooseMode({ navigation }: Props) {
 
   const getModels = async () => {
     var models = await getModelsInAsyncStorage();
-    console.log(models);
 
     if (models) setModels(models);
     else setModels([]);
@@ -50,7 +50,7 @@ export default function ChooseMode({ navigation }: Props) {
     var filtered = models.filter(
       (elm) => elm.name.toLowerCase() !== item.toLowerCase()
     );
-    deleteModelInAsyncStorage(item);
+    deleteModelInAsyncStorage(item + "-xqc");
     setModels(filtered);
   };
 
@@ -81,16 +81,17 @@ export default function ChooseMode({ navigation }: Props) {
                 onDelete={() => {
                   deleteModel(item.name);
                 }}
-                onPress={() => {
-                  dispatch(setNegative(item.negatives));
-                  dispatch(setPositive(item.positives));
-                  dispatch(setSeen(item.seen));
-                  dispatch(setImages(item.lastSeen));
+                onPress={async () => {
+                  console.log(item);
+
+                  await dispatch(setNegative(item.negatives));
+                  await dispatch(setPositive(item.positives));
+                  await dispatch(setSeen(item.seen));
+                  await dispatch(setImages([...item.lastSeen]));
+                  await dispatch(setSelectedFilter(item.filter));
+
                   if (item.mode === "standard") {
                     navigation.navigate("Home", { loadModel: item });
-                  }
-                  if (item.mode === "projection") {
-                    navigation.navigate("ProjectionMode", { loadModel: item });
                   }
                   if (item.mode === "speed") {
                     navigation.navigate("SpeedMode", { loadModel: item });

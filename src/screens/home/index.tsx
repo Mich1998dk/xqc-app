@@ -9,6 +9,7 @@ import ProjectionMode from "./ProjectionMode";
 import Projection from "./Projection";
 import Filter from "./Filter";
 import Search from "./Search";
+import Info from "./Info";
 export {
   Welcome,
   ChooseMode,
@@ -21,4 +22,5 @@ export {
   Projection,
   Filter,
   Search,
+  Info,
 };

@@ -13,6 +13,7 @@ import {
   Projection,
   Filter,
   Search,
+  Info,
 } from "../screens/home/index";
 
 const Stack = createStackNavigator<HomeStackParamList>();
@@ -34,6 +35,7 @@ export default function Navigation() {
       <Stack.Screen name="Projection" component={Projection}></Stack.Screen>
       <Stack.Screen name="Filter" component={Filter}></Stack.Screen>
       <Stack.Screen name="Search" component={Search}></Stack.Screen>
+      <Stack.Screen name="Info" component={Info}></Stack.Screen>
     </Stack.Navigator>
   );
 }

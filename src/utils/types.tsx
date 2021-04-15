@@ -14,6 +14,7 @@ export type HomeStackParamList = {
   Projection: { uri: string };
   Filter: undefined;
   Search: { mode: "terms" | "locations" };
+  Info: undefined;
 };
 
 export type Obj = {
@@ -68,6 +69,7 @@ export type Model = {
   seen: Obj[];
   lastSeen: Obj[];
   created: Date;
+  filter: SelectedFilter;
 };
 
 export type Filter = {

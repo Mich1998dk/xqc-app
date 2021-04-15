@@ -13,6 +13,8 @@ interface Props {
 }
 
 export default function ModeOption({ onPress, onDelete, style, model }: Props) {
+  console.log(model);
+
   var stats = [
     {
       title: "CREATED",
@@ -22,12 +24,20 @@ export default function ModeOption({ onPress, onDelete, style, model }: Props) {
     { title: "SEEN", value: model.seen.length, color: colors.white },
     { title: "POS", value: model.positives.length, color: colors.green },
     { title: "NEG", value: model.negatives.length, color: colors.red },
+    {
+      title: "FILTERS",
+      value:
+        model.filter.activities.length +
+        model.filter.days.length +
+        model.filter.locations.length,
+      color: colors.white,
+    },
   ];
 
   const renderMode = () => {
     switch (model.mode) {
       case "standard":
-        return "STANDARD";
+        return "PROJECTION";
       case "projection":
         return "PROJECTION";
       case "speed":
