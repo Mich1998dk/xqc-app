@@ -3,7 +3,7 @@ import { customAlert } from "./helpers";
 import { Model } from "./types";
 
 export const saveModelInAsyncStorage = (model: Model) => {
-  AsyncStorage.setItem(model.name, JSON.stringify(model));
+  AsyncStorage.setItem(model.name + "-xqc", JSON.stringify(model));
 };
 
 export const deleteModelInAsyncStorage = (name: string) => {
@@ -21,16 +21,18 @@ export const clearStorage = () => {
 export const getModelsInAsyncStorage = async () => {
   const keys = await AsyncStorage.getAllKeys();
   console.log("KEYS");
-
   console.log(keys);
 
   if (keys.length === 0) return [];
   var models: Model[] = [];
   for (let i = 0; i < keys.length; i++) {
-    const model = await AsyncStorage.getItem(keys[i]);
-    //@ts-ignore
-    models.push(JSON.parse(model));
+    if (keys[i].includes("xqc")) {
+      const model = await AsyncStorage.getItem(keys[i]);
+      //@ts-ignore
+      models.push(JSON.parse(model));
+    }
   }
+  if (models.length === 0) return [];
   return models;
 };
 
