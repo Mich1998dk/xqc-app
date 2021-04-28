@@ -65,7 +65,7 @@ export default function ChooseMode({ navigation }: Props) {
 
   return (
     <Container>
-      <Header title="Choose model" onPress={() => navigation.goBack()} />
+      <Header title="Load model" onPress={() => navigation.goBack()} />
       {models.length === 0 && (
         <Text.Button style={{ alignSelf: "center", opacity: 0.4 }}>
           No saved models yet :(

@@ -1,7 +1,6 @@
 import React, { CSSProperties } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { fonts, colors, sizes } from "../../utils/theme";
-import { Text } from "../atoms/index";
 import { MaterialIcons, Ionicons, FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -43,7 +42,7 @@ export default function Icon({ type, onPress, marginRight }: Props) {
       case "filter":
         return <FontAwesome name="filter" size={24} color={colors.accent} />;
       default:
-        <Text.Button>NA</Text.Button>;
+        return <View></View>;
         break;
     }
   };

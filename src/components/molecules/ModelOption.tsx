@@ -61,8 +61,10 @@ export default function ModeOption({ onPress, onDelete, style, model }: Props) {
           {stats.map((item, index) => {
             return (
               <View key={index} style={styles.stat}>
-                <Text.Small style={{ opacity: 0.3 }}>{item.title}</Text.Small>
-                <Text.Header style={{ color: item.color, fontSize: 20 }}>
+                <Text.Small style={{ opacity: 0.3, fontSize: 11.5 }}>
+                  {item.title}
+                </Text.Small>
+                <Text.Header style={{ color: item.color, fontSize: 16 }}>
                   {item.value}
                 </Text.Header>
               </View>
