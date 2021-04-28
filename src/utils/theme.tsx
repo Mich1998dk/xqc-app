@@ -9,6 +9,7 @@ export const colors = {
   loader_bg: "rgba(28, 28, 28, 0.98)",
   positiveOverlay: "rgba(98, 224, 122, 0.45)",
   negativeOverlay: "rgba(237, 93, 93, 0.45)",
+  submitOverlay: "rgba(247, 321, 101, 0.45)",
   red: "#DB5858",
   green: "#5CC47C",
 };

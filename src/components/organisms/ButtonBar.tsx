@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -37,6 +37,7 @@ export default function ButtonBar({
   applyFilter,
 }: Props) {
   const dispatch = useDispatch();
+  const [lastUsed, setLastUsed] = useState<"random" | "update">();
 
   return (
     <View style={styles.buttons}>
@@ -49,28 +50,27 @@ export default function ButtonBar({
           secondary
         />
       )}
-      {history && (
-        <IconButton
-          title="HISTORY"
-          onPress={() => navigation.navigate("History")}
-          type="history"
-          secondary
-        />
-      )}
       {randomSet && (
         <IconButton
           title="NEW RANDOM SET"
-          onPress={() => dispatch(randomSetAsync())}
+          onPress={() => {
+            setLastUsed("random");
+            dispatch(randomSetAsync());
+          }}
           type="random"
           style={{ marginLeft: 10, marginRight: 10 }}
-          secondary
+          secondary={lastUsed !== "random"}
         />
       )}
       {train && (
         <IconButton
           title="TRAIN"
-          onPress={() => dispatch(learnModelAsync())}
+          onPress={() => {
+            setLastUsed("update");
+            dispatch(learnModelAsync());
+          }}
           type="sync"
+          secondary={lastUsed !== "update"}
         />
       )}
 
@@ -98,7 +98,11 @@ export default function ButtonBar({
         <IconButton
           title="UPDATE ALL"
           type="update"
-          onPress={() => dispatch(learnModelAsync())}
+          secondary={lastUsed !== "update"}
+          onPress={() => {
+            setLastUsed("update");
+            dispatch(learnModelAsync());
+          }}
         />
       )}
     </View>

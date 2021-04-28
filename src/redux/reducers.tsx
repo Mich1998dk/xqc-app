@@ -380,6 +380,8 @@ export const searchAsync = (term: string) => async (
   })
     .then((resp) => resp.json())
     .then((res) => {
+      console.log(res.imgLocations.length);
+
       const images = formatObjectsFromMediaInfo(
         getState().mediaInfo,
         res.imgLocations
@@ -553,6 +555,15 @@ export const resetModelAsync = () => async (dispatch: any, getState: any) => {
       if (res.reset !== "successful") return;
       dispatch(setNegative([]));
       dispatch(setPositive([]));
+      dispatch(
+        setSelectedFilter({
+          activities: [],
+          locations: [],
+          days: [],
+          years: [],
+          time: { start: 0, end: 0 },
+        })
+      );
       dispatch(reset());
       dispatch(randomSetAsync());
       dispatch(setLoading(false));
@@ -739,6 +750,9 @@ export const replaceImageAsync = (index: number) => async (
           folderName
         )}/${formatToLocation(loc)}`,
       };
+      console.log("HEEEEEEEJ******'");
+      console.log(newObj);
+
       dispatch(updateSeen([newObj]));
 
       objects.push(newObj);

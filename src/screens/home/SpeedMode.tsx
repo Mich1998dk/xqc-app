@@ -104,7 +104,9 @@ export default function SpeedMode({ navigation, route }: Props) {
           dispatch(reset());
           navigation.goBack();
         }}
+        navigation={navigation}
         filter
+        history
         onPressFilter={() => navigation.navigate("Filter")}
         search
         onPressSearch={() => {
@@ -114,6 +116,7 @@ export default function SpeedMode({ navigation, route }: Props) {
         menu
         time
       />
+
       {redux.timerStatus && (
         <Text.Button style={{ alignSelf: "center" }}>
           {formatTime(min) + ":" + formatTime(seconds)}
@@ -124,13 +127,16 @@ export default function SpeedMode({ navigation, route }: Props) {
           No results - maybe your filter is too strict
         </Text.Regular>
       )}
-      <ScrollView>
-        {redux.images.length > 0 && (
-          <ImageRenderer navigation={navigation} data={redux.images} />
-        )}
-      </ScrollView>
 
-      <ButtonBar navigation={navigation} randomSet update />
+      {redux.images.length > 0 && (
+        <ImageRenderer
+          navigation={navigation}
+          data={redux.images}
+          time={formatTime(min) + ":" + formatTime(seconds)}
+        />
+      )}
+
+      <ButtonBar navigation={navigation} randomSet update posAndNeg />
     </Container>
   );
 }

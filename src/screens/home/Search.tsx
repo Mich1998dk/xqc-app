@@ -42,6 +42,19 @@ export default function Search({ navigation, route }: Props) {
   const redux = useSelector((state: State) => state);
   const [state, setState] = useState({ search: "", currentlySearched: "" });
   const { mode } = route.params;
+  var search = redux.searchData
+    .filter((item) => item.includes(state.search.toLowerCase()))
+    .slice(0, 50);
+
+  const getIndexOfSelected = (str: string) => {
+    for (let i = 0; redux.filter.locations.length > i; i++) {
+      let loc = redux.filter.locations[i];
+      if (loc === str) {
+        return i;
+      }
+    }
+    return 0;
+  };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
@@ -56,12 +69,17 @@ export default function Search({ navigation, route }: Props) {
     <Container>
       <Header
         title="Search"
+        reset={mode === "terms"}
+        onPressReset={() => {
+          dispatch(setSearchResults([]));
+          setState({ ...state, currentlySearched: "", search: "" });
+        }}
         onPress={() => {
           dispatch(setSearchResults([]));
           navigation.goBack();
         }}
       />
-      <View style={{ width: "92%", alignSelf: "center" }}>
+      <View style={{ width: "100%", alignSelf: "center" }}>
         <View style={styles.inputContainer}>
           <Ionicons name="search-outline" size={18} color={colors.white} />
           <TextInput
@@ -74,20 +92,18 @@ export default function Search({ navigation, route }: Props) {
               Platform.OS === "web" ? webStyles : ({} as any),
             ]}
           />
-          
         </View>
         {state.currentlySearched.length > 0 && (
-        <View>
-          <Text.Button style={{ alignSelf: "center", marginBottom: 10 }}>Showing results for '{state.currentlySearched}'</Text.Button>
-        </View>
+          <View>
+            <Text.Button style={{ alignSelf: "center", marginBottom: 10 }}>
+              Showing results for '{state.currentlySearched}'
+            </Text.Button>
+          </View>
         )}
-        
-        
+
         {(redux.searchResults.length === 0 || state.search.length > 0) && (
           <FlatList
-            data={redux.searchData
-              .filter((item) => item.includes(state.search.toLowerCase()))
-              .slice(0, 50)}
+            data={search}
             style={{ height: 600 }}
             keyExtractor={(item) => item.toString()}
             renderItem={({ item, index }) => {
@@ -98,14 +114,21 @@ export default function Search({ navigation, route }: Props) {
                   onPress={() => {
                     if (mode === "terms") {
                       dispatch(searchAsync(item));
-                      setState({ ...state, search: "", currentlySearched: item });
+                      setState({
+                        ...state,
+                        search: "",
+                        currentlySearched: item,
+                      });
                     }
 
                     if (mode === "locations") {
                       dispatch(
                         setTempFilter({
                           ...redux.tempFilter,
-                          locations: [...redux.tempFilter.locations, index],
+                          locations: [
+                            ...redux.tempFilter.locations,
+                            getIndexOfSelected(item),
+                          ],
                         })
                       );
                       navigation.goBack();
@@ -121,9 +144,7 @@ export default function Search({ navigation, route }: Props) {
           />
         )}
         {redux.searchResults.length > 0 && state.search.length === 0 && (
-          <ScrollView>
-            <ImageRenderer data={redux.searchResults} navigation={navigation} />
-          </ScrollView>
+          <ImageRenderer data={redux.searchResults} navigation={navigation} />
         )}
       </View>
     </Container>
@@ -137,11 +158,11 @@ const styles = StyleSheet.create({
     borderRadius: sizes.base16,
     alignItems: "center",
     paddingLeft: 20,
-
-    marginBottom: 30,
+    marginBottom: 15,
   },
   input: {
     padding: 20,
+    paddingVertical: 16,
     color: colors.white,
     fontSize: 18,
     fontFamily: fonts.med,

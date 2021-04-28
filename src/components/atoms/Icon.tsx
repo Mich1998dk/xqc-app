@@ -5,7 +5,15 @@ import { MaterialIcons, Ionicons, FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
-  type: "menu" | "back" | "delete" | "time" | "search" | "filter";
+  type:
+    | "menu"
+    | "back"
+    | "delete"
+    | "time"
+    | "search"
+    | "filter"
+    | "history"
+    | "reset";
   onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   marginRight?: boolean;
 }
@@ -17,10 +25,21 @@ export default function Icon({ type, onPress, marginRight }: Props) {
         return (
           <Ionicons name="ios-timer-outline" size={26} color={colors.accent} />
         );
+      case "history":
+        return (
+          <MaterialCommunityIcons
+            name="timer-sand-full"
+            size={20}
+            color={colors.accent}
+          />
+        );
       case "search":
         return (
           <Ionicons name="search-outline" size={26} color={colors.accent} />
         );
+      case "reset":
+        return <Ionicons name="refresh" size={22} color={colors.accent} />;
+
       case "menu":
         return <Ionicons name="ios-menu" size={26} color={colors.accent} />;
       case "back":

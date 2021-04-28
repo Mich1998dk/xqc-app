@@ -7,6 +7,7 @@ import ImageOverlay from "./ImageOverlay";
 import RMOverlay from "./RMOverlay";
 import ModelOption from "./ModelOption";
 import ImageContainer from "./ImageContainer";
+import SubmitOverlay from "./SubmitOverlay";
 
 export {
   Loader,
@@ -18,4 +19,5 @@ export {
   RMOverlay,
   ModelOption,
   ImageContainer,
+  SubmitOverlay,
 };

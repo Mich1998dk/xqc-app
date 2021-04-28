@@ -12,14 +12,18 @@ type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
 
 interface Props {
   title?: string;
+  navigation?: any;
   onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onPressFilter?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onPressSearch?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onPressReset?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   style?: CSSProperties;
   menu?: boolean;
   search?: boolean;
   time?: boolean;
   filter?: boolean;
+  history?: boolean;
+  reset?: boolean;
 }
 
 export default function ModeOption({
@@ -30,8 +34,12 @@ export default function ModeOption({
   time,
   search,
   filter,
+  history,
   onPressFilter,
   onPressSearch,
+  onPressReset,
+  navigation,
+  reset,
 }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
@@ -45,6 +53,15 @@ export default function ModeOption({
         <Text.Header style={{ fontSize: 16 }}>{title}</Text.Header>
       </View>
       <View style={{ flexDirection: "row" }}>
+        <View>
+          {history && (
+            <Icon
+              onPress={() => navigation.navigate("History")}
+              type="history"
+              marginRight
+            />
+          )}
+        </View>
         <View>
           {time && (
             <Icon
@@ -60,6 +77,11 @@ export default function ModeOption({
           )}
         </View>
         <View>
+          {reset && (
+            <Icon onPress={onPressReset as any} type="reset" marginRight />
+          )}
+        </View>
+        <View>
           {search && (
             <Icon
               onPress={onPressSearch} //() => dispatch(setSearch(true))
@@ -71,9 +93,6 @@ export default function ModeOption({
         <View>
           {menu && <Icon onPress={() => dispatch(setMenu(true))} type="menu" />}
         </View>
-        {/* <View>
-          {time && <Icon onPress={() => dispatch(se)} type="time" />}
-        </View> */}
       </View>
     </View>
   );

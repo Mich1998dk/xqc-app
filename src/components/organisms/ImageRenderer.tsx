@@ -5,6 +5,7 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,21 +20,23 @@ import {
   makeProjection,
   getImageInfo,
 } from "../../redux/reducers";
-import { HomeStackParamList, State } from "../../utils/types";
-import { IconButton, ImageOverlay } from "../molecules";
+import { HomeStackParamList, Obj, State } from "../../utils/types";
+import { IconButton, ImageOverlay, SubmitOverlay } from "../molecules";
 import { colors } from "../../utils/theme";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { setImageForProjection } from "../../redux/actions";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { showSubmitPopup } from "../../utils/helpers";
 
 type HomeProps = StackNavigationProp<HomeStackParamList>;
 
 interface Props {
   data: any;
   navigation: HomeProps;
+  time?: string;
 }
 
-export default function ImageRenderer({ data, navigation }: Props) {
+export default function ImageRenderer({ data, navigation, time }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
@@ -69,6 +72,12 @@ export default function ImageRenderer({ data, navigation }: Props) {
                     uri: item.imageURI,
                   }}
                 />
+                <SubmitOverlay
+                  onPress={() =>
+                    Alert.alert("Image Submitted!", item.thumbnail)
+                  }
+                />
+
                 <ImageOverlay
                   onPressNegative={() => {
                     dispatch(negativeExamplePressed(item));
@@ -87,13 +96,14 @@ export default function ImageRenderer({ data, navigation }: Props) {
       {redux.mode === "speed" && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
-          data={redux.images}
+          data={data || redux.images}
           style={{ paddingBottom: 80 }}
           numColumns={calculateColumnAmount()}
           keyExtractor={(item) => item.exqId.toString()}
-          renderItem={({ item, index }) => {
+          renderItem={({ item }) => {
             return (
               <View style={[styles.box]}>
+                <SubmitOverlay />
                 {/* //@ts-ignore */}
                 <Image
                   style={{
@@ -106,6 +116,15 @@ export default function ImageRenderer({ data, navigation }: Props) {
                     uri: item.imageURI,
                   }}
                 />
+                <SubmitOverlay
+                  onPress={() =>
+                    Alert.alert(
+                      "Image Submitted!",
+                      item.thumbnail + "\n Time: " + time
+                    )
+                  }
+                />
+
                 <ImageOverlay
                   onPressNegative={() => {
                     dispatch(negativeExamplePressed(item));

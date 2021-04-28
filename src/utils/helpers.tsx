@@ -37,7 +37,7 @@ export function getNumberOfImageByPlatformAndMode(mode: Mode) {
     if (isWeb) return 16;
     else return 6;
   }
-  if (mode === "projection"){
+  if (mode === "projection") {
     if (isWeb) return 12;
     else return 6;
   }
@@ -135,4 +135,8 @@ export const formatTime = (num: number) => {
   const str = num.toString();
   if (str.length === 1) return "0" + str;
   else return str;
+};
+
+export const showSubmitPopup = () => {
+  Alert.alert("Submitted", "hej");
 };

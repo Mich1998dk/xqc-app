@@ -49,23 +49,11 @@ export default function History({ navigation }: Props) {
           navigation.goBack();
         }}
       />
-      <ScrollView>
-        {redux.images.length > 0 && (
-          <ImageRenderer navigation={navigation as any} data={redux.seen} />
-        )}
-      </ScrollView>
+      {redux.images.length > 0 && (
+        <ImageRenderer navigation={navigation as any} data={redux.seen} />
+      )}
     </Container>
   );
 }
 
-const styles = StyleSheet.create({
-  box: {
-    width: calculateImageWidth(),
-    backgroundColor: "#393939",
-    marginTop: 10,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 200,
-  },
-});
+const styles = StyleSheet.create({});
