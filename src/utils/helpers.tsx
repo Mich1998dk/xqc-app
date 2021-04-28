@@ -41,7 +41,7 @@ export function getNumberOfImageByPlatformAndMode(mode: Mode) {
     if (isWeb) return 12;
     else return 6;
   }
-  return 50;
+  return 48;
 }
 
 export function formatFolderName(folderName: any) {
@@ -136,3 +136,45 @@ export const formatTime = (num: number) => {
   if (str.length === 1) return "0" + str;
   else return str;
 };
+
+export const getDayInNumber = (day: string) => {
+  switch (day) {
+    case "Monday": {
+      return 0;
+    }
+    case "Tuesday": {
+      return 1;
+    }
+    case "Wednesday": {
+      return 2;
+    }
+    case "Thursday": {
+      return 3;
+    }
+    case "Friday": {
+      return 4;
+    }
+    case "Saturday": {
+      return 5;
+    }
+    case "Sunday": {
+      return 6;
+    }
+  }
+}
+
+export const getYearInNumber = (year: number) => {
+  switch (year) {
+    case 2015: {
+      return 0;
+    }
+    case 2016: {
+      return 1;
+    }
+    case 2018: {
+      return 2;
+    }
+  }
+}
+
+
