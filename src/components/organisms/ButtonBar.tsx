@@ -39,6 +39,7 @@ export default function ButtonBar({
   const dispatch = useDispatch();
   const [lastUsed, setLastUsed] = useState<"random" | "update">();
 
+  const redux = useSelector((state: State) => state);
   return (
     <View style={styles.buttons}>
       {posAndNeg && (
@@ -86,9 +87,9 @@ export default function ButtonBar({
           />
           <IconButton
             title="APPLY FILTERS"
-            onPress={() => {
-              dispatch(applyFiltersAsync());
-              navigation.goBack();
+            onPress={async() => {
+                dispatch(applyFiltersAsync());
+                navigation.goBack();
             }}
           />
         </>

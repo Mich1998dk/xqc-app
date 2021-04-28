@@ -65,6 +65,7 @@ import moment from "moment";
 import axios from "axios";
 import { learn } from "../utils/api";
 import { deleteModelInAsyncStorage } from "../utils/storage";
+import {getYearInNumber, getDayInNumber} from "../utils/helpers";
 
 import {
   formatDate,
@@ -329,13 +330,21 @@ export const applyFiltersAsync = () => async (dispatch: any, getState: any) => {
     .then((res) => {
       console.log(res);
       dispatch(setSelectedFilter(getState().tempFilter));
-      customAlert("success", "The new filters has been set!");
     })
     .catch((err) => {
       console.log(err);
     });
 
-  dispatch(setLoading(false));
+    dispatch(setLoading(false));
+
+    if (getState().positives.length + getState().negatives.length > 0) 
+    {
+      customAlert("success", "The new filters have been applied!");
+      await dispatch(learnModelAsync());
+    } else {
+      customAlert("success", "The new filters have been applied. You will see the result after labelling a picture and training the model.")
+    }
+
 };
 
 export const getImageInfo = (id: number) => async (
@@ -765,3 +774,4 @@ export const replaceImageAsync = (index: number) => async (
       dispatch(setLoading(false));
     });
 };
+
