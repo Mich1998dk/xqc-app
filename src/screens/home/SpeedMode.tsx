@@ -130,7 +130,7 @@ export default function SpeedMode({ navigation, route }: Props) {
         )}
       </ScrollView>
 
-      <ButtonBar navigation={navigation} randomSet update history />
+      <ButtonBar navigation={navigation} randomSet update />
     </Container>
   );
 }

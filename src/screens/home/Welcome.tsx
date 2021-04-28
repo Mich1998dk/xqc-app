@@ -27,11 +27,7 @@ export default function Welcome({ navigation }: Props) {
   }, [navigation]);
 
   return (
-    <Container
-      style={{ alignItems: "center", justifyContent: "space-around" }}
-      loadingTitle="Setting up the app.."
-      loading={redux.loading}
-    >
+    <Container style={{ alignItems: "center", justifyContent: "space-around" }}>
       <Text.Title>XQC</Text.Title>
 
       <View style={{ width: "100%", alignItems: "center" }}>

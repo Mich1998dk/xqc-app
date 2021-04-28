@@ -55,6 +55,9 @@ export default function ProjectionMode({ navigation, route }: Props) {
           }}
         />
         <View style={styles.rightInfo}>
+          {redux.imageInfo?.name && (
+            <Text.Button>Name: {redux.imageInfo?.name}</Text.Button>
+          )}
           {redux.imageInfo?.day !== "unknown" && (
             <Text.Button>Location: {redux.imageInfo?.day}</Text.Button>
           )}
