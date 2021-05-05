@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Platform,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -26,7 +27,7 @@ import { colors } from "../../utils/theme";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { setImageForProjection } from "../../redux/actions";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { showSubmitPopup } from "../../utils/helpers";
+import { customAlert, showSubmitPopup } from "../../utils/helpers";
 
 type HomeProps = StackNavigationProp<HomeStackParamList>;
 
@@ -72,11 +73,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
                     uri: item.imageURI,
                   }}
                 />
-                <SubmitOverlay
-                  onPress={() =>
-                    Alert.alert("Image Submitted!", item.thumbnail)
-                  }
-                />
+                <SubmitOverlay thumbnail={item.thumbnail} />
 
                 <ImageOverlay
                   onPressNegative={() => {
@@ -117,12 +114,13 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
                   }}
                 />
                 <SubmitOverlay
-                  onPress={() =>
-                    Alert.alert(
-                      "Image Submitted!",
-                      item.thumbnail + "\n Time: " + time
-                    )
-                  }
+                  onPressSubmit={() => {
+                    if (Platform.OS === "web") {
+                      customAlert("success", "Image: " + item.thumbnail);
+                    } else {
+                      alert("Image: " + item.thumbnail);
+                    }
+                  }}
                 />
 
                 <ImageOverlay

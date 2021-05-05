@@ -1,19 +1,21 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { customAlert } from "../../utils/helpers";
 import { fonts, colors, sizes } from "../../utils/theme";
 import * as Text from "../atoms/Text";
 
 interface Props {
-  onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onPressSubmit?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  thumbnail?: string;
 }
 
-export default function SubmitOverlay({ onPress }: Props) {
+export default function SubmitOverlay({ onPressSubmit, thumbnail }: Props) {
   return (
     <View style={styles.container}>
       <View style={[styles.submitContainer, styles.positive]}></View>
       <TouchableOpacity
-        onPress={onPress as any}
+        onPress={onPressSubmit as any}
         style={[styles.submitContainer, styles.submit]}
       >
         <Text.Button>S</Text.Button>

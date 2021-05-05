@@ -100,49 +100,51 @@ export default function Search({ navigation, route }: Props) {
             </Text.Button>
           </View>
         )}
+        <ScrollView>
+          {(redux.searchResults.length === 0 || state.search.length > 0) && (
+            <FlatList
+              data={search}
+              style={{ height: 600 }}
+              keyExtractor={(item) => item.toString()}
+              renderItem={({ item, index }) => {
+                return (
+                  <TouchableHighlight
+                    underlayColor={colors.box}
+                    style={styles.result}
+                    onPress={() => {
+                      if (mode === "terms") {
+                        dispatch(searchAsync(item));
+                        setState({
+                          ...state,
+                          search: "",
+                          currentlySearched: item,
+                        });
+                      }
 
-        {(redux.searchResults.length === 0 || state.search.length > 0) && (
-          <FlatList
-            data={search}
-            style={{ height: 600 }}
-            keyExtractor={(item) => item.toString()}
-            renderItem={({ item, index }) => {
-              return (
-                <TouchableHighlight
-                  underlayColor={colors.box}
-                  style={styles.result}
-                  onPress={() => {
-                    if (mode === "terms") {
-                      dispatch(searchAsync(item));
-                      setState({
-                        ...state,
-                        search: "",
-                        currentlySearched: item,
-                      });
-                    }
+                      if (mode === "locations") {
+                        dispatch(
+                          setTempFilter({
+                            ...redux.tempFilter,
+                            locations: [
+                              ...redux.tempFilter.locations,
+                              getIndexOfSelected(item),
+                            ],
+                          })
+                        );
+                        navigation.goBack();
+                      }
+                    }}
+                  >
+                    <Text.Button style={{ fontSize: sizes.base16 }}>
+                      {item}
+                    </Text.Button>
+                  </TouchableHighlight>
+                );
+              }}
+            />
+          )}
+        </ScrollView>
 
-                    if (mode === "locations") {
-                      dispatch(
-                        setTempFilter({
-                          ...redux.tempFilter,
-                          locations: [
-                            ...redux.tempFilter.locations,
-                            getIndexOfSelected(item),
-                          ],
-                        })
-                      );
-                      navigation.goBack();
-                    }
-                  }}
-                >
-                  <Text.Button style={{ fontSize: sizes.base16 }}>
-                    {item}
-                  </Text.Button>
-                </TouchableHighlight>
-              );
-            }}
-          />
-        )}
         {redux.searchResults.length > 0 && state.search.length === 0 && (
           <ImageRenderer data={redux.searchResults} navigation={navigation} />
         )}

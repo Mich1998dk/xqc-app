@@ -24,6 +24,7 @@ interface Props {
   filter?: boolean;
   history?: boolean;
   reset?: boolean;
+  hideBack?: boolean;
 }
 
 export default function ModeOption({
@@ -40,6 +41,7 @@ export default function ModeOption({
   onPressReset,
   navigation,
   reset,
+  hideBack,
 }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
@@ -47,7 +49,11 @@ export default function ModeOption({
   return (
     <View style={[styles.container, style as any]}>
       <View style={{ zIndex: 2 }}>
-        <Icon type="back" onPress={onPress as any} />
+        {!hideBack && (
+          <View>
+            <Icon type="back" onPress={onPress as any} />
+          </View>
+        )}
       </View>
       <View style={styles.title}>
         <Text.Header style={{ fontSize: 16 }}>{title}</Text.Header>

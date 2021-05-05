@@ -1,10 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": 19000,
+  "expoServerPort": null,
   "packagerPort": 19000,
-  "expoServerNgrokUrl": "https://hu-4r4.anonymous.xqc-app.exp.direct",
-  "packagerNgrokUrl": "https://packager.hu-4r4.anonymous.xqc-app.exp.direct",
-  "ngrokPid": 75247,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
   "webpackServerPort": 19006,
   "packagerPid": null
 }

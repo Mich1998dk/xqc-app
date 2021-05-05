@@ -47,7 +47,7 @@ export default function Info({ navigation }: Props) {
           </Text.Regular>
         </View>
         <View style={styles.container}>
-          <Icon type="menu" />
+          <Icon type="time" />
           <Text.Header style={{ marginVertical: 10 }}>Timer</Text.Header>
           <Text.Regular>
             The time button is only available in speed mode and allows the user

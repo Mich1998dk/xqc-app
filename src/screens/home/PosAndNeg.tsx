@@ -14,6 +14,7 @@ import { Container } from "../../containers/index";
 import {} from "../../redux/reducers";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { removeNegative, removePositive } from "../../redux/actions";
+import { ImageRenderer } from "../../components/organisms";
 
 type PosAndNegProps = StackNavigationProp<HomeStackParamList, "Welcome">;
 
@@ -22,7 +23,7 @@ type Props = {
 };
 
 export default function PosAndNeg({ navigation }: Props) {
-  const [state, setState] = useState({ loading: false, selected: "negative" });
+  const [state, setState] = useState({ loading: false, selected: "positive" });
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
@@ -38,50 +39,64 @@ export default function PosAndNeg({ navigation }: Props) {
         <IconButton
           title="NEGATIVE"
           onPress={() => setState({ ...state, selected: "negative" })}
-          secondary={state.selected === "positive"}
+          secondary={state.selected !== "negative"}
           style={{ marginRight: 10 }}
         />
         <IconButton
           title="POSITIVE"
           onPress={() => setState({ ...state, selected: "positive" })}
-          secondary={state.selected === "negative"}
+          secondary={state.selected !== "positive"}
+          style={{ marginRight: 10 }}
+        />
+        <IconButton
+          title="HISTORY"
+          onPress={() => setState({ ...state, selected: "history" })}
+          secondary={state.selected !== "history"}
         />
       </View>
-      <FlatList
-        columnWrapperStyle={{ justifyContent: "space-between" }}
-        data={state.selected === "negative" ? redux.negatives : redux.positives}
-        numColumns={calculateColumnAmount()}
-        style={{ paddingBottom: 80 }}
-        keyExtractor={(item) => item.exqId.toString()}
-        renderItem={({ item, index }) => {
-          return (
-            <View style={styles.box}>
-              {/* //@ts-ignore */}
-              <Image
-                style={{
-                  width: "100%",
-                  height: 200,
-                  resizeMode: "stretch",
-                  borderRadius: 12,
-                }}
-                source={{
-                  uri: item.imageURI,
-                }}
-              />
-              <RMOverlay
-                onClick={() => {
-                  if (state.selected === "negative") {
-                    dispatch(removeNegative(item));
-                  }
-                  if (state.selected === "positive") {
-                    dispatch(removePositive(item));
-                  }
-                }}
-              />
-            </View>
-          );
-        }}
-      />
+      {state.selected !== "history" && (
+        <FlatList
+          columnWrapperStyle={{ justifyContent: "space-between" }}
+          data={
+            state.selected === "negative" ? redux.negatives : redux.positives
+          }
+          numColumns={calculateColumnAmount()}
+          style={{ paddingBottom: 80 }}
+          keyExtractor={(item) => item.exqId.toString()}
+          renderItem={({ item, index }) => {
+            return (
+              <View style={styles.box}>
+                {/* //@ts-ignore */}
+                <Image
+                  style={{
+                    width: "100%",
+                    height: 200,
+                    resizeMode: "stretch",
+                    borderRadius: 12,
+                  }}
+                  source={{
+                    uri: item.imageURI,
+                  }}
+                />
+                <RMOverlay
+                  onClick={() => {
+                    if (state.selected === "negative") {
+                      dispatch(removeNegative(item));
+                    }
+                    if (state.selected === "positive") {
+                      dispatch(removePositive(item));
+                    }
+                  }}
+                />
+              </View>
+            );
+          }}
+        />
+      )}
+
+      {state.selected === "history" && (
+        <ImageRenderer navigation={navigation as any} data={redux.seen} />
+      )}
     </Container>
   );
 }

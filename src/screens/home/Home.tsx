@@ -53,6 +53,7 @@ export default function Home({ navigation, route }: Props) {
           dispatch(reset());
           navigation.goBack();
         }}
+        hideBack
         menu
         filter
         onPressFilter={() => navigation.navigate("Filter")}

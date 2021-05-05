@@ -99,6 +99,7 @@ export default function SpeedMode({ navigation, route }: Props) {
   return (
     <Container navigation={navigation} model={loadModel}>
       <Header
+        hideBack
         title={Platform.OS === "web" ? "SPEED" : ""}
         onPress={() => {
           dispatch(reset());
@@ -106,7 +107,6 @@ export default function SpeedMode({ navigation, route }: Props) {
         }}
         navigation={navigation}
         filter
-        history
         onPressFilter={() => navigation.navigate("Filter")}
         search
         onPressSearch={() => {

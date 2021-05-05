@@ -12,7 +12,7 @@ import { colors } from "../utils/theme";
 import { StatusBar } from "expo-status-bar";
 import { useSelector, useDispatch } from "react-redux";
 import { Model, State } from "../utils/types";
-import { resetModelAsync } from "../redux/reducers";
+import { reset, resetModelAsync } from "../redux/reducers";
 import { setMenu } from "../redux/actions";
 import { saveModelInAsyncStorage } from "../utils/storage";
 import { customAlert } from "../utils/helpers";
@@ -74,6 +74,11 @@ export default function Container({
       {redux.search && <Search />}
       {redux.menu && (
         <Menu
+          onExit={() => {
+            dispatch(setMenu(false));
+            dispatch(reset());
+            navigation?.goBack();
+          }}
           onClickHelp={() => {
             dispatch(setMenu(false));
             navigation?.navigate("Info");
