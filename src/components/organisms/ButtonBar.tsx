@@ -87,9 +87,9 @@ export default function ButtonBar({
           />
           <IconButton
             title="APPLY FILTERS"
-            onPress={async() => {
-                dispatch(applyFiltersAsync());
-                navigation.goBack();
+            onPress={async () => {
+              dispatch(applyFiltersAsync());
+              navigation.goBack();
             }}
           />
         </>
@@ -98,7 +98,7 @@ export default function ButtonBar({
       {update && (
         <IconButton
           title="UPDATE ALL"
-          type="update"
+          //type="update"
           secondary={lastUsed !== "update"}
           onPress={() => {
             setLastUsed("update");
