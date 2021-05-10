@@ -8,6 +8,7 @@ import {
   ModeOption,
   IconButton,
   RMOverlay,
+  SubmitOverlay,
 } from "../../components/molecules/index";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
@@ -15,6 +16,7 @@ import {} from "../../redux/reducers";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { removeNegative, removePositive } from "../../redux/actions";
 import { ImageRenderer } from "../../components/organisms";
+import { customAlert } from "../../utils/helpers";
 
 type PosAndNegProps = StackNavigationProp<HomeStackParamList, "Welcome">;
 
@@ -77,6 +79,9 @@ export default function PosAndNeg({ navigation }: Props) {
                   source={{
                     uri: item.imageURI,
                   }}
+                />
+                <SubmitOverlay
+                  onPressSubmit={() => customAlert("success", item.thumbnail)}
                 />
                 <RMOverlay
                   onClick={() => {

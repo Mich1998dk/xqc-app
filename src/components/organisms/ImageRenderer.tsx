@@ -73,7 +73,10 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
                     uri: item.imageURI,
                   }}
                 />
-                <SubmitOverlay thumbnail={item.thumbnail} />
+                <SubmitOverlay
+                  onPressSubmit={() => customAlert("success", item.thumbnail)}
+                  thumbnail={item.thumbnail}
+                />
 
                 <ImageOverlay
                   onPressNegative={() => {
