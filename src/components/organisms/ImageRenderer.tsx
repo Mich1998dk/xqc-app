@@ -47,7 +47,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
           data={data}
-          style={{ paddingBottom: 80 }}
+          style={{ paddingBottom: 60 }}
           numColumns={calculateColumnAmount()}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
@@ -65,7 +65,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
                 <Image
                   style={{
                     width: "100%",
-                    height: 200,
+                    height: 180,
                     resizeMode: "stretch",
                     borderRadius: 12,
                   }}
@@ -105,7 +105,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
                 <Image
                   style={{
                     width: "100%",
-                    height: 200,
+                    height: 160,
                     resizeMode: "stretch",
                     borderRadius: 12,
                   }}
@@ -153,6 +153,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    height: 200,
+    height: 160,
   },
 });

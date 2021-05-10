@@ -178,8 +178,6 @@ export default function Filter({ navigation, route }: Props) {
       <Header title="Filters" onPress={() => navigation.goBack()} />
       <Text.Button>Activities</Text.Button>
       <View style={styles.filters}>{renderActivities()}</View>
-      <Text.Button>Years</Text.Button>
-      <View style={styles.filters}>{renderYears()}</View>
       <Text.Button>Days</Text.Button>
       <View style={styles.filters}>{renderDays()}</View>
 
