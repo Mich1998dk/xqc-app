@@ -7,6 +7,7 @@ import {
   applyFiltersAsync,
   randomSetAsync,
   resetModelAsync,
+  resetFiltersAsync,
 } from "../../redux/reducers";
 import { State } from "../../utils/types";
 import { IconButton } from "../molecules";
@@ -80,7 +81,7 @@ export default function ButtonBar({
           <IconButton
             title="RESET FILTERS"
             onPress={() => {
-              dispatch(resetModelAsync());
+              dispatch(resetFiltersAsync());
             }}
             style={{ marginRight: 10 }}
             secondary

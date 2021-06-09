@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -27,6 +27,7 @@ import { colors } from "../../utils/theme";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { setImageForProjection } from "../../redux/actions";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { LogBox } from "react-native";
 import { customAlert, showSubmitPopup } from "../../utils/helpers";
 
 type HomeProps = StackNavigationProp<HomeStackParamList>;
@@ -40,6 +41,16 @@ interface Props {
 export default function ImageRenderer({ data, navigation, time }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
+
+  console.log("Length");
+
+  console.log(data.length);
+
+  useEffect(() => {
+    if (Platform.OS !== "web") {
+      LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+    }
+  }, []);
 
   return (
     <View style={styles.container}>

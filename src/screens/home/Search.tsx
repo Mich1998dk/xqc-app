@@ -143,8 +143,6 @@ export default function Search({ navigation, route }: Props) {
               }}
             />
           )}
-        </ScrollView>
-        <ScrollView>
           {redux.searchResults.length > 0 && state.search.length === 0 && (
             <ImageRenderer data={redux.searchResults} navigation={navigation} />
           )}

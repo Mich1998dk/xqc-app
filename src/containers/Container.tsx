@@ -52,7 +52,7 @@ export default function Container({
     };
 
     await saveModelInAsyncStorage(tempModel);
-    customAlert("success", "Your model has been saved!");
+    customAlert("success", " has been saved!");
     dispatch(setMenu(false));
   };
 

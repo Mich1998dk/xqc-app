@@ -65,7 +65,7 @@ import moment from "moment";
 import axios from "axios";
 import { learn } from "../utils/api";
 import { deleteModelInAsyncStorage } from "../utils/storage";
-import {getYearInNumber, getDayInNumber} from "../utils/helpers";
+import { getYearInNumber, getDayInNumber } from "../utils/helpers";
 
 import {
   formatDate,
@@ -231,7 +231,6 @@ export const reducer = (state = initialState, action: any) => {
 };
 
 export const reset = () => async (dispatch: any, getState: any) => {
-  dispatch(setSeen([]));
   dispatch(
     setTempFilter({
       activities: [],
@@ -241,6 +240,8 @@ export const reset = () => async (dispatch: any, getState: any) => {
       time: { start: 0, end: 0 },
     })
   );
+  dispatch(resetFiltersAsync());
+  dispatch(setSeen([]));
 };
 
 export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
@@ -335,187 +336,179 @@ export const applyFiltersAsync = () => async (dispatch: any, getState: any) => {
       console.log(err);
     });
 
-    dispatch(setLoading(false));
+  dispatch(setLoading(false));
 
-    if (getState().positives.length + getState().negatives.length > 0) 
-    {
-      customAlert("success", "The new filters have been applied!");
-      await dispatch(learnModelAsync());
-    } else {
-      customAlert("success", "The new filters have been applied. You will see the result after labelling a picture and training the model.")
+  if (getState().positives.length + getState().negatives.length > 0) {
+    customAlert("success", "The new filters have been applied!");
+    await dispatch(learnModelAsync());
+  } else {
+    customAlert(
+      "success",
+      "The new filters have been applied. You will see the result after labelling a picture and training the model."
+    );
+  }
+};
+
+export const getImageInfo =
+  (id: number) => async (dispatch: any, getState: any) => {
+    await fetch(`${URL}/getImageInfo`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    })
+      .then((resp) => resp.json())
+      .then((res) => {
+        console.log(res);
+        dispatch(setImageInfo(res));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+export const searchAsync =
+  (term: string) => async (dispatch: any, getState: any) => {
+    dispatch(setLoading(true));
+
+    await fetch(`${URL}/getSearchItems`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        terms: [term],
+        mod: "vis",
+        page_items: 50,
+      }),
+    })
+      .then((resp) => resp.json())
+      .then((res) => {
+        console.log(res.imgLocations.length);
+
+        const images = formatObjectsFromMediaInfo(
+          getState().mediaInfo,
+          res.imgLocations
+        );
+        console.log("SIZE OF RESULTS: " + images.length);
+
+        //dispatch(setImages(images));
+        dispatch(setSearchResults(images));
+        dispatch(updateSeen(images));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    dispatch(setLoading(false));
+  };
+
+export const negativeExamplePressed =
+  (item: Obj) => async (dispatch: any, getState: any) => {
+    //Check if it is in positives
+    if (getState().positives.includes(item)) {
+      //If it is in negatives, remove it and add to positives
+      dispatch(removePositive(item));
     }
 
-};
+    if (getState().negatives.includes(item)) {
+      //If the item is already in it, we would like to delete it
+      dispatch(removeNegative(item));
+    } else {
+      //Add to positives
+      dispatch(setNegative([...getState().negatives, item]));
+    }
+  };
 
-export const getImageInfo = (id: number) => async (
-  dispatch: any,
-  getState: any
-) => {
-  await fetch(`${URL}/getImageInfo`, {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: id,
-    }),
-  })
-    .then((resp) => resp.json())
-    .then((res) => {
-      console.log(res);
-      dispatch(setImageInfo(res));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+export const positiveExamplePressed =
+  (item: Obj) => async (dispatch: any, getState: any) => {
+    //Check if it is in positives
+    if (getState().negatives.includes(item)) {
+      //If it is in negatives, remove it and add to positives
+      dispatch(removeNegative(item));
+    }
 
-export const searchAsync = (term: string) => async (
-  dispatch: any,
-  getState: any
-) => {
-  dispatch(setLoading(true));
+    if (getState().positives.includes(item)) {
+      //If the item is already in it, we would like to delete it
+      dispatch(removePositive(item));
+    } else {
+      //Add to positives
+      dispatch(setPositive([...getState().positives, item]));
+    }
+  };
 
-  await fetch(`${URL}/getSearchItems`, {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      terms: [term],
-      mod: "vis",
-      page_items: 50,
-    }),
-  })
-    .then((resp) => resp.json())
-    .then((res) => {
-      console.log(res.imgLocations.length);
+export const learnWithProjectedImageAsync =
+  (label: "positive" | "negative") => async (dispatch: any, getState: any) => {
+    dispatch(setLoading(true));
 
-      const images = formatObjectsFromMediaInfo(
-        getState().mediaInfo,
-        res.imgLocations
-      );
-      //dispatch(setImages(images));
-      dispatch(setSearchResults(images));
-      dispatch(updateSeen(images));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    const pos: Obj[] = getState().positiveProjection;
 
-  dispatch(setLoading(false));
-};
+    const neg: Obj[] = getState().negativeProjection;
 
-export const negativeExamplePressed = (item: Obj) => async (
-  dispatch: any,
-  getState: any
-) => {
-  //Check if it is in positives
-  if (getState().positives.includes(item)) {
-    //If it is in negatives, remove it and add to positives
-    dispatch(removePositive(item));
-  }
+    const img: Obj = getState().imageForProjection;
 
-  if (getState().negatives.includes(item)) {
-    //If the item is already in it, we would like to delete it
-    dispatch(removeNegative(item));
-  } else {
-    //Add to positives
-    dispatch(setNegative([...getState().negatives, item]));
-  }
-};
+    if (label == "negative") {
+      await dispatch(setNegative([...getState().negatives, img]));
+      dispatch(setImages(neg));
+      dispatch(updateSeen(neg));
+    }
+    if (label == "positive") {
+      await dispatch(setPositive([...getState().positives, img]));
+      dispatch(setImages(pos));
+      dispatch(updateSeen(pos));
+    }
 
-export const positiveExamplePressed = (item: Obj) => async (
-  dispatch: any,
-  getState: any
-) => {
-  //Check if it is in positives
-  if (getState().negatives.includes(item)) {
-    //If it is in negatives, remove it and add to positives
-    dispatch(removeNegative(item));
-  }
+    dispatch(setNegativeProjection([]));
+    dispatch(setPositiveProjection([]));
+    dispatch(setLoading(false));
+  };
 
-  if (getState().positives.includes(item)) {
-    //If the item is already in it, we would like to delete it
-    dispatch(removePositive(item));
-  } else {
-    //Add to positives
-    dispatch(setPositive([...getState().positives, item]));
-  }
-};
+export const makeProjection =
+  (obj: Obj) => async (dispatch: any, getState: any) => {
+    dispatch(setLoading(true));
 
-export const learnWithProjectedImageAsync = (
-  label: "positive" | "negative"
-) => async (dispatch: any, getState: any) => {
-  dispatch(setLoading(true));
+    //Prepare with the image in positives
+    const tempPos: Obj[] = [...getState().positives, obj];
+    const pos: number[] = tempPos.map((item: Obj) => item.exqId);
+    const currentNeg: number[] = getState().negatives.map(
+      (item: Obj) => item.exqId
+    );
 
-  const pos: Obj[] = getState().positiveProjection;
+    //Prepare with the image in negatives
+    const tempNeg = [...getState().negatives, obj];
+    const neg: number[] = tempNeg.map((item: Obj) => item.exqId);
+    const currentPos: number[] = getState().positives.map(
+      (item: Obj) => item.exqId
+    );
 
-  const neg: Obj[] = getState().negativeProjection;
+    //Prepare seen
+    const seen: number[] = getState().seen.map((item: Obj) => item.exqId);
 
-  const img: Obj = getState().imageForProjection;
+    //First learn with the current positives with the added image + the current negatives
+    await learn(pos, currentNeg, seen, "projection", getState().user)
+      .then((res) => {
+        var posProjection = formatBackendDataToImageObjects(res);
+        dispatch(setPositiveProjection(posProjection));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-  if (label == "negative") {
-    await dispatch(setNegative([...getState().negatives, img]));
-    dispatch(setImages(neg));
-    dispatch(updateSeen(neg));
-  }
-  if (label == "positive") {
-    await dispatch(setPositive([...getState().positives, img]));
-    dispatch(setImages(pos));
-    dispatch(updateSeen(pos));
-  }
+    //Then learn with the current negatives with the added image + the current positives
+    await learn(currentPos, neg, seen, "projection", getState().user)
+      .then((res) => {
+        var negProjection = formatBackendDataToImageObjects(res);
+        dispatch(setNegativeProjection(negProjection));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-  dispatch(setNegativeProjection([]));
-  dispatch(setPositiveProjection([]));
-  dispatch(setLoading(false));
-};
-
-export const makeProjection = (obj: Obj) => async (
-  dispatch: any,
-  getState: any
-) => {
-  dispatch(setLoading(true));
-
-  //Prepare with the image in positives
-  const tempPos: Obj[] = [...getState().positives, obj];
-  const pos: number[] = tempPos.map((item: Obj) => item.exqId);
-  const currentNeg: number[] = getState().negatives.map(
-    (item: Obj) => item.exqId
-  );
-
-  //Prepare with the image in negatives
-  const tempNeg = [...getState().negatives, obj];
-  const neg: number[] = tempNeg.map((item: Obj) => item.exqId);
-  const currentPos: number[] = getState().positives.map(
-    (item: Obj) => item.exqId
-  );
-
-  //Prepare seen
-  const seen: number[] = getState().seen.map((item: Obj) => item.exqId);
-
-  //First learn with the current positives with the added image + the current negatives
-  await learn(pos, currentNeg, seen, "projection", getState().user)
-    .then((res) => {
-      var posProjection = formatBackendDataToImageObjects(res);
-      dispatch(setPositiveProjection(posProjection));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-
-  //Then learn with the current negatives with the added image + the current positives
-  await learn(currentPos, neg, seen, "projection", getState().user)
-    .then((res) => {
-      var negProjection = formatBackendDataToImageObjects(res);
-      dispatch(setNegativeProjection(negProjection));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-
-  dispatch(setLoading(false));
-};
+    dispatch(setLoading(false));
+  };
 
 export const learnModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
@@ -617,63 +610,59 @@ export const randomSetAsync = () => async (dispatch: any, getState: any) => {
     });
 };
 
-export const initExquisitorAsync = () => async (
-  dispatch: any,
-  getState: any
-) => {
-  dispatch(setLoading(true));
-  await fetch(`${URL}/initExquisitor`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((resp) => resp.json())
-    .then((res) => {
-      console.log("INIT");
-      console.log(res);
-      dispatch(
-        setFilter({ activities: res.activities, locations: res.locations })
-      );
-      dispatch(setUser(res.user));
-
-      dispatch(setMediaInfo(res.mediainfo));
-      dispatch(setTerms(res.vis_terms));
-      dispatch(setLoading(false));
+export const initExquisitorAsync =
+  () => async (dispatch: any, getState: any) => {
+    dispatch(setLoading(true));
+    await fetch(`${URL}/initExquisitor`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-    .catch((err) => {
-      dispatch(setLoading(false));
-      customAlert("error", err);
+      .then((resp) => resp.json())
+      .then((res) => {
+        console.log("INIT");
+        console.log(res);
+        dispatch(
+          setFilter({ activities: res.activities, locations: res.locations })
+        );
+        dispatch(setUser(res.user));
+
+        dispatch(setMediaInfo(res.mediainfo));
+        dispatch(setTerms(res.vis_terms));
+        dispatch(setLoading(false));
+      })
+      .catch((err) => {
+        dispatch(setLoading(false));
+        customAlert("error", err);
+      });
+  };
+
+export const initExistingModel =
+  (lastSeen: Obj[]) => async (dispatch: any, getState: any) => {
+    const body = JSON.stringify({
+      ids: lastSeen.map((item) => item.exqId),
+      user: getState().user,
+      model: 0,
     });
-};
 
-export const initExistingModel = (lastSeen: Obj[]) => async (
-  dispatch: any,
-  getState: any
-) => {
-  const body = JSON.stringify({
-    ids: lastSeen.map((item) => item.exqId),
-    user: getState().user,
-    model: 0,
-  });
-
-  await fetch(`${URL}/initModel`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: body,
-  })
-    .then((resp) => resp.json())
-    .then((res) => {
-      console.log(res);
-      dispatch(setLoading(false));
+    await fetch(`${URL}/initModel`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
     })
-    .catch((err) => {
-      dispatch(setLoading(false));
-      console.log(err);
-    });
-};
+      .then((resp) => resp.json())
+      .then((res) => {
+        console.log(res);
+        dispatch(setLoading(false));
+      })
+      .catch((err) => {
+        dispatch(setLoading(false));
+        console.log(err);
+      });
+  };
 
 export const initModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
@@ -724,54 +713,49 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(false));
 };
 
-export const deleteModelAsync = (name: string) => async (
-  dispatch: any,
-  getState: any
-) => {
-  deleteModelInAsyncStorage(name);
-};
+export const deleteModelAsync =
+  (name: string) => async (dispatch: any, getState: any) => {
+    deleteModelInAsyncStorage(name);
+  };
 
-export const replaceImageAsync = (index: number) => async (
-  dispatch: any,
-  getState: any
-) => {
-  dispatch(setLoading(true));
-  var pos = getState().positives.map((item: Obj) => item.exqId);
-  var neg = getState().negatives.map((item: Obj) => item.exqId);
-  var seen = getState().seen.map((item: Obj) => item.exqId);
+export const replaceImageAsync =
+  (index: number) => async (dispatch: any, getState: any) => {
+    dispatch(setLoading(true));
+    var pos = getState().positives.map((item: Obj) => item.exqId);
+    var neg = getState().negatives.map((item: Obj) => item.exqId);
+    var seen = getState().seen.map((item: Obj) => item.exqId);
 
-  dispatch(setLoading(false));
+    dispatch(setLoading(false));
 
-  let objects: Obj[] = [];
+    let objects: Obj[] = [];
 
-  learn(pos, neg, seen, getState().mode, getState().user)
-    .then((res) => {
-      let loc = res.data.img_locations[0];
-      let suggestion = res.data.sugg[0];
-      var folderName = formatImgLocationToFolderName(loc);
+    learn(pos, neg, seen, getState().mode, getState().user)
+      .then((res) => {
+        let loc = res.data.img_locations[0];
+        let suggestion = res.data.sugg[0];
+        var folderName = formatImgLocationToFolderName(loc);
 
-      var newObj: Obj = {
-        exqId: suggestion,
-        thumbnail: formatToLocation(loc),
-        folderName: "",
-        shotId: 6,
-        imageURI: `http://bjth.itu.dk:5003/${formatFolderName(
-          folderName
-        )}/${formatToLocation(loc)}`,
-      };
-      console.log("HEEEEEEEJ******'");
-      console.log(newObj);
+        var newObj: Obj = {
+          exqId: suggestion,
+          thumbnail: formatToLocation(loc),
+          folderName: "",
+          shotId: 6,
+          imageURI: `http://bjth.itu.dk:5003/${formatFolderName(
+            folderName
+          )}/${formatToLocation(loc)}`,
+        };
+        console.log("HEEEEEEEJ******'");
+        console.log(newObj);
 
-      dispatch(updateSeen([newObj]));
+        dispatch(updateSeen([newObj]));
 
-      objects.push(newObj);
-      dispatch(replaceImage(newObj, index));
+        objects.push(newObj);
+        dispatch(replaceImage(newObj, index));
 
-      dispatch(setLoading(false));
-    })
-    .catch((err) => {
-      console.log(err);
-      dispatch(setLoading(false));
-    });
-};
-
+        dispatch(setLoading(false));
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(setLoading(false));
+      });
+  };
