@@ -122,6 +122,8 @@ export default function Search({ navigation, route }: Props) {
                       }
 
                       if (mode === "locations") {
+                        console.log(redux.filter.locations);
+
                         dispatch(
                           setTempFilter({
                             ...redux.tempFilter,

@@ -268,7 +268,7 @@ export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
           },
         })
       );
-      dispatch(setFilter({ activities: [], locations: [] }));
+      //dispatch(setFilter({ activities: [], locations: [] }));
       customAlert("success", "Filters has been reset!");
     })
     .catch((err) => {
@@ -613,6 +613,8 @@ export const randomSetAsync = () => async (dispatch: any, getState: any) => {
 export const initExquisitorAsync =
   () => async (dispatch: any, getState: any) => {
     dispatch(setLoading(true));
+    console.log("Init");
+
     await fetch(`${URL}/initExquisitor`, {
       method: "POST",
       headers: {
@@ -634,6 +636,7 @@ export const initExquisitorAsync =
       })
       .catch((err) => {
         dispatch(setLoading(false));
+        console.log("Init failed");
         customAlert("error", err);
       });
   };

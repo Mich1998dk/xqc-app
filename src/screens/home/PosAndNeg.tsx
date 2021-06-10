@@ -72,7 +72,7 @@ export default function PosAndNeg({ navigation }: Props) {
                 <Image
                   style={{
                     width: "100%",
-                    height: 200,
+                    height: 180,
                     resizeMode: "stretch",
                     borderRadius: 12,
                   }}
