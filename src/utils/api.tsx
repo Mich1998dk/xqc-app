@@ -22,7 +22,7 @@ export const learn = async (
   console.log(body);
 
   const res = await axios({
-    method: "post",
+    method: "POST",
     url: `${URL}/learn`,
     data: body,
     headers: {

@@ -20,6 +20,7 @@ import {
   replaceImageAsync,
   makeProjection,
   getImageInfo,
+  submitImage,
 } from "../../redux/reducers";
 import { HomeStackParamList, Obj, State } from "../../utils/types";
 import { IconButton, ImageOverlay, SubmitOverlay } from "../molecules";
@@ -27,7 +28,7 @@ import { colors } from "../../utils/theme";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { setImageForProjection } from "../../redux/actions";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { LogBox } from "react-native";
+//import { LogBox } from "react-native";
 import { customAlert, showSubmitPopup } from "../../utils/helpers";
 
 type HomeProps = StackNavigationProp<HomeStackParamList>;
@@ -48,7 +49,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
 
   useEffect(() => {
     if (Platform.OS !== "web") {
-      LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+      //LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     }
   }, []);
 
@@ -85,7 +86,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
                   }}
                 />
                 <SubmitOverlay
-                  onPressSubmit={() => customAlert("success", item.thumbnail)}
+                  onPressSubmit={() => dispatch(submitImage(item.exqId))}
                   thumbnail={item.thumbnail}
                 />
 
@@ -130,9 +131,14 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
                 <SubmitOverlay
                   onPressSubmit={() => {
                     if (Platform.OS === "web") {
-                      customAlert("success", "Image: " + item.thumbnail);
+                      //customAlert("success", "Image: " + item.thumbnail);
+                      console.log("SUBMITTING IMAGE: " + item.thumbnail);
+
+                      dispatch(submitImage(item.exqId));
                     } else {
-                      alert("Image: " + item.thumbnail);
+                      //alert("Image: " + item.thumbnail);
+                      console.log("SUBMITTING IMAGE: " + item.thumbnail);
+                      dispatch(submitImage(item.exqId));
                     }
                   }}
                 />

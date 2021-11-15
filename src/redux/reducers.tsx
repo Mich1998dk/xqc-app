@@ -546,6 +546,7 @@ export const learnModelAsync = () => async (dispatch: any, getState: any) => {
 export const resetModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true));
   dispatch(setImages([]));
+
   await fetch(`${URL}/resetModel`, {
     method: "get",
     headers: {
@@ -583,21 +584,37 @@ export const randomSetAsync = () => async (dispatch: any, getState: any) => {
 
   const arr = initArray(getState().mode);
 
-  await fetch(`${URL}/randomSet`, {
-    method: "post",
+  console.log(getState().user);
+
+  // await fetch(`${URL}/randomSet`, {
+  //   method: "post",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     ids: arr,
+  //     user: getState().user,
+  //   }),
+  // })
+
+  const body = JSON.stringify({
+    ids: arr,
+    model: 0,
+    user: getState().user,
+  });
+  await axios({
+    method: "POST",
+    url: `${URL}/randomSet`,
+    data: body,
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      ids: arr,
-    }),
   })
-    .then((resp) => resp.json())
     .then((res) => {
       const mediaInfo = getState().mediaInfo;
       var imageObjects: Obj[] = formatObjectsFromMediaInfo(
         mediaInfo,
-        res.img_locations
+        res.data.img_locations
       );
 
       dispatch(updateSeen(imageObjects));
@@ -686,22 +703,23 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
   });
   console.log(body);
 
-  await fetch(`${URL}/initModel`, {
+  await axios({
     method: "POST",
+    url: `${URL}/initModel`,
+    data: body,
     headers: {
       "Content-Type": "application/json",
     },
-    body: body,
   })
-    .then((resp) => resp.json())
     .then((res) => {
+      console.log("response");
       console.log(res);
 
-      dispatch(setMediaInfo(res.mediainfo));
+      dispatch(setMediaInfo(res.data.mediainfo));
 
       var imageObjects: Obj[] = formatObjectsFromMediaInfo(
-        res.mediainfo,
-        res.img_locations
+        res.data.mediainfo,
+        res.data.img_locations
       );
 
       dispatch(updateSeen(imageObjects));
@@ -710,8 +728,39 @@ export const initModelAsync = () => async (dispatch: any, getState: any) => {
     })
     .catch((err) => {
       dispatch(setLoading(false));
-      console.log(err);
+      console.log("ERROR: " + err);
     });
+
+  // await fetch(`${URL}/initModel`, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: body,
+  // })
+  //   .then((resp) => {
+  //     console.log("response");
+
+  //     console.log(resp);
+  //   })
+  //   // .then((res) => {
+  //   //   console.log(res);¢
+
+  //   //   // dispatch(setMediaInfo(res.mediainfo));
+
+  //   //   // var imageObjects: Obj[] = formatObjectsFromMediaInfo(
+  //   //   //   res.mediainfo,
+  //   //   //   res.img_locations
+  //   //   // );
+
+  //   //   // dispatch(updateSeen(imageObjects));
+  //   //   // dispatch(setImages(imageObjects));
+  //   //   // dispatch(setLoading(false));
+  //   // })
+  //   .catch((err) => {
+  //     dispatch(setLoading(false));
+  //     console.log("ERROR: " + err);
+  //   });
   //}
   dispatch(setLoading(false));
 };
@@ -743,11 +792,10 @@ export const replaceImageAsync =
           thumbnail: formatToLocation(loc),
           folderName: "",
           shotId: 6,
-          imageURI: `http://bjth.itu.dk:5003/${formatFolderName(
+          imageURI: `http://bjth.itu.dk:5005/${formatFolderName(
             folderName
           )}/${formatToLocation(loc)}`,
         };
-        console.log("HEEEEEEEJ******'");
         console.log(newObj);
 
         dispatch(updateSeen([newObj]));
@@ -761,4 +809,33 @@ export const replaceImageAsync =
         console.log(err);
         dispatch(setLoading(false));
       });
+  };
+
+export const submitImage =
+  (imageId: string) => async (dispatch: any, getState: any) => {
+    dispatch(setLoading(true));
+
+    const body = JSON.stringify({
+      id: imageId,
+      user: getState().user,
+      model: 0,
+    });
+    console.log(body);
+
+    await axios({
+      method: "POST",
+      url: `${URL}/submit`,
+      data: body,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        dispatch(setLoading(false));
+        console.log("ERROR: " + err);
+      });
+    dispatch(setLoading(false));
   };

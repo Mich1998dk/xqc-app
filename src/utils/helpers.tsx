@@ -24,7 +24,7 @@ export function initArray(mode: Mode) {
   var arr = [];
 
   while (arr.length < getNumberOfImageByPlatformAndMode(mode)) {
-    var randomNumber = Math.floor(Math.random() * Math.floor(191524)) + 1;
+    var randomNumber = Math.floor(Math.random() * Math.floor(180000)) + 1;
     if (arr.indexOf(randomNumber) > -1) continue;
     arr[arr.length] = randomNumber;
   }
@@ -66,7 +66,7 @@ export function formatBackendDataToImageObjects(res: any) {
       thumbnail: formatToLocation(loc),
       folderName: "",
       shotId: -1,
-      imageURI: `http://bjth.itu.dk:5003/${formatFolderName(
+      imageURI: `http://bjth.itu.dk:5005/${formatFolderName(
         folderName
       )}/${formatToLocation(loc)}`,
     };
@@ -97,7 +97,7 @@ export function formatObjectsFromMediaInfo(
           exqId: obj.exqId,
           folderName: folderName,
           thumbnail: obj.thumbnail,
-          imageURI: `http://bjth.itu.dk:5003/${formatFolderName(folderName)}/${
+          imageURI: `http://bjth.itu.dk:5005/${formatFolderName(folderName)}/${
             obj.thumbnail
           }`,
         };
