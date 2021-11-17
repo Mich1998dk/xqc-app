@@ -351,19 +351,21 @@ export const applyFiltersAsync = () => async (dispatch: any, getState: any) => {
 
 export const getImageInfo =
   (id: number) => async (dispatch: any, getState: any) => {
-    await fetch(`${URL}/getImageInfo`, {
+    await axios(`${URL}/getImageInfo`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
+      data: JSON.stringify({
         id: id,
+        model: 1,
+        user: getState().user,
+        vidId: -1
       }),
     })
-      .then((resp) => resp.json())
       .then((res) => {
         console.log(res);
-        dispatch(setImageInfo(res));
+        dispatch(setImageInfo(res.data));
       })
       .catch((err) => {
         console.log(err);
@@ -374,24 +376,25 @@ export const searchAsync =
   (term: string) => async (dispatch: any, getState: any) => {
     dispatch(setLoading(true));
 
-    await fetch(`${URL}/getSearchItems`, {
+    await axios(`${URL}/getSearchItems`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
+      data: JSON.stringify({
         terms: [term],
         mod: "vis",
         page_items: 50,
+        user: getState().user,
+        model: 1
       }),
     })
-      .then((resp) => resp.json())
       .then((res) => {
-        console.log(res.imgLocations.length);
+        console.log(res.data.imgLocations.length);
 
         const images = formatObjectsFromMediaInfo(
           getState().mediaInfo,
-          res.imgLocations
+          res.data.imgLocations
         );
         console.log("SIZE OF RESULTS: " + images.length);
 
@@ -777,12 +780,17 @@ export const replaceImageAsync =
     var neg = getState().negatives.map((item: Obj) => item.exqId);
     var seen = getState().seen.map((item: Obj) => item.exqId);
 
+    console.log('Replacing image!!');
+
     dispatch(setLoading(false));
 
     let objects: Obj[] = [];
 
     learn(pos, neg, seen, getState().mode, getState().user)
       .then((res) => {
+        console.log("pikkemand");
+        
+        console.log(res.data)
         let loc = res.data.img_locations[0];
         let suggestion = res.data.sugg[0];
         var folderName = formatImgLocationToFolderName(loc);
