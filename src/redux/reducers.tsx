@@ -551,10 +551,14 @@ export const resetModelAsync = () => async (dispatch: any, getState: any) => {
   dispatch(setImages([]));
 
   await fetch(`${URL}/resetModel`, {
-    method: "get",
-    headers: {
-      "Content-Type": "application/json",
-    },
+      method: "post",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+          user: getState().user,
+          model: 0,
+      }),
   })
     .then((resp) => resp.json())
     .then((res) => {
