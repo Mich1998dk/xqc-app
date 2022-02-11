@@ -1,0 +1,89 @@
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Platform, } from "react-native";
+import { Text } from "../../components/atoms/index";
+import { Header, } from "../../components/molecules/index";
+import { useSelector, useDispatch } from "react-redux";
+import { Container } from "../../containers/index";
+import { initModelAsync, reset, } from "../../redux/reducers";
+import { colors } from "../../utils/theme";
+import { formatTime, } from "../../utils/helpers";
+import { ButtonBar, ImageRenderer, } from "../../components/organisms/index";
+import { calculateImageWidth } from "../../utils/layout";
+import { setSearchData } from "../../redux/actions";
+export default function SpeedMode({ navigation, route }) {
+    const { loadModel } = route.params;
+    const dispatch = useDispatch();
+    const redux = useSelector((state) => state);
+    const [seconds, setSeconds] = useState(0);
+    const [min, setMin] = useState(0);
+    useEffect(() => {
+        if (loadModel === undefined) {
+            dispatch(initModelAsync());
+        }
+        const unsubscribe = navigation.addListener("focus", () => { });
+        return unsubscribe;
+    }, [navigation]);
+    useEffect(() => {
+        if (!redux.loading) {
+            var _s = 0;
+            var _m = 0;
+            const interval = setInterval(() => {
+                if (seconds !== 60) {
+                    setSeconds((sec) => sec + 1);
+                    _s++;
+                }
+                if (_s == 60) {
+                    setSeconds(0);
+                    _s = 0;
+                    setMin((min) => min + 1);
+                    _m++;
+                }
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+        const unsubscribe = navigation.addListener("focus", () => { });
+        return unsubscribe;
+    }, [redux.loading]);
+    return (<Container navigation={navigation} model={loadModel}>
+      <Header hideBack title={Platform.OS === "web" ? "SPEED" : ""} onPress={() => {
+            dispatch(reset());
+            navigation.goBack();
+        }} navigation={navigation} filter onPressFilter={() => navigation.navigate("Filter")} search onPressSearch={() => {
+            dispatch(setSearchData(redux.terms));
+            navigation.navigate("Search", { mode: "terms" });
+        }} menu time/>
+
+      {redux.timerStatus && (<Text.Button style={{ alignSelf: "center" }}>
+          {formatTime(min) + ":" + formatTime(seconds)}
+        </Text.Button>)}
+      {redux.images.length === 0 && !redux.loading && (<Text.Regular style={{ alignSelf: "center" }}>
+          No results - maybe your filter is too strict
+        </Text.Regular>)}
+
+      {redux.images.length > 0 && (<ImageRenderer navigation={navigation} data={redux.images} time={formatTime(min) + ":" + formatTime(seconds)}/>)}
+
+      <ButtonBar navigation={navigation} randomSet update posAndNeg/>
+    </Container>);
+}
+const styles = StyleSheet.create({
+    box: {
+        width: calculateImageWidth(),
+        backgroundColor: "#393939",
+        marginTop: 10,
+        borderRadius: 12,
+        alignItems: "center",
+        justifyContent: "center",
+        height: 200,
+    },
+    buttons: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 64,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: colors.background,
+    },
+});

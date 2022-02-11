@@ -1,0 +1,654 @@
+import { ADD_POSITIVE, SET_POSITIVE, REMOVE_POSITIVE, ADD_NEGATIVE, SET_NEGATIVE, REMOVE_NEGATIVE, ADD_IMAGES, SET_IMAGES, ADD_SEEN, SET_SEEN, SET_LOADING, UPDATE_SEEN, SET_MEDIA_INFO, SET_IMAGE_FOR_PROJECTION, SET_POSITIVE_PROJECTION, SET_NEGATIVE_PROJECTION, REPLACE_IMAGE, SET_MODE, SET_TERMS, SET_MENU, SET_SEARCH, SET_FILTER, SET_TEMP_FILTER, SET_SEARCH_DATA, SET_USER, SET_SELECTED_FILTER, SET_SEARCH_RESULTS, SET_TIME_PICKER, SET_TIMER_STATUS, SET_IMAGE_INFO, } from "./action-types";
+import { setImages, setNegative, setPositive, setSeen, setLoading, removePositive, removeNegative, updateSeen, setMediaInfo, setPositiveProjection, setNegativeProjection, replaceImage, setTerms, setFilter, setUser, setSelectedFilter, setSearchResults, setTempFilter, setImageInfo, } from "./actions";
+import { URL } from "../utils/constants";
+import axios from "axios";
+import { learn } from "../utils/api";
+import { deleteModelInAsyncStorage } from "../utils/storage";
+import { formatToLocation, initArray, formatFolderName, customAlert, formatBackendDataToImageObjects, formatObjectsFromMediaInfo, formatImgLocationToFolderName, } from "../utils/helpers";
+const initialState = {
+    positives: [],
+    negatives: [],
+    images: [],
+    seen: [],
+    loading: false,
+    mediaInfo: undefined,
+    positiveProjection: [],
+    negativeProjection: [],
+    imageForProjection: undefined,
+    imageInfo: undefined,
+    mode: undefined,
+    terms: [],
+    search: false,
+    searchResults: [],
+    searchData: [],
+    menu: false,
+    filter: { activities: [], locations: [] },
+    selectedFilter: {
+        activities: [],
+        locations: [],
+        days: [],
+        years: [],
+        time: { start: 0, end: 0 },
+    },
+    tempFilter: {
+        activities: [],
+        locations: [],
+        days: [],
+        years: [],
+        time: { start: 0, end: 0 },
+    },
+    user: "",
+    timePicker: false,
+    timerStatus: true,
+};
+export const reducer = (state = initialState, action) => {
+    switch (action.type) {
+        case SET_TIMER_STATUS: {
+            return { ...state, timerStatus: action.payload };
+        }
+        case SET_SEARCH: {
+            return { ...state, search: action.payload };
+        }
+        case SET_SEARCH_RESULTS: {
+            return { ...state, searchResults: action.payload };
+        }
+        case SET_TIME_PICKER: {
+            return { ...state, timePicker: action.payload };
+        }
+        case SET_USER: {
+            return { ...state, user: action.payload };
+        }
+        case SET_SEARCH_DATA: {
+            return { ...state, searchData: action.payload };
+        }
+        case SET_FILTER: {
+            return { ...state, filter: action.payload };
+        }
+        case SET_SELECTED_FILTER: {
+            return { ...state, selectedFilter: action.payload };
+        }
+        case SET_TEMP_FILTER: {
+            return { ...state, tempFilter: action.payload };
+        }
+        case SET_MENU: {
+            return { ...state, menu: action.payload };
+        }
+        case SET_LOADING: {
+            return { ...state, loading: action.payload };
+        }
+        case ADD_POSITIVE: {
+            return { ...state, positives: [...state.positives, action.payload] };
+        }
+        case SET_POSITIVE: {
+            return { ...state, positives: action.payload };
+        }
+        case REMOVE_POSITIVE: {
+            return {
+                ...state,
+                positives: state.positives.filter((item) => item.exqId !== action.payload.exqId),
+            };
+        }
+        case ADD_NEGATIVE: {
+            return { ...state, negatives: [...state.positives, action.payload] };
+        }
+        case SET_NEGATIVE: {
+            return { ...state, negatives: action.payload };
+        }
+        case REMOVE_NEGATIVE: {
+            return {
+                ...state,
+                negatives: state.negatives.filter((item) => item.exqId !== action.payload.exqId),
+            };
+        }
+        case ADD_IMAGES: {
+            return { ...state, images: [...state.images, action.payload] };
+        }
+        case SET_IMAGES: {
+            return { ...state, images: action.payload };
+        }
+        case ADD_SEEN: {
+            return { ...state, seen: [...state.images, action.payload] };
+        }
+        case SET_SEEN: {
+            return { ...state, seen: action.payload };
+        }
+        case UPDATE_SEEN: {
+            return { ...state, seen: state.seen.concat(action.payload) };
+        }
+        case SET_MEDIA_INFO: {
+            return { ...state, mediaInfo: action.payload };
+        }
+        case SET_TERMS: {
+            return { ...state, terms: action.payload };
+        }
+        case SET_IMAGE_INFO: {
+            return { ...state, imageInfo: action.payload };
+        }
+        case SET_IMAGE_FOR_PROJECTION: {
+            return { ...state, imageForProjection: action.payload };
+        }
+        case SET_POSITIVE_PROJECTION: {
+            return { ...state, positiveProjection: action.payload };
+        }
+        case SET_NEGATIVE_PROJECTION: {
+            return { ...state, negativeProjection: action.payload };
+        }
+        case SET_MODE: {
+            return { ...state, mode: action.payload };
+        }
+        case REPLACE_IMAGE: {
+            var tempArray = state.images;
+            tempArray[action.payload.index] = action.payload.newImage;
+            return {
+                ...state,
+                images: tempArray,
+            };
+        }
+        default:
+            return state;
+    }
+};
+export const reset = () => async (dispatch, getState) => {
+    dispatch(setTempFilter({
+        activities: [],
+        locations: [],
+        days: [],
+        years: [],
+        time: { start: 0, end: 0 },
+    }));
+    dispatch(resetFiltersAsync());
+    dispatch(setSeen([]));
+};
+export const resetFiltersAsync = () => async (dispatch, getState) => {
+    await fetch(`${URL}/resetFilters`, {
+        method: "post",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            user: getState().user,
+            model: 0,
+        }),
+    })
+        .then((res) => {
+        dispatch(setSelectedFilter({
+            activities: [],
+            locations: [],
+            days: [],
+            years: [],
+            time: {
+                start: 0,
+                end: 0,
+            },
+        }));
+        //dispatch(setFilter({ activities: [], locations: [] }));
+        customAlert("success", "Filters has been reset!");
+    })
+        .catch((err) => {
+        customAlert("error", "Something went wrong resetting the filters.");
+    });
+};
+export const applyFiltersAsync = () => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    var selecting = false;
+    var selected = [];
+    const start = getState().tempFilter.time.start;
+    const end = getState().tempFilter.time.end;
+    if (start == 0 && end == 0) {
+        selected = [];
+    }
+    else if (start == 0 || end == 0) {
+        customAlert("error", "Both time slots needs to be filled");
+        dispatch(setLoading(false));
+        return;
+    }
+    else {
+        if (start > end) {
+            customAlert("error", "Start cant be higher!!!");
+            dispatch(setLoading(false));
+            return;
+        }
+        for (let i = 0; i < 23; i++) {
+            if (i == end) {
+                break;
+            }
+            if (i + 1 == start || selecting) {
+                selecting = true;
+                selected.push(i);
+            }
+        }
+    }
+    const body = JSON.stringify({
+        ts: parseInt(new Date().getTime().toString()),
+        user: getState().user,
+        model: 0,
+        locations: getState().tempFilter.locations,
+        activities: getState().tempFilter.activities,
+        hours: selected,
+        days: getState().tempFilter.days,
+        years: getState().tempFilter.years,
+    });
+    console.log(body);
+    await fetch(`${URL}/applyFilters`, {
+        method: "post",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: body,
+    })
+        .then((resp) => resp.json())
+        .then((res) => {
+        console.log(res);
+        dispatch(setSelectedFilter(getState().tempFilter));
+    })
+        .catch((err) => {
+        console.log(err);
+    });
+    dispatch(setLoading(false));
+    if (getState().positives.length + getState().negatives.length > 0) {
+        customAlert("success", "The new filters have been applied!");
+        await dispatch(learnModelAsync());
+    }
+    else {
+        customAlert("success", "The new filters have been applied. You will see the result after labelling a picture and training the model.");
+    }
+};
+export const getImageInfo = (id) => async (dispatch, getState) => {
+    await axios(`${URL}/getImageInfo`, {
+        method: "post",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+            id: id,
+            model: 1,
+            user: getState().user,
+            vidId: -1
+        }),
+    })
+        .then((res) => {
+        console.log(res);
+        dispatch(setImageInfo(res.data));
+    })
+        .catch((err) => {
+        console.log(err);
+    });
+};
+export const searchAsync = (term) => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    await axios(`${URL}/getSearchItems`, {
+        method: "post",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+            terms: [term],
+            mod: "vis",
+            page_items: 50,
+            user: getState().user,
+            model: 1
+        }),
+    })
+        .then((res) => {
+        console.log(res.data.imgLocations.length);
+        const images = formatObjectsFromMediaInfo(getState().mediaInfo, res.data.imgLocations);
+        console.log("SIZE OF RESULTS: " + images.length);
+        //dispatch(setImages(images));
+        dispatch(setSearchResults(images));
+        dispatch(updateSeen(images));
+    })
+        .catch((err) => {
+        console.log(err);
+    });
+    dispatch(setLoading(false));
+};
+export const negativeExamplePressed = (item) => async (dispatch, getState) => {
+    //Check if it is in positives
+    if (getState().positives.includes(item)) {
+        //If it is in negatives, remove it and add to positives
+        dispatch(removePositive(item));
+    }
+    if (getState().negatives.includes(item)) {
+        //If the item is already in it, we would like to delete it
+        dispatch(removeNegative(item));
+    }
+    else {
+        //Add to positives
+        dispatch(setNegative([...getState().negatives, item]));
+    }
+};
+export const positiveExamplePressed = (item) => async (dispatch, getState) => {
+    //Check if it is in positives
+    if (getState().negatives.includes(item)) {
+        //If it is in negatives, remove it and add to positives
+        dispatch(removeNegative(item));
+    }
+    if (getState().positives.includes(item)) {
+        //If the item is already in it, we would like to delete it
+        dispatch(removePositive(item));
+    }
+    else {
+        //Add to positives
+        dispatch(setPositive([...getState().positives, item]));
+    }
+};
+export const learnWithProjectedImageAsync = (label) => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    const pos = getState().positiveProjection;
+    const neg = getState().negativeProjection;
+    const img = getState().imageForProjection;
+    if (label == "negative") {
+        await dispatch(setNegative([...getState().negatives, img]));
+        dispatch(setImages(neg));
+        dispatch(updateSeen(neg));
+    }
+    if (label == "positive") {
+        await dispatch(setPositive([...getState().positives, img]));
+        dispatch(setImages(pos));
+        dispatch(updateSeen(pos));
+    }
+    dispatch(setNegativeProjection([]));
+    dispatch(setPositiveProjection([]));
+    dispatch(setLoading(false));
+};
+export const makeProjection = (obj) => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    //Prepare with the image in positives
+    const tempPos = [...getState().positives, obj];
+    const pos = tempPos.map((item) => item.exqId);
+    const currentNeg = getState().negatives.map((item) => item.exqId);
+    //Prepare with the image in negatives
+    const tempNeg = [...getState().negatives, obj];
+    const neg = tempNeg.map((item) => item.exqId);
+    const currentPos = getState().positives.map((item) => item.exqId);
+    //Prepare seen
+    const seen = getState().seen.map((item) => item.exqId);
+    //First learn with the current positives with the added image + the current negatives
+    await learn(pos, currentNeg, seen, "projection", getState().user)
+        .then((res) => {
+        var posProjection = formatBackendDataToImageObjects(res);
+        dispatch(setPositiveProjection(posProjection));
+    })
+        .catch((err) => {
+        console.log(err);
+    });
+    //Then learn with the current negatives with the added image + the current positives
+    await learn(currentPos, neg, seen, "projection", getState().user)
+        .then((res) => {
+        var negProjection = formatBackendDataToImageObjects(res);
+        dispatch(setNegativeProjection(negProjection));
+    })
+        .catch((err) => {
+        console.log(err);
+    });
+    dispatch(setLoading(false));
+};
+export const learnModelAsync = () => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    if (getState().positives.length === 0 && getState().negatives.length === 0) {
+        customAlert("error", "You haven't selected any images to train the model, press 'NEW RANDOM SET' if you want new images presented.");
+        dispatch(setLoading(false));
+        return;
+    }
+    //Clear the current images, and wait for the new ones..
+    await dispatch(setImages([]));
+    const pos = getState().positives.map((item) => item.exqId);
+    const neg = getState().negatives.map((item) => item.exqId);
+    const seen = getState().seen.map((item) => item.exqId);
+    learn(pos, neg, seen, getState().mode, getState().user)
+        .then((res) => {
+        var objects = formatBackendDataToImageObjects(res);
+        dispatch(updateSeen(objects));
+        dispatch(setImages(objects));
+        dispatch(setLoading(false));
+    })
+        .catch((err) => {
+        console.log(err);
+        dispatch(setLoading(false));
+    });
+};
+export const resetModelAsync = () => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    dispatch(setImages([]));
+    await fetch(`${URL}/resetModel`, {
+        method: "get",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((resp) => resp.json())
+        .then((res) => {
+        if (res.reset !== "successful")
+            return;
+        dispatch(setNegative([]));
+        dispatch(setPositive([]));
+        dispatch(setSelectedFilter({
+            activities: [],
+            locations: [],
+            days: [],
+            years: [],
+            time: { start: 0, end: 0 },
+        }));
+        dispatch(reset());
+        dispatch(randomSetAsync());
+        dispatch(setLoading(false));
+    })
+        .catch((err) => {
+        console.log(err);
+    });
+    customAlert("success", "Your model has been reset!");
+};
+export const randomSetAsync = () => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    await dispatch(setImages([]));
+    const arr = initArray(getState().mode);
+    console.log(getState().user);
+    // await fetch(`${URL}/randomSet`, {
+    //   method: "post",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     ids: arr,
+    //     user: getState().user,
+    //   }),
+    // })
+    const body = JSON.stringify({
+        ids: arr,
+        model: 0,
+        user: getState().user,
+    });
+    await axios({
+        method: "POST",
+        url: `${URL}/randomSet`,
+        data: body,
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((res) => {
+        const mediaInfo = getState().mediaInfo;
+        var imageObjects = formatObjectsFromMediaInfo(mediaInfo, res.data.img_locations);
+        dispatch(updateSeen(imageObjects));
+        dispatch(setImages(imageObjects));
+        dispatch(setLoading(false));
+    })
+        .catch((err) => {
+        console.log(err);
+        dispatch(setLoading(false));
+    });
+};
+export const initExquisitorAsync = () => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    console.log("Init");
+    await fetch(`${URL}/initExquisitor`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((resp) => resp.json())
+        .then((res) => {
+        console.log("INIT");
+        console.log(res);
+        dispatch(setFilter({ activities: res.activities, locations: res.locations }));
+        dispatch(setUser(res.user));
+        dispatch(setMediaInfo(res.mediainfo));
+        dispatch(setTerms(res.vis_terms));
+        dispatch(setLoading(false));
+    })
+        .catch((err) => {
+        dispatch(setLoading(false));
+        console.log("Init failed");
+        customAlert("error", err);
+    });
+};
+export const initExistingModel = (lastSeen) => async (dispatch, getState) => {
+    const body = JSON.stringify({
+        ids: lastSeen.map((item) => item.exqId),
+        user: getState().user,
+        model: 0,
+    });
+    await fetch(`${URL}/initModel`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: body,
+    })
+        .then((resp) => resp.json())
+        .then((res) => {
+        console.log(res);
+        dispatch(setLoading(false));
+    })
+        .catch((err) => {
+        dispatch(setLoading(false));
+        console.log(err);
+    });
+};
+export const initModelAsync = () => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    dispatch(setImages([]));
+    dispatch(setNegative([]));
+    dispatch(setPositive([]));
+    const initialArray = initArray(getState().mode);
+    // if (getState().mediaInfo !== undefined) {
+    //   await dispatch(randomSetAsync());
+    // } else {
+    const body = JSON.stringify({
+        ids: initialArray,
+        user: getState().user,
+        model: 0,
+    });
+    console.log(body);
+    await axios({
+        method: "POST",
+        url: `${URL}/initModel`,
+        data: body,
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((res) => {
+        console.log("response");
+        console.log(res);
+        dispatch(setMediaInfo(res.data.mediainfo));
+        var imageObjects = formatObjectsFromMediaInfo(res.data.mediainfo, res.data.img_locations);
+        dispatch(updateSeen(imageObjects));
+        dispatch(setImages(imageObjects));
+        dispatch(setLoading(false));
+    })
+        .catch((err) => {
+        dispatch(setLoading(false));
+        console.log("ERROR: " + err);
+    });
+    // await fetch(`${URL}/initModel`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: body,
+    // })
+    //   .then((resp) => {
+    //     console.log("response");
+    //     console.log(resp);
+    //   })
+    //   // .then((res) => {
+    //   //   console.log(res);¢
+    //   //   // dispatch(setMediaInfo(res.mediainfo));
+    //   //   // var imageObjects: Obj[] = formatObjectsFromMediaInfo(
+    //   //   //   res.mediainfo,
+    //   //   //   res.img_locations
+    //   //   // );
+    //   //   // dispatch(updateSeen(imageObjects));
+    //   //   // dispatch(setImages(imageObjects));
+    //   //   // dispatch(setLoading(false));
+    //   // })
+    //   .catch((err) => {
+    //     dispatch(setLoading(false));
+    //     console.log("ERROR: " + err);
+    //   });
+    //}
+    dispatch(setLoading(false));
+};
+export const deleteModelAsync = (name) => async (dispatch, getState) => {
+    deleteModelInAsyncStorage(name);
+};
+export const replaceImageAsync = (index) => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    var pos = getState().positives.map((item) => item.exqId);
+    var neg = getState().negatives.map((item) => item.exqId);
+    var seen = getState().seen.map((item) => item.exqId);
+    console.log('Replacing image!!');
+    dispatch(setLoading(false));
+    let objects = [];
+    learn(pos, neg, seen, getState().mode, getState().user)
+        .then((res) => {
+        console.log("pikkemand");
+        console.log(res.data);
+        let loc = res.data.img_locations[0];
+        let suggestion = res.data.sugg[0];
+        var folderName = formatImgLocationToFolderName(loc);
+        var newObj = {
+            exqId: suggestion,
+            thumbnail: formatToLocation(loc),
+            folderName: "",
+            shotId: 6,
+            imageURI: `http://bjth.itu.dk:5005/images/${formatFolderName(folderName)}/${formatToLocation(loc)}`,
+        };
+        console.log(newObj);
+        dispatch(updateSeen([newObj]));
+        objects.push(newObj);
+        dispatch(replaceImage(newObj, index));
+        dispatch(setLoading(false));
+    })
+        .catch((err) => {
+        console.log(err);
+        dispatch(setLoading(false));
+    });
+};
+export const submitImage = (imageId) => async (dispatch, getState) => {
+    dispatch(setLoading(true));
+    const body = JSON.stringify({
+        id: imageId,
+        user: getState().user,
+        model: 0,
+    });
+    console.log(body);
+    await axios({
+        method: "POST",
+        url: `${URL}/submit`,
+        data: body,
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((res) => {
+        console.log(res);
+    })
+        .catch((err) => {
+        dispatch(setLoading(false));
+        console.log("ERROR: " + err);
+    });
+    dispatch(setLoading(false));
+};
