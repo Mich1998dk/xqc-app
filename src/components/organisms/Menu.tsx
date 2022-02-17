@@ -51,7 +51,7 @@ export default function Menu({
           {canQuickSave && (
             <ModeOption
               style={{ width: 300 }}
-              title="QUICK SAVE"
+              title="SAVE MODEL"
               onPress={onClickQuickSave as any}
             />
           )}
