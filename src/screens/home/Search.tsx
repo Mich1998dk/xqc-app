@@ -93,11 +93,20 @@ export default function Search({ navigation, route }: Props) {
             ]}
           />
         </View>
-        {state.currentlySearched.length > 0 && (
+              {state.currentlySearched.length > 0 && (
           <View>
-            <Text.Button style={{ alignSelf: "center", marginBottom: 10 }}>
-              Showing results for '{state.currentlySearched}'
-            </Text.Button>
+            {(() => {
+                if (redux.searchResults.length === 0) {
+                    return (
+                        <Text.Button style={{ alignSelf: "center", marginBottom: 10 }}>
+                            No results found using current filter.
+                        </Text.Button>
+                    );} return (<Text.Button style={{ alignSelf: "center", marginBottom: 10 }}>
+                    Showing results for '{state.currentlySearched}'
+                </Text.Button>
+                );
+            })()}
+              
           </View>
         )}
         <ScrollView>

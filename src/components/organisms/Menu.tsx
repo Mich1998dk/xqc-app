@@ -16,6 +16,7 @@ interface Props {
   onClickQuickSave?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onClickHelp?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onExit?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickLoadModel? : (event: React.MouseEvent<HTMLButtonElement>) => void;
   canQuickSave?: boolean;
 }
 
@@ -26,6 +27,7 @@ export default function Menu({
   canQuickSave,
   onClickHelp,
   onExit,
+  onClickLoadModel,
 }: Props) {
   const dispatch = useDispatch();
 
@@ -55,7 +57,11 @@ export default function Menu({
               onPress={onClickQuickSave as any}
             />
           )}
-
+          <ModeOption
+              style={{ width: 300 }}
+              title="LOAD MODEL"
+              onPress={onClickLoadModel as any}
+          />
           <ModeOption
             style={{ width: 300 }}
             title="EXIT"

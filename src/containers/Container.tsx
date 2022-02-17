@@ -77,7 +77,7 @@ export default function Container({
           onExit={() => {
             dispatch(setMenu(false));
             dispatch(reset());
-            navigation?.goBack();
+            navigation?.navigate("Welcome");
           }}
           onClickHelp={() => {
             dispatch(setMenu(false));
@@ -94,6 +94,10 @@ export default function Container({
           canQuickSave={model !== undefined}
           onClickQuickSave={() => {
             quickSaveModel();
+          }}
+          onClickLoadModel={() => {
+            dispatch(setMenu(false));
+            navigation?.navigate("LoadModal");
           }}
         />
       )}
