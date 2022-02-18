@@ -45,7 +45,7 @@ export default function ButtonBar({
     <View style={styles.buttons}>
       {posAndNeg && (
         <IconButton
-          title="+/-"
+          title="Labeled/Seen images"
           onPress={() => {
             navigation.navigate("PosAndNeg");
           }}
