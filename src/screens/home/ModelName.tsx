@@ -41,9 +41,10 @@ export default function ChooseMode({ navigation, route }: Props) {
       return;
     }
     if (await checkName(state.name)) {
-      customAlert("error", "This name already exists!");
-      setState({ ...state, name: "" });
-      return;
+        if (!confirm("This name already exist, do you want to override the existing model?")) {
+            setState({ ...state, name: "" });
+            return;
+        }
     }
 
     const model: Model = {

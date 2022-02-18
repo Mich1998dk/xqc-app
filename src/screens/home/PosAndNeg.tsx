@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, Image } from "react-native";
+import { View, StyleSheet, FlatList, Image, ScrollView } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
@@ -100,7 +100,9 @@ export default function PosAndNeg({ navigation }: Props) {
       )}
 
       {state.selected === "history" && (
-        <ImageRenderer navigation={navigation as any} data={redux.seen} />
+        <ScrollView>
+            <ImageRenderer navigation={navigation as any} data={redux.seen} />
+        </ScrollView>
       )}
     </Container>
   );

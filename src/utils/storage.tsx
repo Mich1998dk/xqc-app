@@ -38,7 +38,7 @@ export const getModelsInAsyncStorage = async () => {
 export const checkName = async (name: string) => {
   const keys = await AsyncStorage.getAllKeys();
   for (let i = 0; i < keys.length; i++) {
-    if (keys[i] === name) {
+    if (keys[i] === name + "-xqc") {
       return true;
     }
   }

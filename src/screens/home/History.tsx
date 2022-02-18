@@ -49,9 +49,9 @@ export default function History({ navigation }: Props) {
           navigation.goBack();
         }}
       />
-      {redux.images.length > 0 && (
-        <ImageRenderer navigation={navigation as any} data={redux.seen} />
-      )}
+          {redux.images.length > 0 && (
+            <ImageRenderer navigation={navigation as any} data={redux.seen} />
+          )}
     </Container>
   );
 }
