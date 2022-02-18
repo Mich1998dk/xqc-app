@@ -127,15 +127,15 @@ export default function SpeedMode({ navigation, route }: Props) {
           No results - maybe your filter is too strict
         </Text.Regular>
       )}
-
-      {redux.images.length > 0 && (
+      <ScrollView>
+        {redux.images.length > 0 && (
         <ImageRenderer
-          navigation={navigation}
-          data={redux.images}
-          time={formatTime(min) + ":" + formatTime(seconds)}
+            navigation={navigation}
+            data={redux.images}
+            time={formatTime(min) + ":" + formatTime(seconds)}
         />
-      )}
-
+        )}
+      </ScrollView>
       <ButtonBar navigation={navigation} randomSet update posAndNeg />
     </Container>
   );

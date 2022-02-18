@@ -2,8 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\src",
+    "\\src\\components",
+    "\\src\\components\\organisms",
     "\\src\\utils"
   ],
-  "SelectedNode": "\\App.js",
+  "SelectedNode": "\\src\\screens",
   "PreviewInSolutionExplorer": false
 }

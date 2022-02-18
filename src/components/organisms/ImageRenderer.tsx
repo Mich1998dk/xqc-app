@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Platform,
+  ScrollView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -30,7 +31,7 @@ import { setImageForProjection } from "../../redux/actions";
 import { StackNavigationProp } from "@react-navigation/stack";
 //import { LogBox } from "react-native";
 import { customAlert, showSubmitPopup } from "../../utils/helpers";
-
+import { ButtonBar } from "../../components/organisms";
 type HomeProps = StackNavigationProp<HomeStackParamList>;
 
 interface Props {
@@ -108,14 +109,13 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
       {redux.mode === "speed" && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
-          data={data || redux.images}
+          data={data}
           style={{ paddingBottom: 80 }}
           numColumns={calculateColumnAmount()}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item }) => {
             return (
-              <View style={[styles.box]}>
-                <SubmitOverlay />
+              <View style={styles.box}>
                 {/* //@ts-ignore */}
                 <Image
                   style={{
@@ -133,7 +133,6 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
                     if (Platform.OS === "web") {
                       //customAlert("success", "Image: " + item.thumbnail);
                       console.log("SUBMITTING IMAGE: " + item.thumbnail);
-
                       dispatch(submitImage(item.exqId));
                     } else {
                       //alert("Image: " + item.thumbnail);
