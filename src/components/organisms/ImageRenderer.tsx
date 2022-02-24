@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   box: {
     width: calculateImageWidth(),
     backgroundColor: "#393939",
-    marginTop: 10,
+    margin: "0.5%",
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",

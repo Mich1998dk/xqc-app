@@ -24,6 +24,7 @@ type Props = {
   navigation: PosAndNegProps;
 };
 
+
 export default function PosAndNeg({ navigation }: Props) {
   const [state, setState] = useState({ loading: false, selected: "positive" });
   const dispatch = useDispatch();
@@ -58,7 +59,7 @@ export default function PosAndNeg({ navigation }: Props) {
       </View>
       {state.selected !== "history" && (
         <FlatList
-          columnWrapperStyle={{ justifyContent: "space-between" }}
+          columnWrapperStyle={{ justifyContent: "flex-start" }}
           data={
             state.selected === "negative" ? redux.negatives : redux.positives
           }
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
     width: calculateImageWidth(),
     backgroundColor: "#393939",
     height: 180,
-    marginTop: 10,
+    margin: "0.5%",
     borderRadius: 12,
   },
 });
