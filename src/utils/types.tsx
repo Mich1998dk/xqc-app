@@ -16,6 +16,7 @@ export type HomeStackParamList = {
   Search: { mode: "terms" | "locations" };
   Info: undefined;
   History: undefined;
+  CombineModels: undefined;
 };
 
 export type Obj = {

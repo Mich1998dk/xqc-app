@@ -11,6 +11,7 @@ import Filter from "./Filter";
 import Search from "./Search";
 import Info from "./Info";
 import History from "./History";
+import CombineModels from "./CombineModels";
 export {
   Welcome,
   ChooseMode,
@@ -25,4 +26,5 @@ export {
   Search,
   Info,
   History,
+  CombineModels,
 };

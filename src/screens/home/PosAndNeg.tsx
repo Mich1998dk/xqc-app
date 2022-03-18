@@ -28,8 +28,7 @@ type Props = {
 export default function PosAndNeg({ navigation }: Props) {
   const [state, setState] = useState({ loading: false, selected: "positive" });
   const dispatch = useDispatch();
-  const redux = useSelector((state: State) => state);
-
+    const redux = useSelector((state: State) => state);
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
