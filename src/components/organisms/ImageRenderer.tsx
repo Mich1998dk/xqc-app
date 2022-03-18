@@ -58,7 +58,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
     <View style={styles.container}>
       {redux.mode === "standard" && (
         <FlatList
-          columnWrapperStyle={{ justifyContent: "space-between" }}
+          columnWrapperStyle={{ justifyContent: "flex-start" }}
           data={data}
           style={{ paddingBottom: 80 }}
           numColumns={calculateColumnAmount()}
@@ -108,7 +108,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
       )}
       {redux.mode === "speed" && (
         <FlatList
-          columnWrapperStyle={{ justifyContent: "space-between" }}
+          columnWrapperStyle={{ justifyContent: "flex-start" }}
           data={data}
           style={{ paddingBottom: 80 }}
           numColumns={calculateColumnAmount()}
