@@ -29,6 +29,7 @@ import {
 import { customAlert } from "../../utils/helpers";
 import AsyncStorage from "@react-native-community/async-storage";
 import { LoadModel } from ".";
+import { colors } from "../../utils/theme";
 
 type LoadModelProps = StackNavigationProp<HomeStackParamList, "LoadModal">;
 
@@ -38,7 +39,7 @@ type Props = {
 
 
 export default function ChooseMode({ navigation }: Props) {
-  const [state, setState] = useState({ loading: true, Title: "" });
+    const [state, setState] = useState({ loading: true, Title: "", Modes: false, ModeColor: ""});
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
   const [models, setModels] = useState<Model[]>([]);    
@@ -52,7 +53,7 @@ export default function ChooseMode({ navigation }: Props) {
     if (models) setModels(models);
     else setModels([]);
 
-    setState({ ...state, loading: false , Title: "Load Model"});
+      setState({ ...state, loading: false, Title: "Load Model", ModeColor: colors.accent });
   };
 
   const deleteModel = (item: string) => {
@@ -64,12 +65,10 @@ export default function ChooseMode({ navigation }: Props) {
   };
 
     function changeMode() {
-        if (combineMode) {
-            combineMode = false
-            setState({ ...state, Title: "Load Model"})
+        if (state.Modes) {
+            setState({ ...state, Title: "Load Model", Modes: false, ModeColor: colors.accent})
         } else {
-            combineMode = true
-            setState({ ...state, Title: "Combine Models" })
+            setState({ ...state, Title: "Combine Models", Modes: true, ModeColor: colors.red})
         }
     }
 
@@ -104,11 +103,12 @@ export default function ChooseMode({ navigation }: Props) {
               <ModelOption
                 key={index}
                 model={item}
+                mode={state.ModeColor}
                 onDelete={() => {
                   deleteModel(item.name);
                 }}
                 onPress={async () => {
-                    if (combineMode) {
+                    if (state.Modes) {
                         if (chosenModels.includes(item)) {
                             const index = chosenModels.indexOf(item)
                             chosenModels.splice(index, 1)   

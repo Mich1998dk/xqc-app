@@ -10,9 +10,43 @@ interface Props {
   style?: CSSProperties;
   model: Model;
   onDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  mode: string;
 }
 
-export default function ModeOption({ onPress, onDelete, style, model }: Props) {
+
+export default function ModeOption({ onPress, onDelete, style, model, mode }: Props) {
+
+ const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.background,
+    borderWidth: 1.6,
+    borderColor: mode,
+    width: "100%",
+    borderRadius: 28,
+    flexDirection: "column",
+    alignItems: "center",
+    padding: 20,
+    marginBottom: 15,
+  },
+  top: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  bottom: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+  },
+  stat: {
+    flexDirection: "column",
+    marginRight: 20,
+  },
+});
+
+
   var stats = [
     {
       title: "CREATED",
@@ -74,35 +108,7 @@ export default function ModeOption({ onPress, onDelete, style, model }: Props) {
         <Icon type="delete" onPress={onDelete as any} />
       </View>
     </TouchableOpacity>
-  );
+    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.background,
-    borderWidth: 1.6,
-    borderColor: colors.accent,
-    width: "100%",
-    borderRadius: 28,
-    flexDirection: "column",
-    alignItems: "center",
-    padding: 20,
-    marginBottom: 15,
-  },
-  top: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  bottom: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-between",
-  },
-  stat: {
-    flexDirection: "column",
-    marginRight: 20,
-  },
-});
+
