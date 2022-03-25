@@ -14,39 +14,39 @@ interface Props {
 }
 
 
+
 export default function ModeOption({ onPress, onDelete, style, model, mode }: Props) {
 
-// We movd the stylesheet into the default function, so that the stylesheet can dynamically change. 
- const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.background,
-    borderWidth: 1.6,
-    borderColor: mode,
-    width: "100%",
-    borderRadius: 28,
-    flexDirection: "column",
-    alignItems: "center",
-    padding: 20,
-    marginBottom: 15,
-  },
-  top: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  bottom: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-between",
-  },
-  stat: {
-    flexDirection: "column",
-    marginRight: 20,
-  },
-});
-
+    // We movd the stylesheet into the default function, so that the stylesheet can dynamically change. 
+    var styles = StyleSheet.create({
+        container: {
+            backgroundColor: colors.background,
+            borderWidth: 1.6,
+            borderColor: mode,
+            width: "100%",
+            borderRadius: 28,
+            flexDirection: "column",
+            alignItems: "center",
+            padding: 20,
+            marginBottom: 15,
+        },
+        top: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "100%",
+            marginBottom: 20,
+            alignItems: "center",
+        },
+        bottom: {
+            flexDirection: "row",
+            width: "100%",
+            justifyContent: "space-between",
+        },
+        stat: {
+            flexDirection: "column",
+            marginRight: 20,
+        },
+    });
 
   var stats = [
     {

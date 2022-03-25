@@ -39,7 +39,7 @@ type Props = {
 
 
 export default function ChooseMode({ navigation }: Props) {
-    const [state, setState] = useState({ loading: true, Title: "", Modes: false, ModeColor: ""});
+  const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: ""});
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
   const [models, setModels] = useState<Model[]>([]);    
@@ -53,7 +53,7 @@ export default function ChooseMode({ navigation }: Props) {
     if (models) setModels(models);
     else setModels([]);
 
-      setState({ ...state, loading: false, Title: "Load Model", ModeColor: colors.accent });
+    setState({ ...state, loading: false, Title: "Load Model", Mode: "Load", ModeColor: colors.accent });
   };
 
   const deleteModel = (item: string) => {
@@ -65,10 +65,10 @@ export default function ChooseMode({ navigation }: Props) {
   };
 
     function changeMode() {
-        if (state.Modes) {
-            setState({ ...state, Title: "Load Model", Modes: false, ModeColor: colors.accent})
-        } else {
-            setState({ ...state, Title: "Combine Models", Modes: true, ModeColor: colors.red})
+        if (state.Mode == "Combine") {
+            setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent})
+        } else if (state.Mode == "Load"){
+            setState({ ...state, Title: "Combine Models", Mode: "Combine", ModeColor: colors.red})
         }
     }
 
@@ -108,10 +108,10 @@ export default function ChooseMode({ navigation }: Props) {
                   deleteModel(item.name);
                 }}
                 onPress={async () => {
-                    if (state.Modes) {
+                    if (state.Mode == "Combine") {
                         if (chosenModels.includes(item)) {
                             const index = chosenModels.indexOf(item)
-                            chosenModels.splice(index, 1)   
+                            chosenModels.splice(index, 1)               
                         } else {
                             chosenModels.push(item)
                             if (chosenModels.length == 2) {
@@ -127,7 +127,7 @@ export default function ChooseMode({ navigation }: Props) {
                             console.log("after choice")
                             console.log(chosenModels)
                         }
-                    } else {
+                    } else if (state.Mode == "Load") {
                       dispatch(setLoading(true));
                       await dispatch(initExistingModel(item.lastSeen));
                       await dispatch(setImages(item.lastSeen));
