@@ -3,9 +3,14 @@
     "",
     "\\src",
     "\\src\\components",
-    "\\src\\components\\organisms",
+    "\\src\\components\\atoms",
+    "\\src\\components\\molecules",
+    "\\src\\navigation",
+    "\\src\\redux",
+    "\\src\\screens",
+    "\\src\\screens\\home",
     "\\src\\utils"
   ],
-  "SelectedNode": "\\src\\screens",
+  "SelectedNode": "\\src\\screens\\home\\Filter.tsx",
   "PreviewInSolutionExplorer": false
 }

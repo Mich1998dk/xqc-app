@@ -11,6 +11,8 @@ import {
   getModelsInAsyncStorage,
   clearStorage,
   deleteModelInAsyncStorage,
+  combineModelInStorage,
+  saveModelInAsyncStorage,
 } from "../../utils/storage";
 import { deleteModelAsync, initExistingModel } from "../../redux/reducers";
 import { FlatList } from "react-native-gesture-handler";
@@ -26,6 +28,7 @@ import {
 } from "../../redux/actions";
 import { customAlert } from "../../utils/helpers";
 import AsyncStorage from "@react-native-community/async-storage";
+import { LoadModel } from ".";
 
 type LoadModelProps = StackNavigationProp<HomeStackParamList, "LoadModal">;
 
@@ -33,11 +36,15 @@ type Props = {
   navigation: LoadModelProps;
 };
 
+
 export default function ChooseMode({ navigation }: Props) {
-  const [state, setState] = useState({ loading: true });
+  const [state, setState] = useState({ loading: true, Title: "" });
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
-  const [models, setModels] = useState<Model[]>([]);
+  const [models, setModels] = useState<Model[]>([]);    
+
+  let chosenModels: Model[] = [];
+
 
   const getModels = async () => {
     var models = await getModelsInAsyncStorage();
@@ -45,7 +52,7 @@ export default function ChooseMode({ navigation }: Props) {
     if (models) setModels(models);
     else setModels([]);
 
-    setState({ ...state, loading: false });
+    setState({ ...state, loading: false , Title: "Load Model"});
   };
 
   const deleteModel = (item: string) => {
@@ -56,6 +63,16 @@ export default function ChooseMode({ navigation }: Props) {
     setModels(filtered);
   };
 
+    function changeMode() {
+        if (combineMode) {
+            combineMode = false
+            setState({ ...state, Title: "Load Model"})
+        } else {
+            combineMode = true
+            setState({ ...state, Title: "Combine Models" })
+        }
+    }
+
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       getModels();
@@ -64,15 +81,22 @@ export default function ChooseMode({ navigation }: Props) {
   }, [navigation]);
 
   return (
-    <Container>
-      <Header title="Load model" onPress={() => navigation.goBack()} />
+      <Container>
+      <Header title={state.Title} onPress={() => navigation.goBack()} />
       {models.length === 0 && (
         <Text.Button style={{ alignSelf: "center", opacity: 0.4 }}>
           No saved models yet :(
         </Text.Button>
-      )}
-      {models.length > 0 && (
-        <FlatList
+          )}
+          <View style={{ width: "100%" , alignItems: "center" }}>
+              <Button
+                  title="Change Mode"
+                  onPress={() => changeMode()}
+                  style={{ margin: 10 }}
+              />
+          </View>
+          {models.length > 0 && (
+          <FlatList
           data={models}
           style={{ paddingBottom: 80 }}
           renderItem={({ item, index }) => {
@@ -84,22 +108,43 @@ export default function ChooseMode({ navigation }: Props) {
                   deleteModel(item.name);
                 }}
                 onPress={async () => {
-                  dispatch(setLoading(true));
-                  await dispatch(initExistingModel(item.lastSeen));
-                  await dispatch(setImages(item.lastSeen));
-                  await dispatch(setNegative(item.negatives));
-                  await dispatch(setPositive(item.positives));
-                  await dispatch(setSeen(item.seen));
-                  await dispatch(setSelectedFilter(item.filter));
-                  dispatch(setLoading(false));
-                  if (item.mode === "standard") {
-                    dispatch(setMode("standard"));
-                    navigation.navigate("Home", { loadModel: item });
-                  }
-                  if (item.mode === "speed") {
-                    dispatch(setMode("speed"));
-                    navigation.navigate("SpeedMode", { loadModel: item });
-                  }
+                    if (combineMode) {
+                        if (chosenModels.includes(item)) {
+                            const index = chosenModels.indexOf(item)
+                            chosenModels.splice(index, 1)   
+                        } else {
+                            chosenModels.push(item)
+                            if (chosenModels.length == 2) {
+                                console.log("before choice")
+                                console.log(chosenModels)
+                                if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
+                                    const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
+                                    saveModelInAsyncStorage(Result);
+                                } else {
+                                    chosenModels.pop()
+                                }
+                            }
+                            console.log("after choice")
+                            console.log(chosenModels)
+                        }
+                    } else {
+                      dispatch(setLoading(true));
+                      await dispatch(initExistingModel(item.lastSeen));
+                      await dispatch(setImages(item.lastSeen));
+                      await dispatch(setNegative(item.negatives));
+                      await dispatch(setPositive(item.positives));
+                      await dispatch(setSeen(item.seen));
+                      await dispatch(setSelectedFilter(item.filter));
+                      dispatch(setLoading(false));
+                      if (item.mode === "standard") {
+                        dispatch(setMode("standard"));
+                        navigation.navigate("Home", { loadModel: item });
+                      }
+                      if (item.mode === "speed") {
+                        dispatch(setMode("speed"));
+                        navigation.navigate("SpeedMode", { loadModel: item });
+                      }
+                    }
                 }}
               />
             );
@@ -111,4 +156,7 @@ export default function ChooseMode({ navigation }: Props) {
   );
 }
 
+
+
 const styles = StyleSheet.create({});
+let combineMode = false;

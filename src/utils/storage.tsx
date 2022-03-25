@@ -35,7 +35,6 @@ export const getModelsInAsyncStorage = async () => {
 };
 
 export const combineModelInStorage = (first: Model, second: Model) => {
-   
 
     return {
         mode: first.mode,
@@ -47,7 +46,6 @@ export const combineModelInStorage = (first: Model, second: Model) => {
         created: new Date(),
         filter: CombineFilter(first.filter, second.filter),
     };
-
 }
 
 function CombineFilter(firstFilter: SelectedFilter, secondFilter: SelectedFilter): SelectedFilter {
@@ -59,7 +57,7 @@ function CombineFilter(firstFilter: SelectedFilter, secondFilter: SelectedFilter
         time: {
                 start: Math.min(firstFilter.time.start, secondFilter.time.start),
                 end: Math.max(firstFilter.time.end, secondFilter.time.end)
-               }
+        }
     }
 }
 
