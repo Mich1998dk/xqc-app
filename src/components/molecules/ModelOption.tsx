@@ -16,6 +16,7 @@ interface Props {
 
 export default function ModeOption({ onPress, onDelete, style, model, mode }: Props) {
 
+// We movd the stylesheet into the default function, so that the stylesheet can dynamically change. 
  const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
