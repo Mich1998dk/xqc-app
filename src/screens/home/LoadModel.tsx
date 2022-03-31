@@ -39,8 +39,8 @@ type Props = {
 
 
 export default function ChooseMode({ navigation }: Props) {
-  
-    const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent});
+
+  const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent });
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
   const [models, setModels] = useState<Model[]>([]);    
@@ -53,8 +53,7 @@ export default function ChooseMode({ navigation }: Props) {
 
     if (models) setModels(models);
     else setModels([]);
-
-    setState({ ...state, loading: false, Title: "Load Model", Mode: "Load", ModeColor: colors.accent });
+      setState({ ...state, loading: false, Title: "Load Model", Mode: "Load", ModeColor: colors.accent });
   };
 
   const deleteModel = (item: string) => {
@@ -113,18 +112,21 @@ export default function ChooseMode({ navigation }: Props) {
                 thisModel={item}
                 onPressFunction={async () => {
                     if (state.Mode == "Combine") {
+                        
                         if (chosenModels.includes(item)) {
                             const index = chosenModels.indexOf(item)
-                            chosenModels.splice(index, 1)               
+                            chosenModels.splice(index, 1)
                         } else {
                             chosenModels.push(item)
                             if (chosenModels.length == 2) {
                                 console.log(chosenModels)
                                 if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
                                     const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
-                                    saveModelInAsyncStorage(Result);
-                                    chosenModels = [];
-                                    setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent })
+                                    console.log(Result)
+                                    await saveModelInAsyncStorage(Result);
+                                    await getModels();
+                                    //setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent, chosenModels: [] })
+                                    //React.useCallback(() => setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent }),[])
                                 } else {
                                     chosenModels.pop()
                                 }
