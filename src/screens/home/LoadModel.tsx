@@ -15,7 +15,7 @@ import {
   saveModelInAsyncStorage,
 } from "../../utils/storage";
 import { deleteModelAsync, initExistingModel } from "../../redux/reducers";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, State } from "react-native-gesture-handler";
 
 import {
   setImages,
@@ -28,7 +28,7 @@ import {
 } from "../../redux/actions";
 import { customAlert } from "../../utils/helpers";
 import AsyncStorage from "@react-native-community/async-storage";
-import { LoadModel } from ".";
+import { CombineModels, LoadModel } from ".";
 import { colors } from "../../utils/theme";
 
 type LoadModelProps = StackNavigationProp<HomeStackParamList, "LoadModal">;
@@ -40,7 +40,7 @@ type Props = {
 
 export default function ChooseMode({ navigation }: Props) {
 
-  const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent });
+    const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent });
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
   const [models, setModels] = useState<Model[]>([]);    
@@ -53,7 +53,8 @@ export default function ChooseMode({ navigation }: Props) {
 
     if (models) setModels(models);
     else setModels([]);
-      setState({ ...state, loading: false, Title: "Load Model", Mode: "Load", ModeColor: colors.accent });
+
+      setState({ loading: false, Title: "Load Model", Mode: "Load", ModeColor: colors.accent });
   };
 
   const deleteModel = (item: string) => {
@@ -108,11 +109,9 @@ export default function ChooseMode({ navigation }: Props) {
                 onDelete={() => {
                   deleteModel(item.name);
                     }}
-                CombineList={chosenModels}
-                thisModel={item}
-                onPressFunction={async () => {
+                    CombineList={chosenModels}
+                    onPressFunction={async () => {
                     if (state.Mode == "Combine") {
-                        
                         if (chosenModels.includes(item)) {
                             const index = chosenModels.indexOf(item)
                             chosenModels.splice(index, 1)
@@ -122,8 +121,10 @@ export default function ChooseMode({ navigation }: Props) {
                                 console.log(chosenModels)
                                 if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
                                     const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
-                                    console.log(Result)
                                     await saveModelInAsyncStorage(Result);
+                                    chosenModels = [];
+                                    console.log("chosenmodels:")
+                                    console.log(chosenModels)
                                     await getModels();
                                     //setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent, chosenModels: [] })
                                     //React.useCallback(() => setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent }),[])

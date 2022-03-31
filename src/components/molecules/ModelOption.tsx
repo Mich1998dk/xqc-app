@@ -7,26 +7,30 @@ import moment from "moment";
 
 interface Props {
   onPressFunction: Function;
-  style?: CSSProperties;
+  style: CSSProperties;
   model: Model;
   onDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  mode?: string;
+  mode: string;
   CombineList: Model[];
-  thisModel: Model;
 }
 
 
-export default function ModeOption({ onPressFunction, onDelete, style, model, mode, CombineList, thisModel }: Props) {
+export default function ModeOption({ onPressFunction, onDelete, style, model, mode, CombineList }: Props) {
     const [state, setState] = useState({ TargetColor: "" as CSSProperties });
-   
     function CombineChange() {
-        var selected = (mode == "Combine") ? colors.green : styles.container.borderColor
-        if (CombineList.includes(thisModel)) {
-            setState({ TargetColor: { borderColor: selected } as CSSProperties })
-           } else {
-               setState({ TargetColor: "" as CSSProperties})
+        if (CombineList.includes(model)) {
+            setState({ TargetColor: { borderColor: colors.green } })
+        } else {
+            setState({ TargetColor: "" as CSSProperties })
            }
        
+    }
+    function ChooseColor() {
+        if (CombineList.includes(model)&& mode =="Combine") {
+            return {borderColor:colors.green}
+        } else {
+            return style
+        }
     }
   var stats = [
     {
@@ -63,7 +67,7 @@ export default function ModeOption({ onPressFunction, onDelete, style, model, mo
     return (
         <TouchableOpacity
             onPress={() => { onPressFunction(); CombineChange(); }}
-            style={[styles.container, style as any, state.TargetColor]}
+            style={[styles.container, ChooseColor() as any]}
           activeOpacity={0.75}
         >
         <View style={styles.top}>

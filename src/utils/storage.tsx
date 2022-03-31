@@ -1,9 +1,20 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import { customAlert } from "./helpers";
 import { Model, SelectedFilter } from "./types";
-export const saveModelInAsyncStorage = (model: Model) => {
+export const saveModelInAsyncStorage = async (model: Model) => {
+    let result = model.name
+    let counter = 1;
+
+    while (await checkName(result))
+    {
+        result = model.name + "(" + counter + ")"
+        counter++;
+    }
+    model.name = result
   AsyncStorage.setItem(model.name + "-xqc", JSON.stringify(model));
 };
+
+
 
 export const deleteModelInAsyncStorage = (name: string) => {
   try {
