@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { fonts, colors, sizes } from "../../utils/theme";
 import { Text, Icon } from "../atoms/index";
@@ -6,48 +6,28 @@ import { Mode, Model } from "../../utils/types";
 import moment from "moment";
 
 interface Props {
-  onPress: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onPressFunction: Function;
   style?: CSSProperties;
   model: Model;
   onDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  mode: string;
+  mode?: string;
+  CombineList: Model[];
+  thisModel: Model;
 }
 
 
-
-export default function ModeOption({ onPress, onDelete, style, model, mode }: Props) {
-
-    // We movd the stylesheet into the default function, so that the stylesheet can dynamically change. 
-    var styles = StyleSheet.create({
-        container: {
-            backgroundColor: colors.background,
-            borderWidth: 1.6,
-            borderColor: mode,
-            width: "100%",
-            borderRadius: 28,
-            flexDirection: "column",
-            alignItems: "center",
-            padding: 20,
-            marginBottom: 15,
-        },
-        top: {
-            flexDirection: "row",
-            justifyContent: "space-between",
-            width: "100%",
-            marginBottom: 20,
-            alignItems: "center",
-        },
-        bottom: {
-            flexDirection: "row",
-            width: "100%",
-            justifyContent: "space-between",
-        },
-        stat: {
-            flexDirection: "column",
-            marginRight: 20,
-        },
-    });
-
+export default function ModeOption({ onPressFunction, onDelete, style, model, mode, CombineList, thisModel }: Props) {
+    const [state, setState] = useState({ TargetColor: "" as CSSProperties });
+   
+    function CombineChange() {
+        var selected = (mode == "Combine") ? colors.green : styles.container.borderColor
+        if (CombineList.includes(thisModel)) {
+            setState({ TargetColor: { borderColor: selected } as CSSProperties })
+           } else {
+               setState({ TargetColor: "" as CSSProperties})
+           }
+       
+    }
   var stats = [
     {
       title: "CREATED",
@@ -66,8 +46,7 @@ export default function ModeOption({ onPress, onDelete, style, model, mode }: Pr
         model.filter.years.length,
       color: colors.white,
     },
-  ];
-
+    ];
   const renderMode = () => {
     switch (model.mode) {
       case "standard":
@@ -80,14 +59,14 @@ export default function ModeOption({ onPress, onDelete, style, model, mode }: Pr
         return "STANDARD";
     }
   };
-
-  return (
-    <TouchableOpacity
-      onPress={onPress as any}
-      style={[styles.container, style as any]}
-      activeOpacity={0.75}
-    >
-      <View style={styles.top}>
+    
+    return (
+        <TouchableOpacity
+            onPress={() => { onPressFunction(); CombineChange(); }}
+            style={[styles.container, style as any, state.TargetColor]}
+          activeOpacity={0.75}
+        >
+        <View style={styles.top}>
         <Text.ButtonSecondary>{model.name.toUpperCase()}</Text.ButtonSecondary>
         <Text.Small style={{ opacity: 0.3 }}>{renderMode()} MODE</Text.Small>
       </View>
@@ -113,3 +92,32 @@ export default function ModeOption({ onPress, onDelete, style, model, mode }: Pr
 }
 
 
+var styles = StyleSheet.create({
+    container: {
+        backgroundColor: colors.background,
+        borderWidth: 1.6,
+        borderColor: colors.accent,
+        width: "100%",
+        borderRadius: 28,
+        flexDirection: "column",
+        alignItems: "center",
+        padding: 20,
+        marginBottom: 15,
+    },
+    top: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "100%",
+        marginBottom: 20,
+        alignItems: "center",
+    },
+    bottom: {
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "space-between",
+    },
+    stat: {
+        flexDirection: "column",
+        marginRight: 20,
+    },
+});

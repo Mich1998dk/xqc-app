@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {CSSProperties, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "../../utils/types";
@@ -39,14 +39,15 @@ type Props = {
 
 
 export default function ChooseMode({ navigation }: Props) {
-  const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: ""});
+  
+    const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent});
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
   const [models, setModels] = useState<Model[]>([]);    
 
   let chosenModels: Model[] = [];
 
-
+  
   const getModels = async () => {
     var models = await getModelsInAsyncStorage();
 
@@ -103,11 +104,14 @@ export default function ChooseMode({ navigation }: Props) {
               <ModelOption
                 key={index}
                 model={item}
-                mode={state.ModeColor}
+                mode={state.Mode}
+                style={{borderColor: state.ModeColor} as CSSProperties} 
                 onDelete={() => {
                   deleteModel(item.name);
-                }}
-                onPress={async () => {
+                    }}
+                CombineList={chosenModels}
+                thisModel={item}
+                onPressFunction={async () => {
                     if (state.Mode == "Combine") {
                         if (chosenModels.includes(item)) {
                             const index = chosenModels.indexOf(item)
@@ -115,17 +119,19 @@ export default function ChooseMode({ navigation }: Props) {
                         } else {
                             chosenModels.push(item)
                             if (chosenModels.length == 2) {
-                                console.log("before choice")
                                 console.log(chosenModels)
                                 if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
                                     const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
                                     saveModelInAsyncStorage(Result);
+                                    chosenModels = [];
+                                    setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent })
                                 } else {
                                     chosenModels.pop()
                                 }
                             }
-                            console.log("after choice")
-                            console.log(chosenModels)
+                            
+
+                           
                         }
                     } else if (state.Mode == "Load") {
                       dispatch(setLoading(true));
@@ -149,12 +155,14 @@ export default function ChooseMode({ navigation }: Props) {
               />
             );
           }}
-          keyExtractor={(key) => key.name}
+                  keyExtractor={(key) => key.name}
+                 
         />
       )}
     </Container>
   );
 }
+
 
 
 

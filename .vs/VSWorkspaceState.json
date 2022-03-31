@@ -11,6 +11,6 @@
     "\\src\\screens\\home",
     "\\src\\utils"
   ],
-  "SelectedNode": "\\src\\screens\\home\\Filter.tsx",
+  "SelectedNode": "\\src\\redux\\reducers.tsx",
   "PreviewInSolutionExplorer": false
 }
