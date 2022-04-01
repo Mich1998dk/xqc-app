@@ -1,5 +1,5 @@
 import React, {CSSProperties, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
@@ -30,6 +30,7 @@ import { customAlert } from "../../utils/helpers";
 import AsyncStorage from "@react-native-community/async-storage";
 import { CombineModels, LoadModel } from ".";
 import { colors } from "../../utils/theme";
+import { CustomPopUp } from "../../components/organisms/index"
 
 type LoadModelProps = StackNavigationProp<HomeStackParamList, "LoadModal">;
 
@@ -40,7 +41,8 @@ type Props = {
 
 export default function ChooseMode({ navigation }: Props) {
 
-    const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent });
+  const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent });
+  const [modalState, setModalState] = useState(false)
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
   const [models, setModels] = useState<Model[]>([]);    
@@ -80,8 +82,9 @@ export default function ChooseMode({ navigation }: Props) {
     return unsubscribe;
   }, [navigation]);
 
-  return (
+    return (
       <Container>
+          
       <Header title={state.Title} onPress={() => navigation.goBack()} />
       {models.length === 0 && (
         <Text.Button style={{ alignSelf: "center", opacity: 0.4 }}>
@@ -119,7 +122,7 @@ export default function ChooseMode({ navigation }: Props) {
                             chosenModels.push(item)
                             if (chosenModels.length == 2) {
                                 console.log(chosenModels)
-                                if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
+                                /*if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
                                     const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
                                     await saveModelInAsyncStorage(Result);
                                     chosenModels = [];
@@ -130,7 +133,8 @@ export default function ChooseMode({ navigation }: Props) {
                                     //React.useCallback(() => setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent }),[])
                                 } else {
                                     chosenModels.pop()
-                                }
+                                }*/
+                                setModalState(true)
                             }
                             
 
@@ -162,6 +166,13 @@ export default function ChooseMode({ navigation }: Props) {
                  
         />
       )}
+            <CustomPopUp
+                title={"Whatever man"}
+                description={"Description"}
+                buttons={[<TouchableOpacity>hello there</TouchableOpacity>]}
+                visible={modalState}
+                close={() => setModalState(false)}
+            />
     </Container>
   );
 }
