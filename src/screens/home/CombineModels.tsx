@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
@@ -28,6 +28,8 @@ import {
 } from "../../redux/actions";
 import { customAlert } from "../../utils/helpers";
 import AsyncStorage from "@react-native-community/async-storage";
+import { CustomPopUp } from "../../components/organisms/index";
+import { Title } from "../../components/atoms/Text";
 
 type LoadModelProps = StackNavigationProp<HomeStackParamList, "LoadModal">;
 
@@ -67,6 +69,7 @@ export default function ChooseMode({ navigation }: Props) {
 
     return (
         <Container>
+            
             <Header title="Combine Models" onPress={() => navigation.goBack()} />
             {models.length === 0 && (
                 <Text.Button style={{ alignSelf: "center", opacity: 0.4 }}>
@@ -93,13 +96,17 @@ export default function ChooseMode({ navigation }: Props) {
                                         chosenModels.push(item)
                                         if (chosenModels.length == 2) {
                                         console.log("before choice")
-                                        console.log(chosenModels)
-                                            if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
+                                            console.log(chosenModels)
+                                                
+
+                                            
+                                            /*if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
                                                 const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
                                                 saveModelInAsyncStorage(Result);
                                             } else {
                                                 chosenModels.pop()
-                                            }
+                                            }*/
+
                                         }
                                     console.log("after choice")
                                     console.log(chosenModels)
