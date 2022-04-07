@@ -1,7 +1,7 @@
 import React, {CSSProperties, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList } from "../../utils/types";
+import { HomeStackParamList, Mode } from "../../utils/types";
 import { Text } from "../../components/atoms/index";
 import { Model } from "../../utils/types";
 import { Button, Header, ModelOption } from "../../components/molecules/index";
@@ -66,8 +66,8 @@ export default function ChooseMode({ navigation }: Props) {
     const popupMergeTitle = "Combining models"
     var popupMergeContent = ""
     const cancelButton = <Button title="Cancel" key="cancel" onPress={() => cancelCombine()} style={buttonStyles.buttonStyle} secondary />
-    const projectionButton = <Button title="Projection mode" key="projection mode" onPress={() => combine()} style={buttonStyles.buttonStyle} />
-    const speedButton = <Button title="Speed mode" key="speed mode" onPress={() => false} style={buttonStyles.buttonStyle} />
+    const projectionButton = <Button title="Projection mode" key="projection mode" onPress={() => combine("projection")} style={buttonStyles.buttonStyle} />
+    const speedButton = <Button title="Speed mode" key="speed mode" onPress={() => combine("speed")} style={buttonStyles.buttonStyle} />
 
     function cancelCombine() {
         setMergePopupVisible({ contentText: "", visible: false })
@@ -76,9 +76,9 @@ export default function ChooseMode({ navigation }: Props) {
         setState({ ...state });
     }
 
-    async function combine() {
+    async function combine(combinedMode: Mode) {
         console.log(chosenModels)
-        const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
+        const Result = combineModelInStorage(chosenModels[0], chosenModels[1], combinedMode)
         await saveModelInAsyncStorage(Result);
         chosenModels = [];
         await getModels();
@@ -139,7 +139,11 @@ export default function ChooseMode({ navigation }: Props) {
                         } else {
                             chosenModels.push(item)
                             if (chosenModels.length == 2) {
-                                popupMergeContent = "Do you want to combine: \"" + chosenModels[0].name + "\" and \"" + chosenModels[1].name + "\""
+                                popupMergeContent = "Do you want to combine: \"" +
+                                                    chosenModels[0].name +
+                                                    "\" and \"" +
+                                                    chosenModels[1].name +
+                                                    "\" <br> Do you want to save it as Projection mode or Speed mode"
 
                                 setMergePopupVisible({ contentText: popupMergeContent, visible:true })
                                 //await setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent })
@@ -189,7 +193,7 @@ export default function ChooseMode({ navigation }: Props) {
                 title={popupMergeTitle}
                 contentText={mergePopupVisible.contentText}
                 visible={mergePopupVisible.visible}
-                onClose={() => setMergePopupVisible({ contentText: "", visible: false })}
+                onClose={() => cancelCombine()}
                 buttons={[cancelButton, projectionButton, speedButton]}
             />
     </Container>

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import { customAlert } from "./helpers";
-import { Model, SelectedFilter } from "./types";
+import { Mode, Model, SelectedFilter } from "./types";
 export const saveModelInAsyncStorage = async (model: Model) => {
     let result = model.name
     let counter = 1;
@@ -45,10 +45,9 @@ export const getModelsInAsyncStorage = async () => {
   return models;
 };
 
-export const combineModelInStorage = (first: Model, second: Model) => {
-
+export const combineModelInStorage = (first: Model, second: Model, combinedMode: Mode) => {
     return {
-        mode: first.mode,
+        mode: combinedMode,
         name: first.name + " and " + second.name + " Combined",
         negatives: CombineArrays(first.negatives, second.negatives),
         positives: CombineArrays(first.positives, second.positives),
