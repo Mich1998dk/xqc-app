@@ -3,9 +3,11 @@
     "",
     "\\src",
     "\\src\\components",
+    "\\src\\components\\molecules",
+    "\\src\\components\\organisms",
     "\\src\\screens",
     "\\src\\utils"
   ],
-  "SelectedNode": "\\src\\utils\\types.tsx",
+  "SelectedNode": "\\src\\components\\organisms\\ImageRenderer.tsx",
   "PreviewInSolutionExplorer": false
 }

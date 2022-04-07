@@ -104,7 +104,7 @@ export default function ChooseMode({ navigation }: Props) {
     return (
       <Container>
           
-            <Header title={state.Title} onPress={() => navigation.goBack()} />
+      <Header title={state.Title} onPress={() => navigation.goBack()} />
       {models.length === 0 && (
         <Text.Button style={{ alignSelf: "center", opacity: 0.4 }}>
           No saved models yet :(
