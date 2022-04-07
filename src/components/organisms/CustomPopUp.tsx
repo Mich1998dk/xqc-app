@@ -2,32 +2,39 @@ import React, { CSSProperties, SyntheticEvent, useState } from 'react';
 import { StyleSheet, View, Text, Modal, Pressable } from 'react-native';
 import { Popup } from 'reactjs-popup'
 import { colors } from '../../utils/theme';
+import { Model } from '../../utils/types';
 import { Button } from '../molecules';
 interface Props {
+    title: string;
+    contentText: string;
     visible: boolean;
     onClose: Function;
+    buttons: any[];
 }
 
-export default function CustomPopUp({ visible, onClose }: Props) {
+export default function CustomPopUp({ title, contentText, visible, onClose, buttons}: Props) {
     
     return (
         <Popup
             open={visible}
-            onClose={() => onClose(false)}
+            onClose={() => onClose()}
             contentStyle={styleSheet.contentStyle}
             overlayStyle={styleSheet.overlayStyle}
             closeOnEscape
             closeOnDocumentClick
         >
-            <h1 style={styleSheet.h1Style}>test</h1>
-            <p style={styleSheet.h1Style}> You have choes to merge x and y, would you like to continue?</p>
+            <h1 style={styleSheet.h1Style}>{title}</h1>
+            <p style={styleSheet.h1Style}>{contentText}</p>
             <View style={styles.buttonsView}>
-                <Button title="Cancel" onPress={() => false} style={styleSheet.buttonStyle} secondary />
-                <Button title="no" onPress={() => false} style={styleSheet.buttonStyle} />
-                <Button title="yes" onPress={() => false} style={styleSheet.buttonStyle} />
+                {buttons}
             </View>
         </Popup>
     );
+
+
+
+
+
 }
 const styleSheet = {
 

@@ -38,16 +38,14 @@ type Props = {
   navigation: LoadModelProps;
 };
 
-
+let chosenModels: Model[] = [];
 export default function ChooseMode({ navigation }: Props) {
-
-  let chosenModels: Model[] = [];
   const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent});
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
   const [models, setModels] = useState<Model[]>([]);
 
-  const [popupVisible,setPopupVisible] = useState(false)
+  const [mergePopupVisible, setMergePopupVisible] = useState({ contentText:"",visible:false})
   const getModels = async () => {
     var models = await getModelsInAsyncStorage();
 
@@ -63,7 +61,29 @@ export default function ChooseMode({ navigation }: Props) {
     );
     deleteModelInAsyncStorage(item + "-xqc");
     setModels(filtered);
-  };
+    };
+
+    const popupMergeTitle = "Combining models"
+    var popupMergeContent = ""
+    const cancelButton = <Button title="Cancel" key="cancel" onPress={() => cancelCombine()} style={buttonStyles.buttonStyle} secondary />
+    const projectionButton = <Button title="Projection mode" key="projection mode" onPress={() => combine()} style={buttonStyles.buttonStyle} />
+    const speedButton = <Button title="Speed mode" key="speed mode" onPress={() => false} style={buttonStyles.buttonStyle} />
+
+    function cancelCombine() {
+        setMergePopupVisible({ contentText: "", visible: false })
+        chosenModels = [];
+
+        setState({ ...state });
+    }
+
+    async function combine() {
+        console.log(chosenModels)
+        const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
+        await saveModelInAsyncStorage(Result);
+        chosenModels = [];
+        await getModels();
+        await setMergePopupVisible({ contentText: "", visible: false })
+    }
 
     function changeMode() {
         if (state.Mode == "Combine") {
@@ -119,22 +139,21 @@ export default function ChooseMode({ navigation }: Props) {
                         } else {
                             chosenModels.push(item)
                             if (chosenModels.length == 2) {
-                                setPopupVisible(true)
+                                popupMergeContent = "Do you want to combine: \"" + chosenModels[0].name + "\" and \"" + chosenModels[1].name + "\""
+
+                                setMergePopupVisible({ contentText: popupMergeContent, visible:true })
                                 //await setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent })
                                 //chosenModels = [];
                                 /*if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
                                     const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
                                     await saveModelInAsyncStorage(Result);
                                     chosenModels = [];
-                                    console.log("chosenmodels:")
-                                    console.log(chosenModels)
                                     await getModels();
                                     //setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent, chosenModels: [] })
                                     //React.useCallback(() => setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent }),[])
                                 } else {
                                     chosenModels.pop()
                                 }*/
-                                //setModalState(true)
                             }
                             
 
@@ -166,13 +185,31 @@ export default function ChooseMode({ navigation }: Props) {
                  
         />
             )}
-            <CustomPopUp visible={popupVisible} onClose={setPopupVisible}/>
+            <CustomPopUp
+                title={popupMergeTitle}
+                contentText={mergePopupVisible.contentText}
+                visible={mergePopupVisible.visible}
+                onClose={() => setMergePopupVisible({ contentText: "", visible: false })}
+                buttons={[cancelButton, projectionButton, speedButton]}
+            />
     </Container>
     );
-    
+
+
 }
 
 
 
+
+
+
+
+
 const styles = StyleSheet.create({});
-let combineMode = false;
+
+
+const buttonStyles = {
+    buttonStyle: {
+        width: 100
+    } as CSSProperties,
+}
