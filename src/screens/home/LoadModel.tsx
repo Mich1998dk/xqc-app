@@ -41,22 +41,20 @@ type Props = {
 
 export default function ChooseMode({ navigation }: Props) {
 
-  const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent });
-  const [popupState, setPopupState] = useState(false)
+  let chosenModels: Model[] = [];
+  const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent});
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
-  const [models, setModels] = useState<Model[]>([]);    
+  const [models, setModels] = useState<Model[]>([]);
 
-  let chosenModels: Model[] = [];
-
-  
+  const [popupVisible,setPopupVisible] = useState(false)
   const getModels = async () => {
     var models = await getModelsInAsyncStorage();
 
     if (models) setModels(models);
     else setModels([]);
 
-      setState({ loading: false, Title: "Load Model", Mode: "Load", ModeColor: colors.accent });
+      setState({...state, loading: false, Title: "Load Model", Mode: "Load", ModeColor: colors.accent });
   };
 
   const deleteModel = (item: string) => {
@@ -113,7 +111,7 @@ export default function ChooseMode({ navigation }: Props) {
                   deleteModel(item.name);
                     }}
                     CombineList={chosenModels}
-                    onPressFunction={async () => {
+                    onPressFunction={async() => {
                     if (state.Mode == "Combine") {
                         if (chosenModels.includes(item)) {
                             const index = chosenModels.indexOf(item)
@@ -121,9 +119,9 @@ export default function ChooseMode({ navigation }: Props) {
                         } else {
                             chosenModels.push(item)
                             if (chosenModels.length == 2) {
-                                console.log(chosenModels)
-                                setPopupState(true)
-
+                                setPopupVisible(true)
+                                //await setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent })
+                                //chosenModels = [];
                                 /*if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
                                     const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
                                     await saveModelInAsyncStorage(Result);
@@ -168,11 +166,11 @@ export default function ChooseMode({ navigation }: Props) {
                  
         />
             )}
-            <CustomPopUp visible={popupState}/>
+            <CustomPopUp visible={popupVisible} onClose={setPopupVisible}/>
     </Container>
-  );
+    );
+    
 }
-
 
 
 

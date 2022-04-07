@@ -12,6 +12,7 @@ export const colors = {
   submitOverlay: "rgba(247, 321, 101, 0.45)",
   red: "#DB5858",
   green: "#5CC47C",
+  popupBackground: "rgba(28, 28, 28, 0.55)",
 };
 
 export const sizes = {
