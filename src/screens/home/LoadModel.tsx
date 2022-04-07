@@ -91,6 +91,7 @@ export default function ChooseMode({ navigation }: Props) {
         } else if (state.Mode == "Load"){
             setState({ ...state, Title: "Combine Models", Mode: "Combine", ModeColor: colors.red})
         }
+        chosenModels = []
     }
 
   useEffect(() => {
@@ -103,7 +104,7 @@ export default function ChooseMode({ navigation }: Props) {
     return (
       <Container>
           
-      <Header title={state.Title} onPress={() => navigation.goBack()} />
+            <Header title={state.Title} onPress={() => navigation.goBack()} />
       {models.length === 0 && (
         <Text.Button style={{ alignSelf: "center", opacity: 0.4 }}>
           No saved models yet :(
