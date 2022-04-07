@@ -14,6 +14,8 @@ interface Props {
 
 export default function CustomPopUp({ title, contentText, visible, onClose, buttons}: Props) {
     
+    const contentTextLines = contentText.split('\n').map(line => <p style={styleSheet.h1Style}>{line}</p>)
+
     return (
         <Popup
             open={visible}
@@ -24,7 +26,7 @@ export default function CustomPopUp({ title, contentText, visible, onClose, butt
             closeOnDocumentClick
         >
             <h1 style={styleSheet.h1Style}>{title}</h1>
-            <p style={styleSheet.h1Style}>{contentText}</p>
+            {contentTextLines}
             <View style={styles.buttonsView}>
                 {buttons}
             </View>
@@ -58,10 +60,6 @@ const styleSheet = {
 
     overlayStyle: {
         backgroundColor: colors.popupBackground
-    } as CSSProperties,
-
-    buttonStyle: {
-        width: 100
     } as CSSProperties,
 }
 

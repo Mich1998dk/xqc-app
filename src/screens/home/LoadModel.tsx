@@ -143,7 +143,7 @@ export default function ChooseMode({ navigation }: Props) {
                                                     chosenModels[0].name +
                                                     "\" and \"" +
                                                     chosenModels[1].name +
-                                                    "\" <br> Do you want to save it as Projection mode or Speed mode"
+                                                    "\" \n Do you want to save it as Projection mode or Speed mode"
 
                                 setMergePopupVisible({ contentText: popupMergeContent, visible:true })
                                 //await setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent })
@@ -212,8 +212,10 @@ export default function ChooseMode({ navigation }: Props) {
 const styles = StyleSheet.create({});
 
 
-const buttonStyles = {
+const buttonStyles = StyleSheet.create({
     buttonStyle: {
-        width: 100
-    } as CSSProperties,
-}
+        width: "auto",
+        paddingHorizontal: "15px",
+        textAlign: "center"
+    }
+})
