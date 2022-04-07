@@ -18,12 +18,8 @@ interface Props {
 export default function ModeOption({ onPressFunction, onDelete, style, model, mode, CombineList }: Props) {
     const [state, setState] = useState({ TargetColor: "" as CSSProperties });
     function CombineChange() {
-        if (CombineList.includes(model)) {
-            setState({ TargetColor: { borderColor: colors.green } })
-        } else {
-            setState({ TargetColor: "" as CSSProperties })
-           }
-       
+        //force rerender
+        setState({...state})
     }
     function ChooseColor() {
         if (CombineList.includes(model)&& mode =="Combine") {

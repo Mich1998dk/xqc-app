@@ -42,7 +42,7 @@ type Props = {
 export default function ChooseMode({ navigation }: Props) {
 
   const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent });
-  const [modalState, setModalState] = useState(false)
+  const [popupState, setPopupState] = useState(false)
   const dispatch = useDispatch();
   const redux = useSelector((state) => state);
   const [models, setModels] = useState<Model[]>([]);    
@@ -122,6 +122,8 @@ export default function ChooseMode({ navigation }: Props) {
                             chosenModels.push(item)
                             if (chosenModels.length == 2) {
                                 console.log(chosenModels)
+                                setPopupState(true)
+
                                 /*if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
                                     const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
                                     await saveModelInAsyncStorage(Result);
@@ -134,7 +136,7 @@ export default function ChooseMode({ navigation }: Props) {
                                 } else {
                                     chosenModels.pop()
                                 }*/
-                                setModalState(true)
+                                //setModalState(true)
                             }
                             
 
@@ -165,14 +167,8 @@ export default function ChooseMode({ navigation }: Props) {
                   keyExtractor={(key) => key.name}
                  
         />
-      )}
-            <CustomPopUp
-                title={"Whatever man"}
-                description={"Description"}
-                buttons={[<TouchableOpacity>hello there</TouchableOpacity>]}
-                visible={modalState}
-                close={() => setModalState(false)}
-            />
+            )}
+            <CustomPopUp visible={popupState}/>
     </Container>
   );
 }

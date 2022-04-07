@@ -3,13 +3,9 @@
     "",
     "\\src",
     "\\src\\components",
-    "\\src\\components\\atoms",
-    "\\src\\components\\molecules",
-    "\\src\\navigation",
-    "\\src\\redux",
     "\\src\\screens",
-    "\\src\\screens\\home",
     "\\src\\utils"
   ],
+  "SelectedNode": "\\src\\utils\\types.tsx",
   "PreviewInSolutionExplorer": false
 }
