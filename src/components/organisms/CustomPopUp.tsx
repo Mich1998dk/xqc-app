@@ -1,7 +1,7 @@
 import React, { CSSProperties, SyntheticEvent, useState } from 'react';
 import { StyleSheet, View, Text, Modal, Pressable } from 'react-native';
 import { Popup } from 'reactjs-popup'
-import { colors } from '../../utils/theme';
+import { colors, fonts } from '../../utils/theme';
 import { Model } from '../../utils/types';
 import { Button } from '../molecules';
 interface Props {
@@ -50,12 +50,13 @@ const styleSheet = {
         borderStyle: "solid",
         borderColor: colors.accent,
         borderWidth: "medium",
-        borderRadius: "25px",
+        borderRadius: "25px"
     } as CSSProperties,
 
     h1Style: {
         color: colors.white,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontFamily: fonts.med
     } as CSSProperties,
 
     overlayStyle: {

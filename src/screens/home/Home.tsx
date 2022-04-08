@@ -23,6 +23,7 @@ import { ButtonBar, ImageRenderer } from "../../components/organisms/index";
 import { setSearchData, setSeen, setSelectedFilter } from "../../redux/actions";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Text } from "../../components/atoms";
+import { isMobile } from "react-device-detect"
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
 type RouteProps = RouteProp<HomeStackParamList, "Home">;
@@ -45,8 +46,10 @@ export default function Home({ navigation, route }: Props) {
     return unsubscribe;
   }, [navigation]);
 
-  return (
-    <Container model={loadModel} navigation={navigation}>
+    return (
+        <Container model={loadModel} navigation={navigation} style={{ width: "100%", maxWidth: "100%", flexDirection: "row", justifyContent: "center"}}>
+            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }}> test </div>}
+            <div style={{ width: "50%"}}>
       <Header
         title={Platform.OS === "web" ? "PROJECTION" : ""}
         onPress={() => {
@@ -62,8 +65,8 @@ export default function Home({ navigation, route }: Props) {
           dispatch(setSearchData(redux.terms));
           navigation.navigate("Search", { mode: "terms" });
         }}
-      />
-      <ScrollView>
+                />
+        <ScrollView style={{ height: "90vh" }}>
         {redux.images.length > 0 && (
           <ImageRenderer navigation={navigation} data={redux.images} />
         )}
@@ -74,7 +77,9 @@ export default function Home({ navigation, route }: Props) {
           No results - maybe your filter is too strict
         </Text.Regular>
       )}
-      <ButtonBar navigation={navigation} posAndNeg randomSet train />
+      <ButtonBar navigation={navigation} posAndNeg randomSet train  />
+            </div>
+            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }}> test </div>}
     </Container>
   );
 }

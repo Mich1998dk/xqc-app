@@ -89,7 +89,7 @@ export default function ChooseMode({ navigation }: Props) {
         if (state.Mode == "Combine") {
             setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent})
         } else if (state.Mode == "Load"){
-            setState({ ...state, Title: "Combine Models", Mode: "Combine", ModeColor: colors.red})
+            setState({ ...state, Title: "Combine Models", Mode: "Combine", ModeColor: colors.red })
         }
     }
 
@@ -201,8 +201,6 @@ export default function ChooseMode({ navigation }: Props) {
 
 
 }
-
-
 
 
 

@@ -1,11 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src",
-    "\\src\\components",
-    "\\src\\screens",
-    "\\src\\utils"
+    "\\src"
   ],
-  "SelectedNode": "\\src\\utils\\types.tsx",
+  "SelectedNode": "\\App.js",
   "PreviewInSolutionExplorer": false
 }

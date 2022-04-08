@@ -112,7 +112,7 @@ export default function ButtonBar({
 }
 
 const styles = StyleSheet.create({
-  buttons: {
+    buttons: {
     position: "absolute",
     bottom: 0,
     left: 0,
