@@ -32,7 +32,7 @@ export default function ChooseMode({ navigation }: Props) {
         <ModeOption
           title="PROJECTION MODE (BROWSE ORIENTED)"
           onPress={() => {
-            dispatch(setMode("standard"));
+            dispatch(setMode("projection"));
             navigation.navigate("Home", { loadModel: undefined });
           }}
         />
