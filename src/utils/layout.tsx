@@ -20,7 +20,7 @@ export default {
   isLargeDevice: width > 550, //550
 };
 
-export function calculateColumnAmount() {
+export function calculateColumnAmount(){
   if (width > 1100) return 4;
   if (width > 600) return 3;
   return 2;

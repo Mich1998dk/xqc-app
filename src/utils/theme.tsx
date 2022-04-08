@@ -11,7 +11,9 @@ export const colors = {
   negativeOverlay: "rgba(237, 93, 93, 0.45)",
   submitOverlay: "rgba(247, 321, 101, 0.45)",
   red: "#DB5858",
+    lightRed: "#c76d6d",
   green: "#5CC47C",
+  lightGreen: "rgba(143, 242, 173, 0.80)",
   popupBackground: "rgba(28, 28, 28, 0.55)",
 };
 
