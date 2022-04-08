@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { CSSProperties, useEffect } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -45,11 +45,17 @@ export default function Home({ navigation, route }: Props) {
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
   }, [navigation]);
+    var mobilestylingContainer = (!isMobile) ? {
+        width: "100%", maxWidth: "100%", flexDirection: "row", justifyContent: "center"
+    } as CSSProperties : {};
 
+    var mobileStyle = (!isMobile) ? {
+        width: "50%"
+    } as CSSProperties : {};
     return (
-        <Container model={loadModel} navigation={navigation} style={{ width: "100%", maxWidth: "100%", flexDirection: "row", justifyContent: "center"}}>
+        <Container model={loadModel} navigation={navigation} style={mobilestylingContainer}>
             {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }}> test </div>}
-            <div style={{ width: "50%"}}>
+            <div style={mobileStyle}>
       <Header
         title={Platform.OS === "web" ? "PROJECTION" : ""}
         onPress={() => {

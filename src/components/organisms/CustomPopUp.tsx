@@ -54,7 +54,6 @@ const styleSheet = {
         fontFamily: fonts.med,
         color: colors.white,
         textAlign: 'center',
-        fontFamily: fonts.med
     } as CSSProperties,
 
 
