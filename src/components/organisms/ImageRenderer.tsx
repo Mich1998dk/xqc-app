@@ -56,7 +56,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
 
   return (
     <View style={styles.container}>
-      {redux.mode === "standard" && (
+      {redux.mode === "projection" && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "flex-start" }}
           data={data}

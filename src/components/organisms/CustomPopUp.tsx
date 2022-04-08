@@ -1,7 +1,7 @@
 import React, { CSSProperties, SyntheticEvent, useState } from 'react';
 import { StyleSheet, View, Text, Modal, Pressable } from 'react-native';
 import { Popup } from 'reactjs-popup'
-import { colors } from '../../utils/theme';
+import { colors, fonts } from '../../utils/theme';
 import { Model } from '../../utils/types';
 import { Button } from '../molecules';
 interface Props {
@@ -51,6 +51,7 @@ const styleSheet = {
         borderColor: colors.accent,
         borderWidth: "medium",
         borderRadius: "25px",
+        fontFamily: fonts.med,
     } as CSSProperties,
 
     h1Style: {

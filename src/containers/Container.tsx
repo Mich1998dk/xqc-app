@@ -41,7 +41,7 @@ export default function Container({
 
   const quickSaveModel = async () => {
     const tempModel: Model = {
-      mode: "standard",
+      mode: "projection",
       name: model?.name!,
       negatives: redux.negatives,
       positives: redux.positives,

@@ -142,9 +142,9 @@ export default function ChooseMode({ navigation }: Props) {
                             if (chosenModels.length == 2) {
                                 popupMergeContent = "Do you want to combine: \"" +
                                                     chosenModels[0].name +
-                                                    "\" and \"" +
+                                                    "\" ("+chosenModels[0].mode + ") and \"" +
                                                     chosenModels[1].name +
-                                                    "\" \n Do you want to save it as Projection mode or Speed mode"
+                                                    "\" (" + chosenModels[1].mode + ") \n Do you want to save it as Projection mode or Speed mode"
 
                                 setMergePopupVisible({ contentText: popupMergeContent, visible:true })
                                 //await setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent })
@@ -173,8 +173,8 @@ export default function ChooseMode({ navigation }: Props) {
                       await dispatch(setSeen(item.seen));
                       await dispatch(setSelectedFilter(item.filter));
                       dispatch(setLoading(false));
-                      if (item.mode === "standard") {
-                        dispatch(setMode("standard"));
+                      if (item.mode === "projection") {
+                        dispatch(setMode("projection"));
                         navigation.navigate("Home", { loadModel: item });
                       }
                       if (item.mode === "speed") {
