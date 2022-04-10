@@ -10,6 +10,7 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
 import { RouteProp } from "@react-navigation/native";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@reach/tabs"
 import { Header, ImageOverlay } from "../../components/molecules/index";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
@@ -71,12 +72,23 @@ export default function Home({ navigation, route }: Props) {
           dispatch(setSearchData(redux.terms));
           navigation.navigate("Search", { mode: "terms" });
         }}
-                />
-        <ScrollView style={{ height: "90vh" }}>
-        {redux.images.length > 0 && (
-          <ImageRenderer navigation={navigation} data={redux.images} />
-        )}
-      </ScrollView>
+          />
+          <Tabs>
+              <TabList>
+                  <Tab> first</Tab>
+                  <Tab> second</Tab>
+              </TabList>
+              <TabPanels>
+                  <TabPanel>
+                      <ScrollView style={{ height: "90vh" }}>
+                          {redux.images.length > 0 && (
+                              <ImageRenderer navigation={navigation} data={redux.images} />
+                          )}
+                      </ScrollView>
+                  </TabPanel>
+                  <TabPanel></TabPanel>
+              </TabPanels>
+          </Tabs>
 
       {redux.images.length === 0 && !redux.loading && (
         <Text.Regular style={{ alignSelf: "center" }}>
