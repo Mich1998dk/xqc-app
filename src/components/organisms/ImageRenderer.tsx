@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { CSSProperties, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -38,9 +38,11 @@ interface Props {
   data: any;
   navigation: HomeProps;
   time?: string;
+  style?: CSSProperties;
+  posNeg?: number;
 }
 
-export default function ImageRenderer({ data, navigation, time }: Props) {
+export default function ImageRenderer({ data, navigation, time, style, posNeg }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
@@ -48,25 +50,35 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
 
   console.log(data.length);
 
+  var numberOfCollumns : number
+    if (posNeg != undefined) {
+        if (posNeg > 0) {
+            numberOfCollumns = posNeg
+        } else {
+            numberOfCollumns = calculateColumnAmount()
+        }
+    } else {
+        numberOfCollumns = calculateColumnAmount()
+    }
+
   useEffect(() => {
     if (Platform.OS !== "web") {
       //LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     }
   }, []);
-
   return (
     <View style={styles.container}>
       {redux.mode === "projection" && (
         <FlatList
-          columnWrapperStyle={{ justifyContent: "flex-start" }}
+          columnWrapperStyle={{ justifyContent: "center" }}
           data={data}
           style={{ paddingBottom: 80 }}
-          numColumns={calculateColumnAmount()}
+          numColumns={numberOfCollumns}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
             return (
               <TouchableOpacity
-                style={styles.box}
+                style={[styles.box, style as any]}
                 onPress={async () => {
                   dispatch(getImageInfo(item.exqId));
                   await dispatch(makeProjection(item));
@@ -123,7 +135,7 @@ export default function ImageRenderer({ data, navigation, time }: Props) {
                     height: 200,
                     resizeMode: "stretch",
                     borderRadius: 12,
-                  }}
+                     }}
                   source={{
                     uri: item.imageURI,
                   }}

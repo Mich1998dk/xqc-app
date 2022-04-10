@@ -25,6 +25,7 @@ import { setSearchData, setSeen, setSelectedFilter } from "../../redux/actions";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Text } from "../../components/atoms";
 import { isMobile } from "react-device-detect"
+import { colors } from "../../utils/theme";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
 type RouteProps = RouteProp<HomeStackParamList, "Home">;
@@ -55,7 +56,17 @@ export default function Home({ navigation, route }: Props) {
     } as CSSProperties : {};
     return (
         <Container model={loadModel} navigation={navigation} style={mobilestylingContainer}>
-            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }}> test </div>}
+
+            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%"}} >
+
+                <Header title={"Negative"} hideBack style={{ backgroundColor: colors.red }} />
+                <ScrollView style={{ height: "90vh", backgroundColor: colors.lightRed }} >
+                    {redux.images.length > 0 && (
+                        <ImageRenderer navigation={navigation} data={redux.negatives} style={{ width: 200}} posNeg={2} />
+                    )}
+                </ScrollView>
+            </div>}
+
             <div style={mobileStyle}>
       <Header
         title={Platform.OS === "web" ? "PROJECTION" : ""}
@@ -90,14 +101,23 @@ export default function Home({ navigation, route }: Props) {
               </TabPanels>
           </Tabs>
 
-      {redux.images.length === 0 && !redux.loading && (
-        <Text.Regular style={{ alignSelf: "center" }}>
-          No results - maybe your filter is too strict
-        </Text.Regular>
-      )}
-      <ButtonBar navigation={navigation} posAndNeg randomSet train  />
+              {redux.images.length === 0 && !redux.loading && (
+                <Text.Regular style={{ alignSelf: "center" }}>
+                  No results - maybe your filter is too strict
+                </Text.Regular>
+              )}
             </div>
-            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }}> test </div>}
+
+            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
+                <Header title={"Positive"} hideBack style={{ backgroundColor: colors.green }} />
+                <ScrollView style={{ height: "90vh", backgroundColor: colors.lightGreen }}>
+                    {redux.images.length > 0 && (
+                        <ImageRenderer navigation={navigation} data={redux.positives} style={{ width: 200 }} posNeg={2} />
+                    )}
+                </ScrollView>
+            </div>}
+
+            <ButtonBar navigation={navigation} posAndNeg randomSet train />
     </Container>
   );
 }
