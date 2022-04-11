@@ -88,7 +88,7 @@ export default function ChooseMode({ navigation }: Props) {
                                 onDelete={() => {
                                     deleteModel(item.name);
                                 }}
-                                onPress={() => {
+                                onPressFunction={() => {
                                     if (chosenModels.includes(item)) {
                                         const index = chosenModels.indexOf(item)
                                         chosenModels.splice(index, 1)

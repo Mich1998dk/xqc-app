@@ -68,7 +68,7 @@ export default function ImageRenderer({ data, navigation, time, style, posNeg }:
   }, []);
   return (
     <View style={styles.container}>
-      {redux.mode === "projection" && (
+      {redux.states[0].mode === "projection" && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "center" }}
           data={data}
@@ -110,15 +110,15 @@ export default function ImageRenderer({ data, navigation, time, style, posNeg }:
                   onPressPositive={() => {
                     dispatch(positiveExamplePressed(item));
                   }}
-                  negativeSelected={redux.negatives.includes(item)}
-                  positiveSelected={redux.positives.includes(item)}
+                  negativeSelected={redux.states[0].negatives.includes(item)}
+                  positiveSelected={redux.states[0].positives.includes(item)}
                 />
               </TouchableOpacity>
             );
           }}
         />
       )}
-      {redux.mode === "speed" && (
+      {redux.states[0].mode === "speed" && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "flex-start" }}
           data={data}
@@ -157,14 +157,14 @@ export default function ImageRenderer({ data, navigation, time, style, posNeg }:
                 <ImageOverlay
                   onPressNegative={() => {
                     dispatch(negativeExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.images.indexOf(item)));
+                    dispatch(replaceImageAsync(redux.states[0].images.indexOf(item)));
                   }}
                   onPressPositive={() => {
                     dispatch(positiveExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.images.indexOf(item)));
+                    dispatch(replaceImageAsync(redux.states[0].images.indexOf(item)));
                   }}
-                  negativeSelected={redux.negatives.includes(item)}
-                  positiveSelected={redux.positives.includes(item)}
+                  negativeSelected={redux.states[0].negatives.includes(item)}
+                  positiveSelected={redux.states[0].positives.includes(item)}
                 />
               </View>
             );

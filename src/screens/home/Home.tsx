@@ -61,8 +61,8 @@ export default function Home({ navigation, route }: Props) {
 
                 <Header title={"Negative"} hideBack style={{ backgroundColor: colors.red }} />
                 <ScrollView style={{ height: "90vh", backgroundColor: colors.lightRed }} >
-                    {redux.images.length > 0 && (
-                        <ImageRenderer navigation={navigation} data={redux.negatives} style={{ width: 200}} posNeg={2} />
+                    {redux.states[0].images.length > 0 && (
+                        <ImageRenderer navigation={navigation} data={redux.states[0].negatives} style={{ width: 200}} posNeg={2} />
                     )}
                 </ScrollView>
             </div>}
@@ -80,7 +80,7 @@ export default function Home({ navigation, route }: Props) {
         onPressFilter={() => navigation.navigate("Filter")}
         search
         onPressSearch={() => {
-          dispatch(setSearchData(redux.terms));
+          dispatch(setSearchData(redux.states[0].terms));
           navigation.navigate("Search", { mode: "terms" });
         }}
           />
@@ -92,8 +92,8 @@ export default function Home({ navigation, route }: Props) {
               <TabPanels>
                   <TabPanel>
                       <ScrollView style={{ height: "90vh" }}>
-                          {redux.images.length > 0 && (
-                              <ImageRenderer navigation={navigation} data={redux.images} />
+                          {redux.states[0].images.length > 0 && (
+                              <ImageRenderer navigation={navigation} data={redux.states[0].images} />
                           )}
                       </ScrollView>
                   </TabPanel>
@@ -101,7 +101,7 @@ export default function Home({ navigation, route }: Props) {
               </TabPanels>
           </Tabs>
 
-              {redux.images.length === 0 && !redux.loading && (
+              {redux.states[0].images.length === 0 && !redux.states[0].loading && (
                 <Text.Regular style={{ alignSelf: "center" }}>
                   No results - maybe your filter is too strict
                 </Text.Regular>
@@ -111,8 +111,8 @@ export default function Home({ navigation, route }: Props) {
             {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
                 <Header title={"Positive"} hideBack style={{ backgroundColor: colors.green }} />
                 <ScrollView style={{ height: "90vh", backgroundColor: colors.lightGreen }}>
-                    {redux.images.length > 0 && (
-                        <ImageRenderer navigation={navigation} data={redux.positives} style={{ width: 200 }} posNeg={2} />
+                    {redux.states[0].images.length > 0 && (
+                        <ImageRenderer navigation={navigation} data={redux.states[0].positives} style={{ width: 200 }} posNeg={2} />
                     )}
                 </ScrollView>
             </div>}

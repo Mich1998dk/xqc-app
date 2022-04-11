@@ -34,9 +34,6 @@ export default function CustomPopUp({ title, contentText, visible, onClose, butt
     );
 
 
-
-
-
 }
 const styleSheet = {
 

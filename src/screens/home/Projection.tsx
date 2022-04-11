@@ -51,27 +51,27 @@ export default function ProjectionMode({ navigation, route }: Props) {
             borderRadius: 12,
           }}
           source={{
-            uri: redux.imageForProjection?.imageURI,
+            uri: redux.states[0].imageForProjection?.imageURI,
           }}
         />
         <View style={styles.rightInfo}>
-          {redux.imageInfo?.name && (
-            <Text.Button>Name: {redux.imageInfo?.name}</Text.Button>
+          {redux.states[0].imageInfo?.name && (
+            <Text.Button>Name: {redux.states[0].imageInfo?.name}</Text.Button>
           )}
-          {redux.imageInfo?.day !== "unknown" && (
-            <Text.Button>Location: {redux.imageInfo?.day}</Text.Button>
+          {redux.states[0].imageInfo?.day !== "unknown" && (
+            <Text.Button>Location: {redux.states[0].imageInfo?.day}</Text.Button>
           )}
-          {redux.imageInfo?.hour && (
-            <Text.Button>Hour: {redux.imageInfo?.hour}</Text.Button>
+          {redux.states[0].imageInfo?.hour && (
+            <Text.Button>Hour: {redux.states[0].imageInfo?.hour}</Text.Button>
           )}
-          {redux.imageInfo?.year && (
-            <Text.Button>Year: {redux.imageInfo?.year}</Text.Button>
+          {redux.states[0].imageInfo?.year && (
+            <Text.Button>Year: {redux.states[0].imageInfo?.year}</Text.Button>
           )}
-          {redux.imageInfo?.location !== "unknown" && (
-            <Text.Button>Location: {redux.imageInfo?.location}</Text.Button>
+          {redux.states[0].imageInfo?.location !== "unknown" && (
+            <Text.Button>Location: {redux.states[0].imageInfo?.location}</Text.Button>
           )}
-          {redux.imageInfo?.activity !== "unknown" && (
-            <Text.Button>Activity: {redux.imageInfo?.activity}</Text.Button>
+          {redux.states[0].imageInfo?.activity !== "unknown" && (
+            <Text.Button>Activity: {redux.states[0].imageInfo?.activity}</Text.Button>
           )}
         </View>
       </View>
@@ -93,8 +93,8 @@ export default function ProjectionMode({ navigation, route }: Props) {
         columnWrapperStyle={{ justifyContent: "space-between" }}
         data={
           selected === "negative"
-            ? redux.negativeProjection
-            : redux.positiveProjection
+            ? redux.states[0].negativeProjection
+            : redux.states[0].positiveProjection
         }
         style={{ paddingBottom: 80 }}
         numColumns={calculateColumnAmount()}

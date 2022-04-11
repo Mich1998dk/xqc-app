@@ -48,13 +48,13 @@ export default function ChooseMode({ navigation, route }: Props) {
     }
 
     const model: Model = {
-      mode: redux.mode,
+      mode: redux.states[0].mode,
       name: state.name,
-      negatives: redux.negatives,
-      positives: redux.positives,
-      seen: redux.seen,
-      lastSeen: redux.images,
-      filter: redux.selectedFilter,
+      negatives: redux.states[0].negatives,
+      positives: redux.states[0].positives,
+      seen: redux.states[0].seen,
+      lastSeen: redux.states[0].images,
+      filter: redux.states[0].selectedFilter,
       created: new Date(),
     };
 

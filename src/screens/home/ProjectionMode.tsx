@@ -63,10 +63,10 @@ export default function ProjectionMode({ navigation, route }: Props) {
         onPressFilter={() => navigation.navigate("Filter")}
       />
 
-      {redux.images.length > 0 && (
+      {redux.states[0].images.length > 0 && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "space-between" }}
-          data={redux.images}
+          data={redux.states[0].images}
           numColumns={calculateColumnAmount()}
           style={{ paddingBottom: 80 }}
           keyExtractor={(item) => item.exqId.toString()}

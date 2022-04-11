@@ -60,7 +60,7 @@ export default function PosAndNeg({ navigation }: Props) {
         <FlatList
           columnWrapperStyle={{ justifyContent: "flex-start" }}
           data={
-            state.selected === "negative" ? redux.negatives : redux.positives
+            state.selected === "negative" ? redux.states[0].negatives : redux.states[0].positives
           }
           numColumns={calculateColumnAmount()}
           style={{ paddingBottom: 80 }}
@@ -101,7 +101,7 @@ export default function PosAndNeg({ navigation }: Props) {
 
       {state.selected === "history" && (
         <ScrollView>
-            <ImageRenderer navigation={navigation as any} data={redux.seen} />
+            <ImageRenderer navigation={navigation as any} data={redux.states[0].seen} />
         </ScrollView>
       )}
     </Container>

@@ -71,7 +71,7 @@ export default function ModeOption({
         <View>
           {time && (
             <Icon
-              onPress={() => dispatch(setTimerStatus(!redux.timerStatus))}
+              onPress={() => dispatch(setTimerStatus(!redux.states[0].timerStatus))}
               type="time"
               marginRight
             />

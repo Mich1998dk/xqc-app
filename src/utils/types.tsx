@@ -28,29 +28,30 @@ export type Obj = {
 };
 
 export type State = {
-  positives: Obj[];
-  negatives: Obj[];
-  seen: Obj[];
-  images: Obj[];
-  loading: boolean;
-  mediaInfo: any;
-  positiveProjection: Obj[];
-  negativeProjection: Obj[];
-  imageForProjection: Obj | undefined;
-  imageInfo: ImageInfo | undefined;
-  mode: Mode;
-  terms: string[];
-  search: boolean;
-  searchResults: Obj[];
-  menu: boolean;
-  filter: Filter;
-  selectedFilter: SelectedFilter;
-  tempFilter: SelectedFilter;
-  timePicker: boolean;
-  searchData: string[];
-  user: string;
-  timerStatus: boolean;
-};
+    states: {
+      positives: Obj[];
+      negatives: Obj[];
+      seen: Obj[];
+      images: Obj[];
+      loading: boolean;
+      mediaInfo: any;
+      positiveProjection: Obj[];
+      negativeProjection: Obj[];
+      imageForProjection: Obj | undefined;
+      imageInfo: ImageInfo | undefined;
+      mode: Mode;
+      terms: string[];
+      search: boolean;
+      searchResults: Obj[];
+      menu: boolean;
+      filter: Filter;
+      selectedFilter: SelectedFilter;
+      tempFilter: SelectedFilter;
+      timePicker: boolean;
+      searchData: string[];
+      user: string;
+      timerStatus: boolean;
+}[]};
 
 export type ImageInfo = {
   activity: string;

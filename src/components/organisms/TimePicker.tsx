@@ -62,16 +62,16 @@ export default function TimePicker({ type }: Props) {
     if (type === "start") {
       dispatch(
         setTempFilter({
-          ...redux.tempFilter,
-          time: { ...redux.tempFilter.time, start: time },
+          ...redux.states[0].tempFilter,
+          time: { ...redux.states[0].tempFilter.time, start: time },
         })
       );
     }
     if (type === "end") {
       dispatch(
         setTempFilter({
-          ...redux.tempFilter,
-          time: { ...redux.tempFilter.time, end: time },
+          ...redux.states[0].tempFilter,
+          time: { ...redux.states[0].tempFilter.time, end: time },
         })
       );
     }

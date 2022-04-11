@@ -43,52 +43,52 @@ export default function Filter({ navigation, route }: Props) {
   const [type, setType] = useState<"start" | "end">("start");
 
   useEffect(() => {
-    dispatch(setTempFilter(redux.selectedFilter));
+    dispatch(setTempFilter(redux.states[0].selectedFilter));
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
   }, [navigation]);
 
   const renderActivities = () => {
-    return redux.filter.activities.map((item, index) => {
+    return redux.states[0].filter.activities.map((item, index) => {
       return (
         <IconButton
           key={index}
           onPress={() => {
-            if (redux.tempFilter.activities.includes(index)) {
-              var temp = redux.tempFilter.activities.filter(
+            if (redux.states[0].tempFilter.activities.includes(index)) {
+              var temp = redux.states[0].tempFilter.activities.filter(
                 (item) => item !== index
               );
               dispatch(
-                setTempFilter({ ...redux.tempFilter, activities: temp })
+                setTempFilter({ ...redux.states[0].tempFilter, activities: temp })
               );
             } else {
               dispatch(
                 setTempFilter({
-                  ...redux.tempFilter,
-                  activities: [...redux.tempFilter.activities, index],
+                  ...redux.states[0].tempFilter,
+                  activities: [...redux.states[0].tempFilter.activities, index],
                 })
               );
             }
           }}
           title={item.toUpperCase()}
           style={{ marginRight: 6, marginBottom: 8 }}
-          secondary={!redux.tempFilter.activities.includes(index)}
+          secondary={!redux.states[0].tempFilter.activities.includes(index)}
         />
       );
     });
   };
 
   const renderLocations = () => {
-    return redux.filter.locations.map((item, index) => {
-      if (redux.tempFilter.locations.includes(index)) {
+    return redux.states[0].filter.locations.map((item, index) => {
+      if (redux.states[0].tempFilter.locations.includes(index)) {
         return (
           <IconButton
             key={index}
             onPress={() => {
               dispatch(
                 setTempFilter({
-                  ...redux.tempFilter,
-                  locations: redux.tempFilter.locations.filter(
+                  ...redux.states[0].tempFilter,
+                  locations: redux.states[0].tempFilter.locations.filter(
                     (elm) => elm !== index
                   ),
                 })
@@ -115,21 +115,21 @@ export default function Filter({ navigation, route }: Props) {
         <IconButton
           key={index}
           onPress={() => {
-            if (redux.tempFilter.years.includes(item.value)) {
-              var temp = redux.tempFilter.years.filter(
+            if (redux.states[0].tempFilter.years.includes(item.value)) {
+              var temp = redux.states[0].tempFilter.years.filter(
                 (elm) => elm !== item.value
               );
-              dispatch(setTempFilter({ ...redux.tempFilter, years: temp }));
+              dispatch(setTempFilter({ ...redux.states[0].tempFilter, years: temp }));
             } else {
               dispatch(
                 setTempFilter({
-                  ...redux.tempFilter,
-                  years: [...redux.tempFilter.years, item.value],
+                  ...redux.states[0].tempFilter,
+                  years: [...redux.states[0].tempFilter.years, item.value],
                 })
               );
             }
           }}
-          secondary={!redux.tempFilter.years.includes(item.value)}
+          secondary={!redux.states[0].tempFilter.years.includes(item.value)}
           title={item.year.toUpperCase()}
           style={{ marginRight: 6, marginBottom: 8 }}
         />
@@ -153,19 +153,19 @@ export default function Filter({ navigation, route }: Props) {
         <IconButton
           key={index}
           onPress={() => {
-            if (redux.tempFilter.days.includes(index)) {
-              var temp = redux.tempFilter.days.filter((elm) => elm !== index);
-              dispatch(setTempFilter({ ...redux.tempFilter, days: temp }));
+            if (redux.states[0].tempFilter.days.includes(index)) {
+              var temp = redux.states[0].tempFilter.days.filter((elm) => elm !== index);
+              dispatch(setTempFilter({ ...redux.states[0].tempFilter, days: temp }));
             } else {
               dispatch(
                 setTempFilter({
-                  ...redux.tempFilter,
-                  days: [...redux.tempFilter.days, index],
+                  ...redux.states[0].tempFilter,
+                  days: [...redux.states[0].tempFilter.days, index],
                 })
               );
             }
           }}
-          secondary={!redux.tempFilter.days.includes(index)}
+          secondary={!redux.states[0].tempFilter.days.includes(index)}
           title={item.toUpperCase()}
           style={{ marginRight: 6, marginBottom: 8 }}
         />
@@ -194,7 +194,7 @@ export default function Filter({ navigation, route }: Props) {
           }}
         >
           <Text.Button>
-            {formatTimeToPeriod(redux.tempFilter.time.start)}
+            {formatTimeToPeriod(redux.states[0].tempFilter.time.start)}
           </Text.Button>
         </TouchableOpacity>
         <Text.Regular>and</Text.Regular>
@@ -206,19 +206,19 @@ export default function Filter({ navigation, route }: Props) {
           }}
         >
           <Text.Button>
-            {formatTimeToPeriod(redux.tempFilter.time.end)}
+            {formatTimeToPeriod(redux.states[0].tempFilter.time.end)}
           </Text.Button>
         </TouchableOpacity>
       </View>
 
-      {redux.timePicker && <TimePicker type={type} />}
+      {redux.states[0].timePicker && <TimePicker type={type} />}
 
       <Text.Button>Location</Text.Button>
       <View style={styles.filters}>{renderLocations()}</View>
 
       <TouchableOpacity
         onPress={() => {
-          dispatch(setSearchData(redux.filter.locations));
+          dispatch(setSearchData(redux.states[0].filter.locations));
           navigation.navigate("Search", { mode: "locations" });
         }}
       >

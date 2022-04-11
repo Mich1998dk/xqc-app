@@ -43,12 +43,12 @@ export default function Container({
     const tempModel: Model = {
       mode: "projection",
       name: model?.name!,
-      negatives: redux.negatives,
-      positives: redux.positives,
-      seen: redux.seen,
-      lastSeen: redux.images,
+      negatives: redux.states[0].negatives,
+      positives: redux.states[0].positives,
+      seen: redux.states[0].seen,
+      lastSeen: redux.states[0].images,
       created: new Date(model?.created!),
-      filter: redux.tempFilter,
+      filter: redux.states[0].tempFilter,
     };
 
     await saveModelInAsyncStorage(tempModel);
@@ -70,9 +70,9 @@ export default function Container({
         <View style={[styles.content, style as any]}>{children}</View>
       )}
 
-      {redux.loading && <Loader loadingTitle="Please wait.." />}
-      {redux.search && <Search />}
-      {redux.menu && (
+      {redux.states[0].loading && <Loader loadingTitle="Please wait.." />}
+      {redux.states[0].search && <Search />}
+      {redux.states[0].menu && (
         <Menu
           onExit={() => {
             dispatch(setMenu(false));
@@ -89,7 +89,7 @@ export default function Container({
           }}
           onClickSaveModel={() => {
             dispatch(setMenu(false));
-            navigation!.navigate("ModelName", { mode: redux.mode });
+            navigation!.navigate("ModelName", { mode: redux.states[0].mode });
           }}
           canQuickSave={model !== undefined}
           onClickQuickSave={() => {

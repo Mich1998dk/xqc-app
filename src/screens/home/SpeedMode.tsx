@@ -73,7 +73,7 @@ export default function SpeedMode({ navigation, route }: Props) {
   }, [navigation]);
 
   useEffect(() => {
-    if (!redux.loading) {
+    if (!redux.states[0].loading) {
       var _s = 0;
       var _m = 0;
 
@@ -94,7 +94,7 @@ export default function SpeedMode({ navigation, route }: Props) {
 
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
-  }, [redux.loading]);
+  }, [redux.states[0].loading]);
 
   return (
     <Container navigation={navigation} model={loadModel}>
@@ -110,28 +110,28 @@ export default function SpeedMode({ navigation, route }: Props) {
         onPressFilter={() => navigation.navigate("Filter")}
         search
         onPressSearch={() => {
-          dispatch(setSearchData(redux.terms));
+          dispatch(setSearchData(redux.states[0].terms));
           navigation.navigate("Search", { mode: "terms" });
         }}
         menu
         time
       />
 
-      {redux.timerStatus && (
+      {redux.states[0].timerStatus && (
         <Text.Button style={{ alignSelf: "center" }}>
           {formatTime(min) + ":" + formatTime(seconds)}
         </Text.Button>
       )}
-      {redux.images.length === 0 && !redux.loading && (
+      {redux.states[0].images.length === 0 && !redux.states[0].loading && (
         <Text.Regular style={{ alignSelf: "center" }}>
           No results - maybe your filter is too strict
         </Text.Regular>
       )}
       <ScrollView>
-        {redux.images.length > 0 && (
+        {redux.states[0].images.length > 0 && (
         <ImageRenderer
             navigation={navigation}
-            data={redux.images}
+            data={redux.states[0].images}
             time={formatTime(min) + ":" + formatTime(seconds)}
         />
         )}

@@ -30,7 +30,7 @@ const webStyles = {
 export default function Menu({}: Props) {
   const dispatch = useDispatch();
   const [state, setState] = useState({ search: "" });
-  const terms = useSelector((state: State) => state.terms);
+  const terms = useSelector((state: State) => state.states[0].terms);
 
   return (
     <Animatable.View style={styles.container} animation="fadeIn" duration={240}>

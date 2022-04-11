@@ -42,13 +42,13 @@ export default function Search({ navigation, route }: Props) {
   const redux = useSelector((state: State) => state);
   const [state, setState] = useState({ search: "", currentlySearched: "" });
   const { mode } = route.params;
-  var search = redux.searchData
+  var search = redux.states[0].searchData
     .filter((item) => item.includes(state.search.toLowerCase()))
     .slice(0, 50);
 
   const getIndexOfSelected = (str: string) => {
-    for (let i = 0; redux.filter.locations.length > i; i++) {
-      let loc = redux.filter.locations[i];
+    for (let i = 0; redux.states[0].filter.locations.length > i; i++) {
+      let loc = redux.states[0].filter.locations[i];
       if (loc === str) {
         return i;
       }
@@ -96,7 +96,7 @@ export default function Search({ navigation, route }: Props) {
               {state.currentlySearched.length > 0 && (
           <View>
             {(() => {
-                if (redux.searchResults.length === 0) {
+                if (redux.states[0].searchResults.length === 0) {
                     return (
                         <Text.Button style={{ alignSelf: "center", marginBottom: 10 }}>
                             No results found using current filter.
@@ -110,7 +110,7 @@ export default function Search({ navigation, route }: Props) {
           </View>
         )}
         <ScrollView>
-          {(redux.searchResults.length === 0 || state.search.length > 0) && (
+          {(redux.states[0].searchResults.length === 0 || state.search.length > 0) && (
             <FlatList
               data={search}
               style={{ height: 600 }}
@@ -131,13 +131,13 @@ export default function Search({ navigation, route }: Props) {
                       }
 
                       if (mode === "locations") {
-                        console.log(redux.filter.locations);
+                        console.log(redux.states[0].filter.locations);
 
                         dispatch(
                           setTempFilter({
-                            ...redux.tempFilter,
+                            ...redux.states[0].tempFilter,
                             locations: [
-                              ...redux.tempFilter.locations,
+                              ...redux.states[0].tempFilter.locations,
                               getIndexOfSelected(item),
                             ],
                           })
@@ -154,8 +154,8 @@ export default function Search({ navigation, route }: Props) {
               }}
             />
           )}
-          {redux.searchResults.length > 0 && state.search.length === 0 && (
-            <ImageRenderer data={redux.searchResults} navigation={navigation} />
+          {redux.states[0].searchResults.length > 0 && state.search.length === 0 && (
+            <ImageRenderer data={redux.states[0].searchResults} navigation={navigation} />
           )}
         </ScrollView>
       </View>
