@@ -1,6 +1,6 @@
 # vs
 */.vs
-
+.vs/
 # Logs
 logs
 *.log
