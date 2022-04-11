@@ -52,7 +52,7 @@ export const combineModelInStorage = (first: Model, second: Model, combinedMode:
         negatives: CombineArrays(first.negatives, second.negatives),
         positives: CombineArrays(first.positives, second.positives),
         seen: CombineArrays(first.seen, second.seen),
-        lastSeen: CombineArrays(first.lastSeen, second.lastSeen),
+        lastSeen: combinedMode == first.mode ? first.lastSeen : second.lastSeen,
         created: new Date(),
         filter: CombineFilter(first.filter, second.filter),
     };

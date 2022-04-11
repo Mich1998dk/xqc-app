@@ -62,7 +62,7 @@ export default function Home({ navigation, route }: Props) {
                 <Header title={"Negative"} hideBack style={{ backgroundColor: colors.red }} />
                 <ScrollView style={{ height: "90vh", backgroundColor: colors.lightRed }} >
                     {redux.states[0].images.length > 0 && (
-                        <ImageRenderer navigation={navigation} data={redux.states[0].negatives} style={{ width: 200}} posNeg={2} />
+                        <ImageRenderer navigation={navigation} data={redux.states[0].negatives} style={{ width: 200 }} numberOfImages={2} />
                     )}
                 </ScrollView>
             </div>}
@@ -112,7 +112,7 @@ export default function Home({ navigation, route }: Props) {
                 <Header title={"Positive"} hideBack style={{ backgroundColor: colors.green }} />
                 <ScrollView style={{ height: "90vh", backgroundColor: colors.lightGreen }}>
                     {redux.states[0].images.length > 0 && (
-                        <ImageRenderer navigation={navigation} data={redux.states[0].positives} style={{ width: 200 }} posNeg={2} />
+                        <ImageRenderer navigation={navigation} data={redux.states[0].positives} style={{ width: 200 }} numberOfImages={2} />
                     )}
                 </ScrollView>
             </div>}

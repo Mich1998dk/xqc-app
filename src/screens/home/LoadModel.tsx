@@ -14,7 +14,7 @@ import {
   combineModelInStorage,
   saveModelInAsyncStorage,
 } from "../../utils/storage";
-import { deleteModelAsync, initExistingModel } from "../../redux/reducers";
+import { deleteModelAsync, initExistingModel, learnModelAsync, randomSetAsync } from "../../redux/reducers";
 import { FlatList, State } from "react-native-gesture-handler";
 
 import {
@@ -172,6 +172,11 @@ export default function ChooseMode({ navigation }: Props) {
                       await dispatch(setPositive(item.positives));
                       await dispatch(setSeen(item.seen));
                       await dispatch(setSelectedFilter(item.filter));
+                      if (item.negatives.length == 0 && item.positives.length == 0) {
+                           dispatch(randomSetAsync());
+                      } else {
+                           await dispatch(learnModelAsync());
+                      }
                       dispatch(setLoading(false));
                       if (item.mode === "projection") {
                         dispatch(setMode("projection"));

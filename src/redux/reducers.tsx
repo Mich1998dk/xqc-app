@@ -801,9 +801,9 @@ export const deleteModelAsync =
 export const replaceImageAsync =
   (index: number,modelIndex: number = 0) => async (dispatch: any, getState: any) => {
     dispatch(setLoading(true,modelIndex));
-    var pos = getState().states[index].positives.map((item: Obj) => item.exqId);
-    var neg = getState().states[index].negatives.map((item: Obj) => item.exqId);
-    var seen = getState().states[index].seen.map((item: Obj) => item.exqId);
+      var pos = getState().states[modelIndex].positives.map((item: Obj) => item.exqId);
+      var neg = getState().states[modelIndex].negatives.map((item: Obj) => item.exqId);
+      var seen = getState().states[modelIndex].seen.map((item: Obj) => item.exqId);
 
     console.log('Replacing image!!');
 
@@ -811,7 +811,7 @@ export const replaceImageAsync =
 
     let objects: Obj[] = [];
 
-    learn(pos, neg, seen, getState().states[index].mode, getState().states[index].user)
+      learn(pos, neg, seen, getState().states[modelIndex].mode, getState().states[modelIndex].user)
       .then((res) => {
         console.log("pikkemand");
         
