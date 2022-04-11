@@ -39,10 +39,10 @@ interface Props {
   navigation: HomeProps;
   time?: string;
   style?: CSSProperties;
-  posNeg?: number;
+  numberOfImages?: number;
 }
 
-export default function ImageRenderer({ data, navigation, time, style, posNeg }: Props) {
+export default function ImageRenderer({ data, navigation, time, style, numberOfImages }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
@@ -51,9 +51,9 @@ export default function ImageRenderer({ data, navigation, time, style, posNeg }:
   console.log(data.length);
 
   var numberOfCollumns : number
-    if (posNeg != undefined) {
-        if (posNeg > 0) {
-            numberOfCollumns = posNeg
+    if (numberOfImages != undefined) {
+        if (numberOfImages > 0) {
+            numberOfCollumns = numberOfImages
         } else {
             numberOfCollumns = calculateColumnAmount()
         }
