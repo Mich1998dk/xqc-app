@@ -26,7 +26,7 @@ import {
   setSeen,
   setSelectedFilter,
 } from "../../redux/actions";
-import { customAlert } from "../../utils/helpers";
+import { customAlert, getNumberOfImageByPlatformAndMode } from "../../utils/helpers";
 import AsyncStorage from "@react-native-community/async-storage";
 import { CombineModels, LoadModel } from ".";
 import { colors } from "../../utils/theme";
@@ -167,15 +167,18 @@ export default function ChooseMode({ navigation }: Props) {
                     } else if (state.Mode == "Load") {
                       dispatch(setLoading(true));
                       await dispatch(initExistingModel(item.lastSeen));
-                      await dispatch(setImages(item.lastSeen));
                       await dispatch(setNegative(item.negatives));
                       await dispatch(setPositive(item.positives));
                       await dispatch(setSeen(item.seen));
                       await dispatch(setSelectedFilter(item.filter));
-                      if (item.negatives.length == 0 && item.positives.length == 0) {
-                           dispatch(randomSetAsync());
+                      if (item.lastSeen.length == getNumberOfImageByPlatformAndMode(item.mode)) {
+                         await dispatch(setImages(item.lastSeen))
                       } else {
-                           await dispatch(learnModelAsync());
+                        if (item.negatives.length == 0 && item.positives.length == 0) {
+                            dispatch(randomSetAsync());
+                        } else {
+                            await dispatch(learnModelAsync());
+                        }
                       }
                       dispatch(setLoading(false));
                       if (item.mode === "projection") {
