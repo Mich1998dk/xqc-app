@@ -44,8 +44,8 @@ export default function Search({ navigation, route }: Props) {
   const { mode,tabIndex } = route.params;
   var search = redux.states[tabIndex].searchData
     .filter((item) => item.includes(state.search.toLowerCase()))
-    .slice(0, 50);
-
+        .slice(0, 50);
+    console.log("results:" + search.length)
   const getIndexOfSelected = (str: string) => {
     for (let i = 0; redux.states[tabIndex].filter.locations.length > i; i++) {
       let loc = redux.states[tabIndex].filter.locations[i];
@@ -110,7 +110,7 @@ export default function Search({ navigation, route }: Props) {
           </View>
         )}
         <ScrollView>
-                  {(redux.states[tabIndex].searchResults.length === 0 || state.search.length > 0) && (
+            {(redux.states[tabIndex].searchResults.length === 0 || state.search.length > 0) && (
             <FlatList
               data={search}
               style={{ height: 600 }}

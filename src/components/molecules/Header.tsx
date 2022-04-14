@@ -25,6 +25,7 @@ interface Props {
   history?: boolean;
   reset?: boolean;
   hideBack?: boolean;
+  index?: number;
 }
 
 export default function ModeOption({
@@ -42,6 +43,7 @@ export default function ModeOption({
   navigation,
   reset,
   hideBack,
+  index = 0,
 }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
@@ -71,7 +73,7 @@ export default function ModeOption({
         <View>
           {time && (
             <Icon
-              onPress={() => dispatch(setTimerStatus(!redux.states[0].timerStatus))}
+              onPress={() => dispatch(setTimerStatus(!redux.states[index].timerStatus,index))}
               type="time"
               marginRight
             />
@@ -97,7 +99,7 @@ export default function ModeOption({
           )}
         </View>
         <View>
-          {menu && <Icon onPress={() => dispatch(setMenu(true))} type="menu" />}
+          {menu && <Icon onPress={() => dispatch(setMenu(true,index))} type="menu" />}
         </View>
       </View>
     </View>

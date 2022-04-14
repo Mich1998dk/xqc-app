@@ -86,7 +86,7 @@ const initialState: State =
 {
     states: [addModel("Default")]
 };
-function addModel(name: string, user: string = "", mode: Mode = undefined, searchData: string[] = []) {
+function addModel(name: string, user: string = "", mode: Mode = undefined, terms: string[] = []) {
     return {
         name: name,
         positives: [],
@@ -100,10 +100,10 @@ function addModel(name: string, user: string = "", mode: Mode = undefined, searc
         imageForProjection: undefined,
         imageInfo: undefined,
         mode: mode,
-        terms: [],
+        terms: terms,
         search: false,
         searchResults: [],
-        searchData: searchData,
+        searchData: [],
         menu: false,
         filter: { activities: [], locations: [] },
         selectedFilter: {
@@ -255,7 +255,7 @@ export const reducer = (state = initialState, action: any) => {
           return { ...state, states: newArray };
         }
       case ADD_NEW_MODEL: {
-          newArray.push(addModel("Model" + newArray.length, newArray[0].user, newArray[0].mode, newArray[0].searchData))
+          newArray.push(addModel("Model" + newArray.length, newArray[0].user, newArray[0].mode, newArray[0].terms))
           return { ...state, states: newArray };
         }
         
@@ -408,7 +408,7 @@ export const getImageInfo =
 
 export const searchAsync =
   (term: string, index:number = 0) => async (dispatch: any, getState: any) => {
-    dispatch(setLoading(true),index);
+    dispatch(setLoading(true,index));
     console.log("request index:" + index)
     await axios(`${URL}/getSearchItems`, {
       method: "post",
@@ -433,14 +433,14 @@ export const searchAsync =
         console.log("SIZE OF RESULTS: " + images.length);
 
         //dispatch(setImages(images));
-        dispatch(setSearchResults(images),index);
-        dispatch(updateSeen(images),index);
+        dispatch(setSearchResults(images,index));
+        dispatch(updateSeen(images,index));
       })
       .catch((err) => {
         console.log(err);
       });
 
-    dispatch(setLoading(false),index);
+    dispatch(setLoading(false,index));
   };
 
 export const negativeExamplePressed =
