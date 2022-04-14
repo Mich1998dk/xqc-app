@@ -1,5 +1,6 @@
 export const INIT_MODEL = "INIT_MODEL";
 export const SET_LOADING = "SET_LOADING";
+export const ADD_NEW_MODEL = "ADD_MODEL"
 
 export const ADD_POSITIVE = "ADD_POSITIVE";
 export const SET_POSITIVE = "SET_POSITIVE";

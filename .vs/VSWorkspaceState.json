@@ -3,11 +3,11 @@
     "",
     "\\src",
     "\\src\\components",
-    "\\src\\components\\molecules",
     "\\src\\components\\organisms",
+    "\\src\\containers",
+    "\\src\\redux",
     "\\src\\screens",
     "\\src\\utils"
   ],
-  "SelectedNode": "\\src\\components\\organisms\\ImageRenderer.tsx",
   "PreviewInSolutionExplorer": false
 }

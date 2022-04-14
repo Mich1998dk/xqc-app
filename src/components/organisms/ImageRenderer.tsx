@@ -37,12 +37,13 @@ type HomeProps = StackNavigationProp<HomeStackParamList>;
 interface Props {
   data: any;
   navigation: HomeProps;
+  tabIndex?: number;
   time?: string;
   style?: CSSProperties;
   numberOfImages?: number;
 }
 
-export default function ImageRenderer({ data, navigation, time, style, numberOfImages }: Props) {
+export default function ImageRenderer({ data, navigation, time, style, numberOfImages,tabIndex = 0 }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
@@ -68,7 +69,7 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
   }, []);
   return (
     <View style={styles.container}>
-      {redux.states[0].mode === "projection" && (
+      {redux.states[tabIndex].mode === "projection" && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "center" }}
           data={data}
@@ -80,9 +81,9 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
               <TouchableOpacity
                 style={[styles.box, style as any]}
                 onPress={async () => {
-                  dispatch(getImageInfo(item.exqId));
-                  await dispatch(makeProjection(item));
-                  await dispatch(setImageForProjection(item));
+                  dispatch(getImageInfo(item.exqId,tabIndex));
+                  await dispatch(makeProjection(item,tabIndex));
+                  await dispatch(setImageForProjection(item,tabIndex));
                   navigation.navigate("Projection", { uri: item.imageURI! });
                 }}
               >
@@ -99,26 +100,26 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
                   }}
                 />
                 <SubmitOverlay
-                  onPressSubmit={() => dispatch(submitImage(item.exqId))}
+                  onPressSubmit={() => dispatch(submitImage(item.exqId,tabIndex))}
                   thumbnail={item.thumbnail}
                 />
 
                 <ImageOverlay
                   onPressNegative={() => {
-                    dispatch(negativeExamplePressed(item));
+                    dispatch(negativeExamplePressed(item,tabIndex));
                   }}
                   onPressPositive={() => {
-                    dispatch(positiveExamplePressed(item));
+                    dispatch(positiveExamplePressed(item,tabIndex));
                   }}
-                  negativeSelected={redux.states[0].negatives.includes(item)}
-                  positiveSelected={redux.states[0].positives.includes(item)}
+                  negativeSelected={redux.states[tabIndex].negatives.includes(item)}
+                  positiveSelected={redux.states[tabIndex].positives.includes(item)}
                 />
               </TouchableOpacity>
             );
           }}
         />
       )}
-      {redux.states[0].mode === "speed" && (
+      {redux.states[tabIndex].mode === "speed" && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "flex-start" }}
           data={data}
@@ -157,14 +158,14 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
                 <ImageOverlay
                   onPressNegative={() => {
                     dispatch(negativeExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.states[0].images.indexOf(item)));
+                    dispatch(replaceImageAsync(redux.states[tabIndex].images.indexOf(item)));
                   }}
                   onPressPositive={() => {
                     dispatch(positiveExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.states[0].images.indexOf(item)));
+                    dispatch(replaceImageAsync(redux.states[tabIndex].images.indexOf(item)));
                   }}
-                  negativeSelected={redux.states[0].negatives.includes(item)}
-                  positiveSelected={redux.states[0].positives.includes(item)}
+                  negativeSelected={redux.states[tabIndex].negatives.includes(item)}
+                  positiveSelected={redux.states[tabIndex].positives.includes(item)}
                 />
               </View>
             );

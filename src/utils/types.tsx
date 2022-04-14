@@ -13,7 +13,7 @@ export type HomeStackParamList = {
   ProjectionMode: { loadModel?: Model };
   Projection: { uri: string };
   Filter: undefined;
-  Search: { mode: "terms" | "locations" };
+  Search: { mode: "terms" | "locations",tabIndex:number };
   Info: undefined;
   History: undefined;
   CombineModels: undefined;
@@ -29,6 +29,7 @@ export type Obj = {
 
 export type State = {
     states: {
+      name: string;
       positives: Obj[];
       negatives: Obj[];
       seen: Obj[];

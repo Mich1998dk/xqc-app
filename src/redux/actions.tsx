@@ -3,6 +3,7 @@ import {
   ADD_NEGATIVE,
   ADD_IMAGES,
   ADD_SEEN,
+  ADD_NEW_MODEL,
   REMOVE_NEGATIVE,
   REMOVE_POSITIVE,
   SET_POSITIVE,
@@ -217,3 +218,8 @@ export const setTerms = (terms: any, index: number = 0) => ({
   index:index,
   payload: terms,
 });
+
+export const addNewModel = () => ({
+    type: ADD_NEW_MODEL,
+    index:0
+})

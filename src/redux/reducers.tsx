@@ -31,6 +31,7 @@ import {
   SET_TIME_PICKER,
   SET_TIMER_STATUS,
   SET_IMAGE_INFO,
+  ADD_NEW_MODEL,
 } from "./action-types";
 import {
   addImages,
@@ -58,9 +59,10 @@ import {
   setSearchResults,
   setTempFilter,
   setImageInfo,
+  addNewModel,
 } from "./actions";
 import { URL } from "../utils/constants";
-import { Obj, State, MediaInfo } from "../utils/types";
+import { Obj, State, MediaInfo, Mode } from "../utils/types";
 import moment from "moment";
 import axios from "axios";
 import { learn } from "../utils/api";
@@ -82,7 +84,11 @@ import {
 
 const initialState: State =
 {
-    states: [{
+    states: [addModel("Default")]
+};
+function addModel(name: string, user: string = "", mode: Mode = undefined, searchData: string[] = []) {
+    return {
+        name: name,
         positives: [],
         negatives: [],
         images: [],
@@ -93,11 +99,11 @@ const initialState: State =
         negativeProjection: [],
         imageForProjection: undefined,
         imageInfo: undefined,
-        mode: undefined,
+        mode: mode,
         terms: [],
         search: false,
         searchResults: [],
-        searchData: [],
+        searchData: searchData,
         menu: false,
         filter: { activities: [], locations: [] },
         selectedFilter: {
@@ -114,11 +120,13 @@ const initialState: State =
             years: [],
             time: { start: 0, end: 0 },
         },
-        user: "",
+        user: user,
         timePicker: false,
         timerStatus: true,
-    }]
-};
+
+    }
+}
+
 //timerStatus: action.payload
 export const reducer = (state = initialState, action: any) => {
     const index = action.index
@@ -188,7 +196,7 @@ export const reducer = (state = initialState, action: any) => {
           newArray[index].negatives = action.payload
           return { ...state, states: newArray };
         }
-        case REMOVE_NEGATIVE: {
+      case REMOVE_NEGATIVE: {
           newArray[index].negatives = newArray[index].negatives.filter((item) => item.exqId !== action.payload.exqId)
           return { ...state, states: newArray };
         }
@@ -246,6 +254,11 @@ export const reducer = (state = initialState, action: any) => {
           newArray[index].images = tempArray
           return { ...state, states: newArray };
         }
+      case ADD_NEW_MODEL: {
+          newArray.push(addModel("Model" + newArray.length, newArray[0].user, newArray[0].mode, newArray[0].searchData))
+          return { ...state, states: newArray };
+        }
+        
     default:
       return state;
   }
@@ -396,7 +409,7 @@ export const getImageInfo =
 export const searchAsync =
   (term: string, index:number = 0) => async (dispatch: any, getState: any) => {
     dispatch(setLoading(true),index);
-
+    console.log("request index:" + index)
     await axios(`${URL}/getSearchItems`, {
       method: "post",
       headers: {
@@ -432,15 +445,17 @@ export const searchAsync =
 
 export const negativeExamplePressed =
   (item: Obj, index:number = 0) => async (dispatch: any, getState: any) => {
+      console.log(index)
+      console.log(getState().states[index].negatives)
     //Check if it is in positives
     if (getState().states[index].positives.includes(item)) {
       //If it is in negatives, remove it and add to positives
-      dispatch(removePositive(item),index);
+      dispatch(removePositive(item,index));
     }
 
     if (getState().states[index].negatives.includes(item)) {
       //If the item is already in it, we would like to delete it
-      dispatch(removeNegative(item),index);
+      dispatch(removeNegative(item,index));
     } else {
       //Add to positives
       dispatch(setNegative([...getState().states[index].negatives, item],index));
@@ -452,7 +467,7 @@ export const positiveExamplePressed =
     //Check if it is in positives
     if (getState().states[index].negatives.includes(item)) {
       //If it is in negatives, remove it and add to positives
-      dispatch(removeNegative(item),index);
+      dispatch(removeNegative(item,index));
     }
 
     if (getState().states[index].positives.includes(item)) {
@@ -712,7 +727,8 @@ export const initExistingModel =
       });
   };
 
-export const initModelAsync = (index:number = 0) => async (dispatch: any, getState: any) => {
+export const initModelAsync = (index: number = 0) => async (dispatch: any, getState: any) => {
+  console.log(index)
   dispatch(setLoading(true,index));
   dispatch(setImages([],index));
   dispatch(setNegative([],index));
@@ -793,6 +809,11 @@ export const initModelAsync = (index:number = 0) => async (dispatch: any, getSta
   dispatch(setLoading(false,index));
 };
 
+export const addNewModelAsync = (index: number = 0) => async (dispatch: any, getState: any) => {
+    await dispatch(addNewModel())
+    console.log(getState().states.length)
+    dispatch(initModelAsync(index))
+}
 export const deleteModelAsync =
   (name: string,index:number=0) => async (dispatch: any, getState: any) => {
     deleteModelInAsyncStorage(name);

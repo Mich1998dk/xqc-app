@@ -41,14 +41,14 @@ export default function Search({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
   const [state, setState] = useState({ search: "", currentlySearched: "" });
-  const { mode } = route.params;
-  var search = redux.states[0].searchData
+  const { mode,tabIndex } = route.params;
+  var search = redux.states[tabIndex].searchData
     .filter((item) => item.includes(state.search.toLowerCase()))
     .slice(0, 50);
 
   const getIndexOfSelected = (str: string) => {
-    for (let i = 0; redux.states[0].filter.locations.length > i; i++) {
-      let loc = redux.states[0].filter.locations[i];
+    for (let i = 0; redux.states[tabIndex].filter.locations.length > i; i++) {
+      let loc = redux.states[tabIndex].filter.locations[i];
       if (loc === str) {
         return i;
       }
@@ -71,11 +71,11 @@ export default function Search({ navigation, route }: Props) {
         title="Search"
         reset={mode === "terms"}
         onPressReset={() => {
-          dispatch(setSearchResults([]));
+          dispatch(setSearchResults([],tabIndex));
           setState({ ...state, currentlySearched: "", search: "" });
         }}
         onPress={() => {
-          dispatch(setSearchResults([]));
+          dispatch(setSearchResults([],tabIndex));
           navigation.goBack();
         }}
       />
@@ -96,7 +96,7 @@ export default function Search({ navigation, route }: Props) {
               {state.currentlySearched.length > 0 && (
           <View>
             {(() => {
-                if (redux.states[0].searchResults.length === 0) {
+                if (redux.states[tabIndex].searchResults.length === 0) {
                     return (
                         <Text.Button style={{ alignSelf: "center", marginBottom: 10 }}>
                             No results found using current filter.
@@ -110,7 +110,7 @@ export default function Search({ navigation, route }: Props) {
           </View>
         )}
         <ScrollView>
-          {(redux.states[0].searchResults.length === 0 || state.search.length > 0) && (
+                  {(redux.states[tabIndex].searchResults.length === 0 || state.search.length > 0) && (
             <FlatList
               data={search}
               style={{ height: 600 }}
@@ -122,7 +122,7 @@ export default function Search({ navigation, route }: Props) {
                     style={styles.result}
                     onPress={() => {
                       if (mode === "terms") {
-                        dispatch(searchAsync(item));
+                        dispatch(searchAsync(item,tabIndex));
                         setState({
                           ...state,
                           search: "",
@@ -131,16 +131,16 @@ export default function Search({ navigation, route }: Props) {
                       }
 
                       if (mode === "locations") {
-                        console.log(redux.states[0].filter.locations);
+                        console.log(redux.states[tabIndex].filter.locations);
 
                         dispatch(
                           setTempFilter({
-                            ...redux.states[0].tempFilter,
+                            ...redux.states[tabIndex].tempFilter,
                             locations: [
-                              ...redux.states[0].tempFilter.locations,
+                                ...redux.states[tabIndex].tempFilter.locations,
                               getIndexOfSelected(item),
                             ],
-                          })
+                          }, tabIndex)
                         );
                         navigation.goBack();
                       }
@@ -154,8 +154,8 @@ export default function Search({ navigation, route }: Props) {
               }}
             />
           )}
-          {redux.states[0].searchResults.length > 0 && state.search.length === 0 && (
-            <ImageRenderer data={redux.states[0].searchResults} navigation={navigation} />
+          {redux.states[tabIndex].searchResults.length > 0 && state.search.length === 0 && (
+            <ImageRenderer data={redux.states[tabIndex].searchResults} navigation={navigation} />
           )}
         </ScrollView>
       </View>

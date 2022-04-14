@@ -108,8 +108,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
     width: "100%",
-    alignSelf: "center",
-    height: 50,
+    height: "5vh",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
