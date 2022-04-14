@@ -26,7 +26,7 @@ import { addNewModel, setSearchData, setSeen, setSelectedFilter } from "../../re
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Text } from "../../components/atoms";
 import { isMobile } from "react-device-detect"
-import { colors } from "../../utils/theme";
+import { colors, fonts, sizes } from "../../utils/theme";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
 type RouteProps = RouteProp<HomeStackParamList, "Home">;
@@ -80,7 +80,6 @@ export default function Home({ navigation, route }: Props) {
                         }}/>
                         <TabList>
                             {tabGenerator()}
-                            <button onClick={() => addModel()}>+</button>
                         </TabList>
                 </div>
                     {!isMobile && (<Header title={"Positive"} hideBack style={{ backgroundColor: colors.green, width: "25%"}} />)}
@@ -96,11 +95,34 @@ export default function Home({ navigation, route }: Props) {
         var index = redux.states.length
         dispatch(addNewModelAsync(index))
     }
+    function tabStyle(index : number) {
+       var temp = {
+            backgroundColor: colors.background,
+            borderWidth: 1.6,
+            borderColor: colors.accent,
+            fontFamily: fonts.med,
+            fontSize: sizes.base20,
+            color: colors.accent,
+            borderRadius: 10,
+            margin: 5
+        } as CSSProperties
+
+        if (index == selectedTab) {
+            temp.backgroundColor = colors.accent;
+            temp.color = colors.white
+        }
+
+        return temp
+    }
+
     function tabGenerator() {
         var acc = [];
         for (var i = 0; i < redux.states.length; i++) {
-            acc.push(<Tab key={"tab" + i} index={i}>{redux.states[i].name}</Tab>)
+            acc.push(<Tab key={"tab" + i} index={i} style={
+                tabStyle(i)
+            }>{redux.states[i].name}</Tab>)
         }
+        acc.push(<button onClick={() => addModel()} style={tabStyle(-1)} >+</button>)
         return acc
     }
 
@@ -164,5 +186,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: 200,
-  },
+    },
 });
