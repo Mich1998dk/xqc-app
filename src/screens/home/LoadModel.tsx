@@ -88,8 +88,8 @@ export default function ChooseMode({ navigation }: Props) {
     function changeMode() {
         if (state.Mode == "Combine") {
             setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent})
-        } else if (state.Mode == "Load"){
-            setState({ ...state, Title: "Combine Models", Mode: "Combine", ModeColor: colors.red })
+        } else if (state.Mode == "Load") {
+            setState({ ...state, Title: "Combine Models", Mode: "Combine", ModeColor: colors.accentDark })
         }
         chosenModels = []
     }

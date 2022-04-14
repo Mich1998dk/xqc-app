@@ -23,7 +23,7 @@ export default function ModeOption({ onPressFunction, onDelete, style, model, mo
     }
     function ChooseColor() {
         if (CombineList.includes(model)&& mode =="Combine") {
-            return {borderColor:colors.green}
+            return {borderColor:colors.white}
         } else {
             return style
         }
