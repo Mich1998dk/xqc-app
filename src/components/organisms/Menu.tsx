@@ -18,6 +18,7 @@ interface Props {
   onExit?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onClickLoadModel? : (event: React.MouseEvent<HTMLButtonElement>) => void;
   canQuickSave?: boolean;
+  tabIndex?:number;
 }
 
 export default function Menu({
@@ -28,6 +29,7 @@ export default function Menu({
   onClickHelp,
   onExit,
   onClickLoadModel,
+  tabIndex,
 }: Props) {
   const dispatch = useDispatch();
 
@@ -70,7 +72,7 @@ export default function Menu({
         </View>
 
         <TouchableOpacity
-          onPress={() => dispatch(setMenu(false))}
+          onPress={() => dispatch(setMenu(false,tabIndex))}
           style={{ alignSelf: "center", alignItems: "center" }}
           activeOpacity={0.7}
         >

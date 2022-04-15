@@ -163,7 +163,7 @@ export default function SpeedMode({ navigation, route }: Props) {
                   <TabPanels>
                       {panelGenerator()}
                   </TabPanels>
-                  <ButtonBar navigation={navigation} index={selectedTab} posAndNeg randomSet train />
+                  <ButtonBar navigation={navigation} tabIndex={selectedTab} posAndNeg randomSet train />
             </Tabs>
           
         </Container>

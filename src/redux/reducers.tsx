@@ -32,6 +32,7 @@ import {
   SET_TIMER_STATUS,
   SET_IMAGE_INFO,
   ADD_NEW_MODEL,
+  RESET,
 } from "./action-types";
 import {
   addImages,
@@ -60,6 +61,7 @@ import {
   setTempFilter,
   setImageInfo,
   addNewModel,
+  resetAll,
 } from "./actions";
 import { URL } from "../utils/constants";
 import { Obj, State, MediaInfo, Mode } from "../utils/types";
@@ -130,7 +132,7 @@ function addModel(name: string, user: string = "", mode: Mode = undefined, terms
 //timerStatus: action.payload
 export const reducer = (state = initialState, action: any) => {
     const index = action.index
-    const newArray = [...state.states]
+    var newArray = [...state.states]
   switch (action.type) {
         case SET_TIMER_STATUS: {
             newArray[index].timerStatus = action.payload
@@ -254,8 +256,12 @@ export const reducer = (state = initialState, action: any) => {
           newArray[index].images = tempArray
           return { ...state, states: newArray };
         }
-      case ADD_NEW_MODEL: {
+        case ADD_NEW_MODEL: {
           newArray.push(addModel("Model" + newArray.length, newArray[0].user, newArray[0].mode, newArray[0].terms))
+          return { ...state, states: newArray };
+          }
+        case RESET: {
+          newArray = [addModel("Default",newArray[0].user)]
           return { ...state, states: newArray };
         }
         
@@ -265,17 +271,7 @@ export const reducer = (state = initialState, action: any) => {
 };
 
 export const reset = (index: number = 0) => async (dispatch: any, getState: any) => {
-  dispatch(
-    setTempFilter({
-      activities: [],
-      locations: [],
-      days: [],
-      years: [],
-      time: { start: 0, end: 0 },
-    },index)
-  );
-  dispatch(resetFiltersAsync(index));
-  dispatch(setSeen([],index));
+  dispatch(resetAll())
 };
 
 export const resetFiltersAsync = (index: number = 0) => async (dispatch: any, getState: any) => {
@@ -374,7 +370,7 @@ export const applyFiltersAsync = (index: number = 0) => async (dispatch: any, ge
 
   if (getState().states[index].positives.length + getState().states[index].negatives.length > 0) {
     customAlert("success", "The new filters have been applied!");
-    await dispatch(learnModelAsync(),index);
+    await dispatch(learnModelAsync(index));
   } else {
     customAlert(
       "success",
@@ -399,7 +395,7 @@ export const getImageInfo =
     })
       .then((res) => {
         console.log(res);
-        dispatch(setImageInfo(res.data),index);
+        dispatch(setImageInfo(res.data,index));
       })
       .catch((err) => {
         console.log(err);
@@ -507,7 +503,7 @@ export const learnWithProjectedImageAsync =
 
 export const makeProjection =
   (obj: Obj,index:number=0) => async (dispatch: any, getState: any) => {
-    dispatch(setLoading(true));
+    dispatch(setLoading(true,index));
 
     //Prepare with the image in positives
     const tempPos: Obj[] = [...getState().states[index].positives, obj];
@@ -834,7 +830,6 @@ export const replaceImageAsync =
 
       learn(pos, neg, seen, getState().states[modelIndex].mode, getState().states[modelIndex].user)
       .then((res) => {
-        console.log("pikkemand");
         
         console.log(res.data)
         let loc = res.data.img_locations[0];

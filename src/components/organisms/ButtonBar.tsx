@@ -26,7 +26,7 @@ interface Props {
   confirm?: boolean;
   applyFilter?: boolean;
   history?: boolean;
-  index?:number;
+  tabIndex?:number;
 }
 
 export default function ButtonBar({
@@ -37,7 +37,7 @@ export default function ButtonBar({
   update,
   history,
   applyFilter,
-  index = 0,
+  tabIndex = 0,
 }: Props) {
   const dispatch = useDispatch();
   const [lastUsed, setLastUsed] = useState<"random" | "update">();
@@ -49,7 +49,7 @@ export default function ButtonBar({
         <IconButton
           title="Labeled/Seen images"
           onPress={() => {
-            navigation.navigate("PosAndNeg");
+              navigation.navigate("PosAndNeg", { tabIndex: tabIndex});
           }}
           secondary
         />
@@ -59,7 +59,7 @@ export default function ButtonBar({
           title="NEW RANDOM SET"
           onPress={() => {
             setLastUsed("random");
-            dispatch(randomSetAsync(index));
+            dispatch(randomSetAsync(tabIndex));
           }}
           type="random"
           style={{ marginLeft: 10, marginRight: 10 }}
@@ -71,7 +71,7 @@ export default function ButtonBar({
           title="TRAIN"
           onPress={() => {
             setLastUsed("update");
-            dispatch(learnModelAsync(index));
+            dispatch(learnModelAsync(tabIndex));
           }}
           type="sync"
           secondary={lastUsed !== "update"}
@@ -83,7 +83,7 @@ export default function ButtonBar({
           <IconButton
             title="RESET FILTERS"
             onPress={() => {
-              dispatch(resetFiltersAsync(index));
+              dispatch(resetFiltersAsync(tabIndex));
             }}
             style={{ marginRight: 10 }}
             secondary
@@ -91,7 +91,7 @@ export default function ButtonBar({
           <IconButton
             title="APPLY FILTERS"
             onPress={async () => {
-              dispatch(applyFiltersAsync(index));
+              dispatch(applyFiltersAsync(tabIndex));
               navigation.goBack();
             }}
           />
@@ -105,7 +105,7 @@ export default function ButtonBar({
           secondary={lastUsed !== "update"}
           onPress={() => {
             setLastUsed("update");
-            dispatch(learnModelAsync(index));
+            dispatch(learnModelAsync(tabIndex));
           }}
         />
       )}

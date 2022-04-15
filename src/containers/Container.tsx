@@ -27,6 +27,7 @@ interface Props {
   style?: CSSProperties;
   model?: Model;
   navigation?: HomeProps;
+  tabIndex?: number;
 }
 
 export default function Container({
@@ -35,6 +36,7 @@ export default function Container({
   style,
   model,
   navigation,
+  tabIndex = 0,
 }: Props) {
   const redux = useSelector((state: State) => state);
   const dispatch = useDispatch();
@@ -43,17 +45,17 @@ export default function Container({
     const tempModel: Model = {
       mode: "projection",
       name: model?.name!,
-      negatives: redux.states[0].negatives,
-      positives: redux.states[0].positives,
-      seen: redux.states[0].seen,
-      lastSeen: redux.states[0].images,
+      negatives: redux.states[tabIndex].negatives,
+      positives: redux.states[tabIndex].positives,
+      seen: redux.states[tabIndex].seen,
+      lastSeen: redux.states[tabIndex].images,
       created: new Date(model?.created!),
-      filter: redux.states[0].tempFilter,
+      filter: redux.states[tabIndex].tempFilter,
     };
 
     await saveModelInAsyncStorage(tempModel);
     customAlert("success", " has been saved!");
-    dispatch(setMenu(false));
+    dispatch(setMenu(false,tabIndex));
   };
 
   return (
@@ -70,33 +72,33 @@ export default function Container({
         <View style={[styles.content, style as any]}>{children}</View>
       )}
 
-      {redux.states[0].loading && <Loader loadingTitle="Please wait.." />}
-      {redux.states[0].search && <Search />}
-      {redux.states[0].menu && (
-        <Menu
+      {redux.states[tabIndex].loading && <Loader loadingTitle="Please wait.." />}
+      {redux.states[tabIndex].search && <Search />}
+      {redux.states[tabIndex].menu && (
+              <Menu tabIndex={tabIndex }
           onExit={() => {
-            dispatch(setMenu(false));
+            dispatch(setMenu(false,tabIndex));
             dispatch(reset());
             navigation?.navigate("Welcome");
           }}
           onClickHelp={() => {
-            dispatch(setMenu(false));
+            dispatch(setMenu(false,tabIndex));
             navigation?.navigate("Info");
           }}
           onClickReset={() => {
             dispatch(resetModelAsync());
-            dispatch(setMenu(false));
+            dispatch(setMenu(false,tabIndex));
           }}
           onClickSaveModel={() => {
-            dispatch(setMenu(false));
-            navigation!.navigate("ModelName", { mode: redux.states[0].mode });
+            dispatch(setMenu(false,tabIndex));
+            navigation!.navigate("ModelName", { mode: redux.states[tabIndex].mode,tabIndex });
           }}
           canQuickSave={model !== undefined}
           onClickQuickSave={() => {
             quickSaveModel();
           }}
           onClickLoadModel={() => {
-            dispatch(setMenu(false));
+            dispatch(setMenu(false,tabIndex));
             navigation?.navigate("LoadModal");
           }}
         />
