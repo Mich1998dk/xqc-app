@@ -42,11 +42,6 @@ export default function Welcome({ navigation }: Props) {
           onPress={() => navigation.navigate("LoadModal")}
           style={{ marginBottom: 10 }}
         />
-        <Button
-          secondary
-          title="COMBINE MODELS"
-          onPress={() => navigation.navigate("CombineModels")}
-        />
       </View>
     </Container>
   );

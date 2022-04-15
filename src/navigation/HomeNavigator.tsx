@@ -15,7 +15,6 @@ import {
   Search,
   Info,
   History,
-  CombineModels,
 } from "../screens/home/index";
 
 const Stack = createStackNavigator<HomeStackParamList>();
@@ -28,7 +27,6 @@ export default function Navigation() {
       <Stack.Screen name="Home" component={Home}></Stack.Screen>
       <Stack.Screen name="PosAndNeg" component={PosAndNeg}></Stack.Screen>
       <Stack.Screen name="LoadModal" component={LoadModel}></Stack.Screen>
-      <Stack.Screen name="CombineModels" component={CombineModels}></Stack.Screen>
       <Stack.Screen name="ModelName" component={ModelName}></Stack.Screen>
       <Stack.Screen name="SpeedMode" component={SpeedMode}></Stack.Screen>
       <Stack.Screen
