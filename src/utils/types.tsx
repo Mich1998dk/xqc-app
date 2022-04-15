@@ -11,8 +11,8 @@ export type HomeStackParamList = {
   ModelName: { mode: Mode,tabIndex:number };
   SpeedMode: { loadModel?: Model };
   ProjectionMode: { loadModel?: Model };
-  Projection: { uri: string };
-  Filter: undefined;
+  Projection: {tabIndex:number };
+  Filter: {tabIndex:number};
   Search: { mode: "terms" | "locations",tabIndex:number };
   Info: undefined;
   History: undefined;

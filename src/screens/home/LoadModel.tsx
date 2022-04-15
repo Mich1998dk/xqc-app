@@ -14,13 +14,14 @@ import {
   combineModelInStorage,
   saveModelInAsyncStorage,
 } from "../../utils/storage";
-import { deleteModelAsync, initExistingModel, learnModelAsync, randomSetAsync } from "../../redux/reducers";
+import { deleteModelAsync, initExistingModel, learnModelAsync, randomSetAsync, reset } from "../../redux/reducers";
 import { FlatList, State } from "react-native-gesture-handler";
 
 import {
   setImages,
   setLoading,
   setMode,
+  setName,
   setNegative,
   setPositive,
   setSeen,
@@ -165,8 +166,10 @@ export default function ChooseMode({ navigation }: Props) {
                            
                         }
                     } else if (state.Mode == "Load") {
+                      await dispatch(reset());
                       dispatch(setLoading(true));
                       await dispatch(initExistingModel(item.lastSeen));
+                      await dispatch(setName(item.name));
                       await dispatch(setNegative(item.negatives));
                       await dispatch(setPositive(item.positives));
                       await dispatch(setSeen(item.seen));

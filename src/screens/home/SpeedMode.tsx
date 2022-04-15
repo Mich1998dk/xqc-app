@@ -145,7 +145,7 @@ export default function SpeedMode({ navigation, route }: Props) {
                             onPressFilter={() => navigation.navigate("Filter")}
                             search
                             onPressSearch={() => {
-                                dispatch(setSearchData(redux.states[0].terms));
+                                dispatch(setSearchData(redux.states[selectedTab].terms,selectedTab));
                                 navigation.navigate("Search", { mode: "terms", tabIndex: selectedTab });
                             }}
                             menu

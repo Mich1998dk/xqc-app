@@ -154,8 +154,8 @@ export default function Search({ navigation, route }: Props) {
               }}
             />
           )}
-          {redux.states[tabIndex].searchResults.length > 0 && state.search.length === 0 && (
-            <ImageRenderer data={redux.states[tabIndex].searchResults} navigation={navigation} />
+                  {redux.states[tabIndex].searchResults.length > 0 && state.search.length === 0 && (
+                      <ImageRenderer data={redux.states[tabIndex].searchResults} tabIndex={tabIndex} navigation={navigation} />
           )}
         </ScrollView>
       </View>

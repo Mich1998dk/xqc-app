@@ -82,8 +82,8 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
                 onPress={async () => {
                   dispatch(getImageInfo(item.exqId,tabIndex));
                   await dispatch(makeProjection(item,tabIndex));
-                  await dispatch(setImageForProjection(item,tabIndex));
-                  navigation.navigate("Projection", { uri: item.imageURI! });
+                    await dispatch(setImageForProjection(item, tabIndex));
+                    navigation.navigate("Projection", { tabIndex });
                 }}
               >
                 {/* //@ts-ignore */}

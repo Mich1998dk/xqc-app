@@ -26,7 +26,7 @@ export default function ProjectionMode({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
   const [selected, setSelected] = useState<"positive" | "negative">("positive");
-
+  const {tabIndex } = route.params
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
@@ -51,27 +51,27 @@ export default function ProjectionMode({ navigation, route }: Props) {
             borderRadius: 12,
           }}
           source={{
-            uri: redux.states[0].imageForProjection?.imageURI,
+            uri: redux.states[tabIndex].imageForProjection?.imageURI,
           }}
         />
         <View style={styles.rightInfo}>
-          {redux.states[0].imageInfo?.name && (
-            <Text.Button>Name: {redux.states[0].imageInfo?.name}</Text.Button>
+          {redux.states[tabIndex].imageInfo?.name && (
+            <Text.Button>Name: {redux.states[tabIndex].imageInfo?.name}</Text.Button>
           )}
-          {redux.states[0].imageInfo?.day !== "unknown" && (
-            <Text.Button>Location: {redux.states[0].imageInfo?.day}</Text.Button>
+          {redux.states[tabIndex].imageInfo?.day !== "unknown" && (
+            <Text.Button>Location: {redux.states[tabIndex].imageInfo?.day}</Text.Button>
           )}
-          {redux.states[0].imageInfo?.hour && (
-            <Text.Button>Hour: {redux.states[0].imageInfo?.hour}</Text.Button>
+          {redux.states[tabIndex].imageInfo?.hour && (
+            <Text.Button>Hour: {redux.states[tabIndex].imageInfo?.hour}</Text.Button>
           )}
-          {redux.states[0].imageInfo?.year && (
-            <Text.Button>Year: {redux.states[0].imageInfo?.year}</Text.Button>
+          {redux.states[tabIndex].imageInfo?.year && (
+            <Text.Button>Year: {redux.states[tabIndex].imageInfo?.year}</Text.Button>
           )}
-          {redux.states[0].imageInfo?.location !== "unknown" && (
-            <Text.Button>Location: {redux.states[0].imageInfo?.location}</Text.Button>
+          {redux.states[tabIndex].imageInfo?.location !== "unknown" && (
+            <Text.Button>Location: {redux.states[tabIndex].imageInfo?.location}</Text.Button>
           )}
-          {redux.states[0].imageInfo?.activity !== "unknown" && (
-            <Text.Button>Activity: {redux.states[0].imageInfo?.activity}</Text.Button>
+          {redux.states[tabIndex].imageInfo?.activity !== "unknown" && (
+            <Text.Button>Activity: {redux.states[tabIndex].imageInfo?.activity}</Text.Button>
           )}
         </View>
       </View>
@@ -93,8 +93,8 @@ export default function ProjectionMode({ navigation, route }: Props) {
         columnWrapperStyle={{ justifyContent: "space-between" }}
         data={
           selected === "negative"
-            ? redux.states[0].negativeProjection
-            : redux.states[0].positiveProjection
+            ? redux.states[tabIndex].negativeProjection
+            : redux.states[tabIndex].positiveProjection
         }
         style={{ paddingBottom: 80 }}
         numColumns={calculateColumnAmount()}
@@ -123,7 +123,7 @@ export default function ProjectionMode({ navigation, route }: Props) {
           title="CONFIRM CHOICE"
           onPress={async () => {
             navigation.goBack();
-            dispatch(learnWithProjectedImageAsync(selected));
+            dispatch(learnWithProjectedImageAsync(selected,tabIndex));
           }}
         />
       </View>

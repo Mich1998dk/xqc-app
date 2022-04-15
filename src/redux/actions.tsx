@@ -32,6 +32,7 @@ import {
   SET_TIMER_STATUS,
   SET_IMAGE_INFO,
   RESET,
+  SET_NAME,
 } from "./action-types";
 import { Obj, Filter, SelectedFilter, ImageInfo } from "../utils/types";
 
@@ -40,6 +41,12 @@ export const setTimePicker = (payload: boolean, index: number = 0) => ({
   index:index,
   payload: payload,
 });
+
+export const setName = (payload: string, index: number = 0) => ({
+    type: SET_NAME,
+    index: index,
+    payload: payload,
+})
 
 export const setSearch = (payload: boolean, index: number = 0) => ({
   type: SET_SEARCH,

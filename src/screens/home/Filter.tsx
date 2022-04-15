@@ -41,57 +41,57 @@ export default function Filter({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
   const [type, setType] = useState<"start" | "end">("start");
-
+  const {tabIndex } = route.params
   useEffect(() => {
-    dispatch(setTempFilter(redux.states[0].selectedFilter));
+    dispatch(setTempFilter(redux.states[tabIndex].selectedFilter,tabIndex));
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
   }, [navigation]);
 
   const renderActivities = () => {
-    return redux.states[0].filter.activities.map((item, index) => {
+    return redux.states[tabIndex].filter.activities.map((item, index) => {
       return (
         <IconButton
           key={index}
           onPress={() => {
-            if (redux.states[0].tempFilter.activities.includes(index)) {
-              var temp = redux.states[0].tempFilter.activities.filter(
+            if (redux.states[tabIndex].tempFilter.activities.includes(index)) {
+              var temp = redux.states[tabIndex].tempFilter.activities.filter(
                 (item) => item !== index
               );
               dispatch(
-                setTempFilter({ ...redux.states[0].tempFilter, activities: temp })
+                setTempFilter({ ...redux.states[tabIndex].tempFilter, activities: temp },tabIndex)
               );
             } else {
               dispatch(
                 setTempFilter({
-                  ...redux.states[0].tempFilter,
-                  activities: [...redux.states[0].tempFilter.activities, index],
-                })
+                  ...redux.states[tabIndex].tempFilter,
+                  activities: [...redux.states[tabIndex].tempFilter.activities, index],
+                }, tabIndex)
               );
             }
           }}
           title={item.toUpperCase()}
           style={{ marginRight: 6, marginBottom: 8 }}
-          secondary={!redux.states[0].tempFilter.activities.includes(index)}
+          secondary={!redux.states[tabIndex].tempFilter.activities.includes(index)}
         />
       );
     });
   };
 
   const renderLocations = () => {
-    return redux.states[0].filter.locations.map((item, index) => {
-      if (redux.states[0].tempFilter.locations.includes(index)) {
+    return redux.states[tabIndex].filter.locations.map((item, index) => {
+      if (redux.states[tabIndex].tempFilter.locations.includes(index)) {
         return (
           <IconButton
             key={index}
             onPress={() => {
               dispatch(
                 setTempFilter({
-                  ...redux.states[0].tempFilter,
-                  locations: redux.states[0].tempFilter.locations.filter(
+                  ...redux.states[tabIndex].tempFilter,
+                  locations: redux.states[tabIndex].tempFilter.locations.filter(
                     (elm) => elm !== index
                   ),
-                })
+                }, tabIndex)
               );
             }}
             type="delete"
@@ -115,21 +115,21 @@ export default function Filter({ navigation, route }: Props) {
         <IconButton
           key={index}
           onPress={() => {
-            if (redux.states[0].tempFilter.years.includes(item.value)) {
-              var temp = redux.states[0].tempFilter.years.filter(
+            if (redux.states[tabIndex].tempFilter.years.includes(item.value)) {
+              var temp = redux.states[tabIndex].tempFilter.years.filter(
                 (elm) => elm !== item.value
               );
-              dispatch(setTempFilter({ ...redux.states[0].tempFilter, years: temp }));
+              dispatch(setTempFilter({ ...redux.states[tabIndex].tempFilter, years: temp },tabIndex));
             } else {
               dispatch(
                 setTempFilter({
-                  ...redux.states[0].tempFilter,
-                  years: [...redux.states[0].tempFilter.years, item.value],
-                })
+                  ...redux.states[tabIndex].tempFilter,
+                  years: [...redux.states[tabIndex].tempFilter.years, item.value],
+                }, tabIndex)
               );
             }
           }}
-          secondary={!redux.states[0].tempFilter.years.includes(item.value)}
+          secondary={!redux.states[tabIndex].tempFilter.years.includes(item.value)}
           title={item.year.toUpperCase()}
           style={{ marginRight: 6, marginBottom: 8 }}
         />
@@ -153,19 +153,19 @@ export default function Filter({ navigation, route }: Props) {
         <IconButton
           key={index}
           onPress={() => {
-            if (redux.states[0].tempFilter.days.includes(index)) {
-              var temp = redux.states[0].tempFilter.days.filter((elm) => elm !== index);
-              dispatch(setTempFilter({ ...redux.states[0].tempFilter, days: temp }));
+            if (redux.states[tabIndex].tempFilter.days.includes(index)) {
+              var temp = redux.states[tabIndex].tempFilter.days.filter((elm) => elm !== index);
+              dispatch(setTempFilter({ ...redux.states[tabIndex].tempFilter, days: temp },tabIndex));
             } else {
               dispatch(
                 setTempFilter({
-                  ...redux.states[0].tempFilter,
-                  days: [...redux.states[0].tempFilter.days, index],
-                })
+                  ...redux.states[tabIndex].tempFilter,
+                  days: [...redux.states[tabIndex].tempFilter.days, index],
+                }, tabIndex)
               );
             }
           }}
-          secondary={!redux.states[0].tempFilter.days.includes(index)}
+          secondary={!redux.states[tabIndex].tempFilter.days.includes(index)}
           title={item.toUpperCase()}
           style={{ marginRight: 6, marginBottom: 8 }}
         />
@@ -190,11 +190,11 @@ export default function Filter({ navigation, route }: Props) {
           style={styles.time}
           onPress={() => {
             setType("start");
-            dispatch(setTimePicker(true));
+            dispatch(setTimePicker(true,tabIndex));
           }}
         >
           <Text.Button>
-            {formatTimeToPeriod(redux.states[0].tempFilter.time.start)}
+            {formatTimeToPeriod(redux.states[tabIndex].tempFilter.time.start)}
           </Text.Button>
         </TouchableOpacity>
         <Text.Regular>and</Text.Regular>
@@ -202,29 +202,29 @@ export default function Filter({ navigation, route }: Props) {
           style={styles.time}
           onPress={() => {
             setType("end");
-            dispatch(setTimePicker(true));
+            dispatch(setTimePicker(true,tabIndex));
           }}
         >
           <Text.Button>
-            {formatTimeToPeriod(redux.states[0].tempFilter.time.end)}
+            {formatTimeToPeriod(redux.states[tabIndex].tempFilter.time.end)}
           </Text.Button>
         </TouchableOpacity>
       </View>
 
-      {redux.states[0].timePicker && <TimePicker type={type} />}
+      {redux.states[tabIndex].timePicker && <TimePicker type={type} />}
 
       <Text.Button>Location</Text.Button>
       <View style={styles.filters}>{renderLocations()}</View>
 
       <TouchableOpacity
         onPress={() => {
-          dispatch(setSearchData(redux.states[0].filter.locations));
-          navigation.navigate("Search", { mode: "locations" });
+          dispatch(setSearchData(redux.states[tabIndex].filter.locations,tabIndex));
+          navigation.navigate("Search", { mode: "locations",tabIndex:tabIndex });
         }}
       >
         <Text.ButtonSecondary>+ Add filter</Text.ButtonSecondary>
       </TouchableOpacity>
-      <ButtonBar navigation={navigation as any} applyFilter />
+          <ButtonBar navigation={navigation as any} tabIndex={tabIndex } applyFilter />
     </Container>
   );
 }

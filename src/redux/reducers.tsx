@@ -33,6 +33,7 @@ import {
   SET_IMAGE_INFO,
   ADD_NEW_MODEL,
   RESET,
+  SET_NAME,
 } from "./action-types";
 import {
   addImages,
@@ -134,6 +135,10 @@ export const reducer = (state = initialState, action: any) => {
     const index = action.index
     var newArray = [...state.states]
   switch (action.type) {
+        case SET_NAME: {
+          newArray[index].name = action.payload
+          return { ...state, states: newArray };
+        }
         case SET_TIMER_STATUS: {
             newArray[index].timerStatus = action.payload
             return { ...state, states:newArray};
@@ -261,7 +266,7 @@ export const reducer = (state = initialState, action: any) => {
           return { ...state, states: newArray };
           }
         case RESET: {
-          newArray = [addModel("Default",newArray[0].user)]
+          newArray = [addModel("Default", newArray[0].user, undefined, newArray[0].terms)]
           return { ...state, states: newArray };
         }
         
@@ -270,7 +275,7 @@ export const reducer = (state = initialState, action: any) => {
   }
 };
 
-export const reset = (index: number = 0) => async (dispatch: any, getState: any) => {
+export const reset = () => async (dispatch: any, getState: any) => {
   dispatch(resetAll())
 };
 
@@ -606,7 +611,7 @@ export const resetModelAsync = (index:number = 0) => async (dispatch: any, getSt
           time: { start: 0, end: 0 },
         },index)
       );
-      dispatch(reset(index));
+      dispatch(reset());
       dispatch(randomSetAsync(index));
       dispatch(setLoading(false,index));
     })

@@ -92,7 +92,7 @@ export default function Home({ navigation, route }: Props) {
                             hideBack
                             menu
                             filter
-                            onPressFilter={() => navigation.navigate("Filter")}
+                            onPressFilter={() => navigation.navigate("Filter", {tabIndex:selectedTab})}
                             search
                             onPressSearch={() => {
                                 dispatch(setSearchData(redux.states[selectedTab].terms, selectedTab));

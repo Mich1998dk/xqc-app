@@ -11,6 +11,7 @@ import { colors, fonts } from "../../utils/theme";
 import { saveModelInAsyncStorage, checkName } from "../../utils/storage";
 import { customAlert } from "../../utils/helpers";
 import { RouteProp } from "@react-navigation/native";
+import { setName } from "../../redux/actions";
 
 type ModelNameProps = StackNavigationProp<HomeStackParamList, "ModelName">;
 type RouteProps = RouteProp<HomeStackParamList, "ModelName">;
@@ -61,6 +62,7 @@ export default function ChooseMode({ navigation, route }: Props) {
     console.log(model);
 
     await saveModelInAsyncStorage(model);
+    dispatch(setName(model.name,tabIndex))
     customAlert("success", "Your model has been saved!");
     navigation.goBack();
   };
