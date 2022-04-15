@@ -75,7 +75,7 @@ export default function Home({ navigation, route }: Props) {
         width: "50%"
     } as CSSProperties : { width: "100%" } as CSSProperties;
     return (
-        <Container model={loadModel} navigation={navigation} style={mobilestylingContainer}>
+        <Container model={loadModel} navigation={navigation} tabIndex={selectedTab} style={mobilestylingContainer}>
             <Tabs onChange={(index) => setSelectedTab(index)}>
 
                 <div style={{ height: (Dimensions.get("window").height - 64) }}>
@@ -88,6 +88,7 @@ export default function Home({ navigation, route }: Props) {
                                 dispatch(reset());
                                 navigation.goBack();
                             }}
+                            tabIndex={selectedTab}
                             hideBack
                             menu
                             filter
@@ -108,7 +109,7 @@ export default function Home({ navigation, route }: Props) {
                         {panelGenerator()}
                     </TabPanels>
                 </div>
-                <ButtonBar navigation={navigation} index={selectedTab} posAndNeg randomSet train />
+                <ButtonBar navigation={navigation} tabIndex={selectedTab} posAndNeg randomSet train />
             </Tabs>
     </Container>
   );

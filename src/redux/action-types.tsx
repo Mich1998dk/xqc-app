@@ -47,3 +47,5 @@ export const SET_USER = "SET_USER";
 export const SET_TIME_PICKER = "SET_TIME_PICKER";
 
 export const SET_TIMER_STATUS = "SET_TIMER_STATUS";
+
+export const RESET = "RESET"

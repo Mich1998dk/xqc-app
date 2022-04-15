@@ -24,8 +24,7 @@ export default function ChooseMode({ navigation, route }: Props) {
   const [state, setState] = useState({ loading: false, name: "" });
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
-  const { mode } = route.params;
-
+  const { mode,tabIndex } = route.params;
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
@@ -48,13 +47,13 @@ export default function ChooseMode({ navigation, route }: Props) {
     }
 
     const model: Model = {
-      mode: redux.states[0].mode,
+      mode: redux.states[tabIndex].mode,
       name: state.name,
-      negatives: redux.states[0].negatives,
-      positives: redux.states[0].positives,
-      seen: redux.states[0].seen,
-      lastSeen: redux.states[0].images,
-      filter: redux.states[0].selectedFilter,
+      negatives: redux.states[tabIndex].negatives,
+      positives: redux.states[tabIndex].positives,
+      seen: redux.states[tabIndex].seen,
+      lastSeen: redux.states[tabIndex].images,
+      filter: redux.states[tabIndex].selectedFilter,
       created: new Date(),
     };
 

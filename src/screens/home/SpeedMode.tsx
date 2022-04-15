@@ -125,7 +125,7 @@ export default function SpeedMode({ navigation, route }: Props) {
         width: "50%"
     } as CSSProperties : { width: "100%" } as CSSProperties;
     return (
-        <Container model={loadModel} navigation={navigation} style={mobilestylingContainer}>
+        <Container model={loadModel} navigation={navigation} tabIndex={selectedTab} style={mobilestylingContainer}>
             <Tabs onChange={(index) => setSelectedTab(index)}>
 
                     <div style={{ height: (Dimensions.get("window").height-64)}}>
@@ -139,6 +139,7 @@ export default function SpeedMode({ navigation, route }: Props) {
                               dispatch(reset());
                               navigation.goBack();
                             }}
+                            tabIndex={selectedTab}
                             navigation={navigation}
                             filter
                             onPressFilter={() => navigation.navigate("Filter")}
@@ -167,7 +168,7 @@ export default function SpeedMode({ navigation, route }: Props) {
                               {panelGenerator()}
                             </TabPanels>
                         </div>
-                    <ButtonBar navigation={navigation} index={selectedTab} posAndNeg randomSet train />
+                    <ButtonBar navigation={navigation} tabIndex={selectedTab} posAndNeg randomSet train />
             </Tabs>
           
         </Container>
@@ -226,15 +227,16 @@ export default function SpeedMode({ navigation, route }: Props) {
                             </div>}
                             <div style={mobileStyle}>
 
-                                <ScrollView style={{ height: "80vh" }}>
-                                    {redux.states[i].images.length > 0 && (
-                                        <ImageRenderer
-                                            navigation={navigation}
-                                            data={redux.states[0].images}
-                                            time={formatTime(min) + ":" + formatTime(seconds)}
-                                        />
-                                    )}
-                                </ScrollView>
+                            <ScrollView style={{ height: "80vh" }}>
+                                {redux.states[i].images.length > 0 && (
+                                    <ImageRenderer
+                                        navigation={navigation}
+                                        data={redux.states[i].images}
+                                        time={formatTime(min) + ":" + formatTime(seconds)}
+                                        tabIndex={i}
+                                    />
+                                )}
+                            </ScrollView>
 
                                 {redux.states[i].images.length === 0 && !redux.states[i].loading && (
                                     <Text.Regular style={{ alignSelf: "center" }}>

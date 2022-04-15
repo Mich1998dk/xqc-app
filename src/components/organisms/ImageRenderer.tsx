@@ -101,7 +101,7 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
                 <SubmitOverlay
                   onPressSubmit={() => dispatch(submitImage(item.exqId,tabIndex))}
                   thumbnail={item.thumbnail}
-                />
+                />  
 
                 <ImageOverlay
                   onPressNegative={() => {
@@ -144,23 +144,23 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
                     if (Platform.OS === "web") {
                       //customAlert("success", "Image: " + item.thumbnail);
                       console.log("SUBMITTING IMAGE: " + item.thumbnail);
-                      dispatch(submitImage(item.exqId));
+                      dispatch(submitImage(item.exqId,tabIndex));
                     } else {
                       //alert("Image: " + item.thumbnail);
                       console.log("SUBMITTING IMAGE: " + item.thumbnail);
-                      dispatch(submitImage(item.exqId));
+                      dispatch(submitImage(item.exqId,tabIndex));
                     }
                   }}
                 />
 
                 <ImageOverlay
                   onPressNegative={() => {
-                    dispatch(negativeExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.states[tabIndex].images.indexOf(item)));
+                    dispatch(negativeExamplePressed(item,tabIndex));
+                    dispatch(replaceImageAsync(redux.states[tabIndex].images.indexOf(item),tabIndex));
                   }}
                   onPressPositive={() => {
-                    dispatch(positiveExamplePressed(item));
-                    dispatch(replaceImageAsync(redux.states[tabIndex].images.indexOf(item)));
+                    dispatch(positiveExamplePressed(item,tabIndex));
+                    dispatch(replaceImageAsync(redux.states[tabIndex].images.indexOf(item),tabIndex));
                   }}
                   negativeSelected={redux.states[tabIndex].negatives.includes(item)}
                   positiveSelected={redux.states[tabIndex].positives.includes(item)}

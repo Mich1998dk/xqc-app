@@ -17,18 +17,21 @@ import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { removeNegative, removePositive } from "../../redux/actions";
 import { ImageRenderer } from "../../components/organisms";
 import { customAlert } from "../../utils/helpers";
+import { RouteProp } from "@react-navigation/native";
 
 type PosAndNegProps = StackNavigationProp<HomeStackParamList, "Welcome">;
 
 type Props = {
   navigation: PosAndNegProps;
+  route: RouteProp<HomeStackParamList, "PosAndNeg">;
 };
 
 
-export default function PosAndNeg({ navigation }: Props) {
+export default function PosAndNeg({ navigation,route }: Props) {
   const [state, setState] = useState({ loading: false, selected: "positive" });
   const dispatch = useDispatch();
-    const redux = useSelector((state: State) => state);
+  const redux = useSelector((state: State) => state);
+  const { tabIndex } = route.params;
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;
@@ -60,7 +63,7 @@ export default function PosAndNeg({ navigation }: Props) {
         <FlatList
           columnWrapperStyle={{ justifyContent: "flex-start" }}
           data={
-            state.selected === "negative" ? redux.states[0].negatives : redux.states[0].positives
+            state.selected === "negative" ? redux.states[tabIndex].negatives : redux.states[tabIndex].positives
           }
           numColumns={calculateColumnAmount()}
           style={{ paddingBottom: 80 }}
@@ -101,7 +104,7 @@ export default function PosAndNeg({ navigation }: Props) {
 
       {state.selected === "history" && (
         <ScrollView>
-            <ImageRenderer navigation={navigation as any} data={redux.states[0].seen} />
+            <ImageRenderer navigation={navigation as any} data={redux.states[tabIndex].seen} />
         </ScrollView>
       )}
     </Container>

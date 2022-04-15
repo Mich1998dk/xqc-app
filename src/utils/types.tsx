@@ -6,9 +6,9 @@ export type HomeStackParamList = {
   Home: { loadModel?: Model };
   ChooseMode: undefined;
   Welcome: undefined;
-  PosAndNeg: undefined;
+  PosAndNeg: {tabIndex:number};
   LoadModal: undefined;
-  ModelName: { mode: Mode };
+  ModelName: { mode: Mode,tabIndex:number };
   SpeedMode: { loadModel?: Model };
   ProjectionMode: { loadModel?: Model };
   Projection: { uri: string };
