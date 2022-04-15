@@ -124,7 +124,7 @@ export default function SpeedMode({ navigation, route }: Props) {
         width: "50%"
     } as CSSProperties : { width: "100%" } as CSSProperties;
     return (
-        <Container model={loadModel} navigation={navigation} style={mobilestylingContainer}>
+        <Container model={loadModel} navigation={navigation} tabIndex={selectedTab} style={mobilestylingContainer}>
             <Tabs onChange={(index) => setSelectedTab(index)}>
                 <div style={{ display: "flex" }}>
                     {!isMobile && (<Header title={"Negative"} hideBack style={posNegHeaderStyle(false)} />)}
@@ -141,14 +141,15 @@ export default function SpeedMode({ navigation, route }: Props) {
                     onPressFilter={() => navigation.navigate("Filter")}
                     search
                     onPressSearch={() => {
-                        dispatch(setSearchData(redux.states[0].terms));
+                        dispatch(setSearchData(redux.states[selectedTab].terms));
                         navigation.navigate("Search", { mode: "terms", tabIndex: selectedTab });
                     }}
                     menu
                     time
+                    tabIndex={selectedTab}
                         />
                         <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-                      {redux.states[0].timerStatus && (
+                      {redux.states[selectedTab].timerStatus && (
                           <Text.Button>
                               {formatTime(min) + ":" + formatTime(seconds)}
                           </Text.Button>
@@ -221,12 +222,13 @@ export default function SpeedMode({ navigation, route }: Props) {
                         </div>}
                         <div style={mobileStyle}>
 
-                            <ScrollView>
+                            <ScrollView style={{ height: "90vh" }}>
                                 {redux.states[i].images.length > 0 && (
                                     <ImageRenderer
                                         navigation={navigation}
-                                        data={redux.states[0].images}
+                                        data={redux.states[i].images}
                                         time={formatTime(min) + ":" + formatTime(seconds)}
+                                        tabIndex={i}
                                     />
                                 )}
                             </ScrollView>

@@ -816,7 +816,9 @@ export const deleteModelAsync =
   };
 
 export const replaceImageAsync =
-  (index: number,modelIndex: number = 0) => async (dispatch: any, getState: any) => {
+    (index: number, modelIndex: number = 0) => async (dispatch: any, getState: any) => {
+      console.log("imageindex:" + index)
+      console.log("modelindex:" + modelIndex)
     dispatch(setLoading(true,modelIndex));
       var pos = getState().states[modelIndex].positives.map((item: Obj) => item.exqId);
       var neg = getState().states[modelIndex].negatives.map((item: Obj) => item.exqId);
