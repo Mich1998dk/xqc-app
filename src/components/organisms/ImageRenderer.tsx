@@ -43,7 +43,7 @@ interface Props {
   numberOfImages?: number;
 }
 
-export default function ImageRenderer({ data, navigation, time, style, numberOfImages,tabIndex = 0 }: Props) {
+export default function ImageRenderer({ data, navigation, time, style, numberOfImages, tabIndex = 0 }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
@@ -121,14 +121,14 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
       )}
       {redux.states[tabIndex].mode === "speed" && (
         <FlatList
-          columnWrapperStyle={{ justifyContent: "flex-start" }}
+          columnWrapperStyle={{ justifyContent: "center" }}
           data={data}
           style={{ paddingBottom: 80 }}
-          numColumns={calculateColumnAmount()}
+          numColumns={numberOfCollumns}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item }) => {
             return (
-              <View style={styles.box}>
+              <View style={[styles.box, style as any]}>
                 {/* //@ts-ignore */}
                 <Image
                   style={{

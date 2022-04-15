@@ -10,7 +10,7 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList, State } from "../../utils/types";
 import { RouteProp } from "@react-navigation/native";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@reach/tabs"
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@reach/tabs";
 import { Header, ImageOverlay } from "../../components/molecules/index";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
@@ -25,7 +25,7 @@ import { ButtonBar, ImageRenderer } from "../../components/organisms/index";
 import { addNewModel, setSearchData, setSeen, setSelectedFilter } from "../../redux/actions";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { Text } from "../../components/atoms";
-import { isMobile } from "react-device-detect"
+import { isMobile } from "react-device-detect";
 import { colors, fonts, sizes } from "../../utils/theme";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
@@ -49,6 +49,22 @@ export default function Home({ navigation, route }: Props) {
     return unsubscribe;
   }, [navigation]);
 
+    function posNegHeaderStyle(pos: Boolean): CSSProperties {
+        var temp = {
+            width: "25%",
+            height: "auto",
+            backgroundColor: colors.accent,
+            borderRadius: 12,
+            fontSize: sizes.base28
+        }
+
+        if (pos) {
+            temp.backgroundColor = colors.green
+        } else {
+            temp.backgroundColor = colors.red
+        }
+        return temp
+    }
 
     var mobilestylingContainer = (!isMobile) ? {
         width: "100%", maxWidth: "100%", flexDirection: "column"
@@ -60,7 +76,7 @@ export default function Home({ navigation, route }: Props) {
         <Container model={loadModel} navigation={navigation} style={mobilestylingContainer}>
             <Tabs onChange={(index) => setSelectedTab(index)}>
                 <div style={{ display: "flex" }}>
-                    {!isMobile && (<Header title={"Negative"} hideBack style={{ backgroundColor: colors.red, width: "25%"}} />)}
+                    {!isMobile && (<Header title={"Negative"} hideBack style={posNegHeaderStyle(false)} />)}
                 <div style={mobileStyle}>
                     <Header
                         title={Platform.OS === "web" ? "PROJECTION" : ""}
@@ -81,8 +97,8 @@ export default function Home({ navigation, route }: Props) {
                         <TabList>
                             {tabGenerator()}
                         </TabList>
-                </div>
-                    {!isMobile && (<Header title={"Positive"} hideBack style={{ backgroundColor: colors.green, width: "25%"}} />)}
+                    </div>
+                    {!isMobile && (<Header title={"Positive"} hideBack style={posNegHeaderStyle(true)} />)}
             </div>
             <TabPanels>
                     {panelGenerator()}
@@ -91,6 +107,7 @@ export default function Home({ navigation, route }: Props) {
             </Tabs>
     </Container>
   );
+
     function addModel() {
         var index = redux.states.length
         dispatch(addNewModelAsync(index))
@@ -136,9 +153,9 @@ export default function Home({ navigation, route }: Props) {
                 <div style={{ width: "100%", display: "flex" }}>
                     {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} >
 
-                        <ScrollView style={{ height: "90vh", backgroundColor: colors.lightRed }} >
+                            <ScrollView style={{ height: "90vh", backgroundColor: colors.lightRed, borderRadius: 12 }} >
                             {redux.states[i].images.length > 0 && (
-                                    <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: 200 }} numberOfImages={2} />
+                                    <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
                             )}
                         </ScrollView>
                     </div>}
@@ -156,9 +173,9 @@ export default function Home({ navigation, route }: Props) {
                         )}
                     </div>
                     {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
-                        <ScrollView style={{ height: "90vh", backgroundColor: colors.lightGreen }}>
+                        <ScrollView style={{ height: "90vh", backgroundColor: colors.lightGreen, borderRadius: 12 }}>
                             {redux.states[i].images.length > 0 && (
-                                <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: 200 }} numberOfImages={2} />
+                                    <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
                             )}
                         </ScrollView>
                     </div>}

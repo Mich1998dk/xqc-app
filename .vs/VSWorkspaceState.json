@@ -3,11 +3,14 @@
     "",
     "\\src",
     "\\src\\components",
+    "\\src\\components\\molecules",
     "\\src\\components\\organisms",
-    "\\src\\containers",
+    "\\src\\navigation",
     "\\src\\redux",
     "\\src\\screens",
+    "\\src\\screens\\home",
     "\\src\\utils"
   ],
+  "SelectedNode": "\\src\\utils\\storage.tsx",
   "PreviewInSolutionExplorer": false
 }

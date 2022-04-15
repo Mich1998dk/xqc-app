@@ -58,7 +58,7 @@ export default function ModeOption({
         )}
       </View>
       <View style={styles.title}>
-        <Text.Header style={{ fontSize: 16 }}>{title}</Text.Header>
+              <Text.Header style={[{ fontSize: 16 }, style as any, { width: "auto"}]}>{title}</Text.Header>
       </View>
       <View style={{ flexDirection: "row" }}>
         <View>
@@ -97,8 +97,8 @@ export default function ModeOption({
               marginRight
             />
           )}
-        </View>
-        <View>
+              </View>
+              <View style={{ paddingRight: 10 }}>
           {menu && <Icon onPress={() => dispatch(setMenu(true,index))} type="menu" />}
         </View>
       </View>
