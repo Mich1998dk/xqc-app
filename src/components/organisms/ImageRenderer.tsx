@@ -73,7 +73,6 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
         <FlatList
           columnWrapperStyle={{ justifyContent: "center" }}
           data={data}
-          style={{ paddingBottom: 80 }}
           numColumns={numberOfCollumns}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item, index }) => {
@@ -123,7 +122,6 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
         <FlatList
           columnWrapperStyle={{ justifyContent: "center" }}
           data={data}
-          style={{ paddingBottom: 80 }}
           numColumns={numberOfCollumns}
           keyExtractor={(item) => item.exqId.toString()}
           renderItem={({ item }) => {

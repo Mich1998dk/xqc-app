@@ -50,6 +50,7 @@ import { RouteProp } from "@react-navigation/native";
 import { setSearchData, setSeen, setSelectedFilter } from "../../redux/actions";
 import { isMobile } from "react-device-detect";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@reach/tabs";
+import { Dimensions } from "react-native";
 
 
 
@@ -126,44 +127,47 @@ export default function SpeedMode({ navigation, route }: Props) {
     return (
         <Container model={loadModel} navigation={navigation} style={mobilestylingContainer}>
             <Tabs onChange={(index) => setSelectedTab(index)}>
-                <div style={{ display: "flex" }}>
-                    {!isMobile && (<Header title={"Negative"} hideBack style={posNegHeaderStyle(false)} />)}
-                <div style={mobileStyle}>
-                    <Header
-                    hideBack
-                    title={Platform.OS === "web" ? "SPEED" : ""}
-                    onPress={() => {
-                      dispatch(reset());
-                      navigation.goBack();
-                    }}
-                    navigation={navigation}
-                    filter
-                    onPressFilter={() => navigation.navigate("Filter")}
-                    search
-                    onPressSearch={() => {
-                        dispatch(setSearchData(redux.states[0].terms));
-                        navigation.navigate("Search", { mode: "terms", tabIndex: selectedTab });
-                    }}
-                    menu
-                    time
-                        />
-                        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-                      {redux.states[0].timerStatus && (
-                          <Text.Button>
-                              {formatTime(min) + ":" + formatTime(seconds)}
-                          </Text.Button>
-                       )}
-                  </div>
-                  <TabList>
-                      {tabGenerator()}
-                  </TabList>
-                  </div>
-                    {!isMobile && (<Header title={"Positive"} hideBack style={posNegHeaderStyle(true)} />)}
-                  </div>
-                  <TabPanels>
-                      {panelGenerator()}
-                  </TabPanels>
-                  <ButtonBar navigation={navigation} index={selectedTab} posAndNeg randomSet train />
+
+                    <div style={{ height: (Dimensions.get("window").height-64)}}>
+                        <div style={{ display: "flex" }}>
+                            {!isMobile && (<Header title={"Negative"} hideBack style={posNegHeaderStyle(false)} />)}
+                        <div style={mobileStyle}>
+                            <Header
+                            hideBack
+                            title={Platform.OS === "web" ? "SPEED" : ""}
+                            onPress={() => {
+                              dispatch(reset());
+                              navigation.goBack();
+                            }}
+                            navigation={navigation}
+                            filter
+                            onPressFilter={() => navigation.navigate("Filter")}
+                            search
+                            onPressSearch={() => {
+                                dispatch(setSearchData(redux.states[0].terms));
+                                navigation.navigate("Search", { mode: "terms", tabIndex: selectedTab });
+                            }}
+                            menu
+                            time
+                                />
+                                <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                              {redux.states[0].timerStatus && (
+                                  <Text.Button>
+                                      {formatTime(min) + ":" + formatTime(seconds)}
+                                  </Text.Button>
+                               )}
+                          </div>
+                          <TabList>
+                              {tabGenerator()}
+                          </TabList>
+                          </div>
+                            {!isMobile && (<Header title={"Positive"} hideBack style={posNegHeaderStyle(true)} />)}
+                          </div>
+                          <TabPanels>
+                              {panelGenerator()}
+                            </TabPanels>
+                        </div>
+                    <ButtonBar navigation={navigation} index={selectedTab} posAndNeg randomSet train />
             </Tabs>
           
         </Container>
@@ -210,41 +214,42 @@ export default function SpeedMode({ navigation, route }: Props) {
         for (var i = 0; i < redux.states.length; i++) {
             acc.push(
                 <TabPanel key={"panel" + i} style={{ width: "100%" }} index={i}>
-                    <div style={{ width: "100%", display: "flex" }}>
-                        {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} >
+                    
+                        <div style={{ width: "100%", display: "flex" }}>
+                            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} >
 
-                            <ScrollView style={{ height: "90vh", backgroundColor: colors.lightRed, borderRadius: 12 }} >
-                                {redux.states[i].images.length > 0 && (
-                                    <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+                                <ScrollView style={{ height: "80vh", backgroundColor: colors.lightRed, borderRadius: 12 }} >
+                                    {redux.states[i].images.length > 0 && (
+                                        <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+                                    )}
+                                </ScrollView>
+                            </div>}
+                            <div style={mobileStyle}>
+
+                                <ScrollView style={{ height: "80vh" }}>
+                                    {redux.states[i].images.length > 0 && (
+                                        <ImageRenderer
+                                            navigation={navigation}
+                                            data={redux.states[0].images}
+                                            time={formatTime(min) + ":" + formatTime(seconds)}
+                                        />
+                                    )}
+                                </ScrollView>
+
+                                {redux.states[i].images.length === 0 && !redux.states[i].loading && (
+                                    <Text.Regular style={{ alignSelf: "center" }}>
+                                        No results - maybe your filter is too strict
+                                    </Text.Regular>
                                 )}
-                            </ScrollView>
-                        </div>}
-                        <div style={mobileStyle}>
-
-                            <ScrollView>
-                                {redux.states[i].images.length > 0 && (
-                                    <ImageRenderer
-                                        navigation={navigation}
-                                        data={redux.states[0].images}
-                                        time={formatTime(min) + ":" + formatTime(seconds)}
-                                    />
-                                )}
-                            </ScrollView>
-
-                            {redux.states[i].images.length === 0 && !redux.states[i].loading && (
-                                <Text.Regular style={{ alignSelf: "center" }}>
-                                    No results - maybe your filter is too strict
-                                </Text.Regular>
-                            )}
+                            </div>
+                            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
+                                <ScrollView style={{ height: "80vh", backgroundColor: colors.lightGreen, borderRadius: 12 }}>
+                                    {redux.states[i].images.length > 0 && (
+                                        <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+                                    )}
+                                </ScrollView>
+                            </div>}
                         </div>
-                        {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
-                            <ScrollView style={{ height: "90vh", backgroundColor: colors.lightGreen, borderRadius: 12 }}>
-                                {redux.states[i].images.length > 0 && (
-                                    <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
-                                )}
-                            </ScrollView>
-                        </div>}
-                    </div>
                 </TabPanel>
             )
         }
