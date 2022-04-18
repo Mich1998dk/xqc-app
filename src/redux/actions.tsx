@@ -31,7 +31,7 @@ import {
   SET_TIME_PICKER,
   SET_TIMER_STATUS,
   SET_IMAGE_INFO,
-  RESET,
+  RESET_ALL,
   SET_NAME,
 } from "./action-types";
 import { Obj, Filter, SelectedFilter, ImageInfo } from "../utils/types";
@@ -233,5 +233,5 @@ export const addNewModel = () => ({
 })
 
 export const resetAll = () => ({
-    type: RESET
+    type: RESET_ALL
 })

@@ -1,4 +1,3 @@
-import { Platform } from "react-native";
 import {
   ADD_POSITIVE,
   SET_POSITIVE,
@@ -32,18 +31,13 @@ import {
   SET_TIMER_STATUS,
   SET_IMAGE_INFO,
   ADD_NEW_MODEL,
-  RESET,
+  RESET_ALL,
   SET_NAME,
 } from "./action-types";
 import {
-  addImages,
   setImages,
-  addNegative,
   setNegative,
-  addPositive,
   setPositive,
-  addSeen,
-  setSeen,
   setLoading,
   removePositive,
   removeNegative,
@@ -52,43 +46,49 @@ import {
   resetModel,
   setPositiveProjection,
   setNegativeProjection,
-  setImageForProjection,
   replaceImage,
   setTerms,
   setFilter,
   setUser,
   setSelectedFilter,
   setSearchResults,
-  setTempFilter,
   setImageInfo,
   addNewModel,
   resetAll,
 } from "./actions";
 import { URL } from "../utils/constants";
-import { Obj, State, MediaInfo, Mode } from "../utils/types";
-import moment from "moment";
+import { Obj, State, Mode } from "../utils/types";
 import axios from "axios";
 import { learn } from "../utils/api";
 import { deleteModelInAsyncStorage } from "../utils/storage";
-import { getYearInNumber, getDayInNumber } from "../utils/helpers";
 
 import {
-  formatDate,
   formatToLocation,
-  isUpperCase,
   initArray,
   formatFolderName,
   customAlert,
   formatBackendDataToImageObjects,
-  getNumberOfImageByPlatformAndMode,
   formatObjectsFromMediaInfo,
   formatImgLocationToFolderName,
 } from "../utils/helpers";
 
+
+/**
+ *  initialState gives us the default state holding a array of models with a default model inside
+ *  only used when starting the application
+ **/
 const initialState: State =
 {
     states: [addModel("Default")]
 };
+
+/** 
+ *  addModel creates a empty model with possibility for ekstra infomation
+ *  @param name is the name given to the newly added model
+ *  @param user is the user given model, often we just copy the inital model user because it was generated from the server side
+ *  @param mode the given mode(projection or speed) which most often is taken from initial model when generating extras
+ *  @param terms given terms so search is in the correct mode when opening a model
+ **/
 function addModel(name: string, user: string = "", mode: Mode = undefined, terms: string[] = []) {
     return {
         name: name,
@@ -130,8 +130,13 @@ function addModel(name: string, user: string = "", mode: Mode = undefined, terms
     }
 }
 
-//timerStatus: action.payload
+/**
+ * the reducer for handling dispatch
+ * @param state the current state of the app which starts with initialState on startup(where changes are applied)
+ * @param action the given action taken which most often holds a type(what to do), index(what model to change) and payload (what change is made)
+ **/
 export const reducer = (state = initialState, action: any) => {
+    // sets values that holds onto index given and current state
     const index = action.index
     var newArray = [...state.states]
   switch (action.type) {
@@ -255,20 +260,24 @@ export const reducer = (state = initialState, action: any) => {
           newArray[index].mode = action.payload
           return { ...state, states: newArray };
         }
+        // replaces a single image in the model at the given index (used in speedmode)
         case REPLACE_IMAGE: {
           var tempArray = newArray[index].images;
           tempArray[action.payload.index] = action.payload.newImage;
           newArray[index].images = tempArray
           return { ...state, states: newArray };
         }
+        //adds a new model to the state which copies user, mode and terms from initial model
         case ADD_NEW_MODEL: {
           newArray.push(addModel("Model" + newArray.length, newArray[0].user, newArray[0].mode, newArray[0].terms))
           return { ...state, states: newArray };
           }
-        case RESET: {
+        // Resets the whole state to revert back to initial model
+        case RESET_ALL: {
           newArray = [addModel("Default", newArray[0].user, undefined, newArray[0].terms)]
           return { ...state, states: newArray };
         }
+        // resets specific model to revert back to the same case as when adding a new model
         case RESET_MODEL: {
           newArray[index] = addModel("Model" + index, newArray[0].user, undefined, newArray[0].terms)
         }
@@ -277,13 +286,17 @@ export const reducer = (state = initialState, action: any) => {
       return state;
   }
 };
-
+/**
+ * dispatch a filter reset and local reset
+ **/
 export const reset = () => async (dispatch: any, getState: any) => {
   dispatch(resetFiltersAsync())
   dispatch(resetAll())
 };
 
-
+/**
+ *Calls a filter reset from server since filter is connected to user
+ **/
 export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
   await fetch(`${URL}/resetFilters`, {
     method: "post",

@@ -50,4 +50,4 @@ export const SET_TIME_PICKER = "SET_TIME_PICKER";
 
 export const SET_TIMER_STATUS = "SET_TIMER_STATUS";
 
-export const RESET = "RESET"
+export const RESET_ALL = "RESET_ALL"
