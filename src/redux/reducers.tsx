@@ -1,76 +1,20 @@
-import {
-  ADD_POSITIVE,
-  SET_POSITIVE,
-  REMOVE_POSITIVE,
-  ADD_NEGATIVE,
-  SET_NEGATIVE,
-  REMOVE_NEGATIVE,
-  ADD_IMAGES,
-  SET_IMAGES,
-  ADD_SEEN,
-  SET_SEEN,
-  SET_LOADING,
-  UPDATE_SEEN,
-  SET_MEDIA_INFO,
-  RESET_MODEL,
-  SET_IMAGE_FOR_PROJECTION,
-  SET_POSITIVE_PROJECTION,
-  SET_NEGATIVE_PROJECTION,
-  REPLACE_IMAGE,
-  SET_MODE,
-  SET_TERMS,
-  SET_MENU,
-  SET_SEARCH,
-  SET_FILTER,
-  SET_TEMP_FILTER,
-  SET_SEARCH_DATA,
-  SET_USER,
-  SET_SELECTED_FILTER,
-  SET_SEARCH_RESULTS,
-  SET_TIME_PICKER,
-  SET_TIMER_STATUS,
-  SET_IMAGE_INFO,
-  ADD_NEW_MODEL,
-  RESET_ALL,
-  SET_NAME,
-} from "./action-types";
-import {
-  setImages,
-  setNegative,
-  setPositive,
-  setLoading,
-  removePositive,
-  removeNegative,
-  updateSeen,
-  setMediaInfo,
-  resetModel,
-  setPositiveProjection,
-  setNegativeProjection,
-  replaceImage,
-  setTerms,
-  setFilter,
-  setUser,
-  setSelectedFilter,
-  setSearchResults,
-  setImageInfo,
-  addNewModel,
-  resetAll,
-} from "./actions";
-import { URL } from "../utils/constants";
-import { Obj, State, Mode } from "../utils/types";
 import axios from "axios";
 import { learn } from "../utils/api";
-import { deleteModelInAsyncStorage } from "../utils/storage";
-
+import { URL } from "../utils/constants";
 import {
-  formatToLocation,
-  initArray,
-  formatFolderName,
-  customAlert,
-  formatBackendDataToImageObjects,
-  formatObjectsFromMediaInfo,
-  formatImgLocationToFolderName,
+    customAlert,
+    formatBackendDataToImageObjects, formatFolderName, formatImgLocationToFolderName, formatObjectsFromMediaInfo, formatToLocation,
+    initArray
 } from "../utils/helpers";
+import { deleteModelInAsyncStorage } from "../utils/storage";
+import { Mode, Obj, State } from "../utils/types";
+import {
+    ADD_NEW_MODEL, REMOVE_NEGATIVE, REMOVE_POSITIVE, REPLACE_IMAGE, RESET_ALL, RESET_MODEL, SET_FILTER, SET_IMAGES, SET_IMAGE_FOR_PROJECTION, SET_IMAGE_INFO, SET_LOADING, SET_MEDIA_INFO, SET_MENU, SET_MODE, SET_NAME, SET_NEGATIVE, SET_NEGATIVE_PROJECTION, SET_POSITIVE, SET_POSITIVE_PROJECTION, SET_SEARCH, SET_SEARCH_DATA, SET_SEARCH_RESULTS, SET_SEEN, SET_SELECTED_FILTER, SET_TEMP_FILTER, SET_TERMS, SET_TIMER_STATUS, SET_TIME_PICKER, SET_USER, UPDATE_SEEN
+} from "./action-types";
+import {
+    addNewModel, removeNegative, removePositive, replaceImage, resetAll, resetModel, setFilter, setImageInfo, setImages, setLoading, setMediaInfo, setNegative, setNegativeProjection, setPositive, setPositiveProjection, setSearchResults, setSelectedFilter, setTerms, setUser, updateSeen
+} from "./actions";
+
 
 
 /**
@@ -188,20 +132,12 @@ export const reducer = (state = initialState, action: any) => {
             newArray[index].loading = action.payload
             return { ...state, states:newArray};
         }
-        case ADD_POSITIVE: {
-            newArray[index].positives = [...newArray[index].positives, action.payload]
-            return { ...state, states:newArray};
-        }
         case SET_POSITIVE: {
             newArray[index].positives = action.payload
             return { ...state, states:newArray};
         }
         case REMOVE_POSITIVE: {
           newArray[index].positives = newArray[index].positives.filter((item) => item.exqId !== action.payload.exqId)
-          return { ...state, states: newArray };
-        }
-        case ADD_NEGATIVE: {
-          newArray[index].negatives = [...newArray[index].negatives, action.payload]
           return { ...state, states: newArray };
         }
         case SET_NEGATIVE: {
@@ -212,16 +148,8 @@ export const reducer = (state = initialState, action: any) => {
           newArray[index].negatives = newArray[index].negatives.filter((item) => item.exqId !== action.payload.exqId)
           return { ...state, states: newArray };
         }
-        case ADD_IMAGES: {
-          newArray[index].images = [...newArray[index].images, action.payload]
-          return { ...state, states: newArray };
-        }
         case SET_IMAGES: {
           newArray[index].images = action.payload
-          return { ...state, states: newArray };
-        }
-        case ADD_SEEN: {
-          newArray[index].seen = [...newArray[index].seen, action.payload]
           return { ...state, states: newArray };
         }
         case SET_SEEN: {
