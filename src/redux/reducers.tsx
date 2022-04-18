@@ -279,7 +279,7 @@ export const reducer = (state = initialState, action: any) => {
 };
 
 export const reset = () => async (dispatch: any, getState: any) => {
-  resetFiltersAsync()
+  dispatch(resetFiltersAsync())
   dispatch(resetAll())
 };
 
