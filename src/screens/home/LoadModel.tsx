@@ -9,12 +9,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
 import {
   getModelsInAsyncStorage,
-  clearStorage,
   deleteModelInAsyncStorage,
   combineModelInStorage,
   saveModelInAsyncStorage,
 } from "../../utils/storage";
-import { deleteModelAsync, initExistingModel, learnModelAsync, randomSetAsync, reset } from "../../redux/reducers";
+import { initExistingModel, learnModelAsync, randomSetAsync, reset } from "../../redux/reducers";
 import { FlatList, State } from "react-native-gesture-handler";
 
 import {
@@ -27,9 +26,7 @@ import {
   setSeen,
   setSelectedFilter,
 } from "../../redux/actions";
-import { customAlert, getNumberOfImageByPlatformAndMode } from "../../utils/helpers";
-import AsyncStorage from "@react-native-community/async-storage";
-import { CombineModels, LoadModel } from ".";
+import { getNumberOfImageByPlatformAndMode } from "../../utils/helpers";
 import { colors } from "../../utils/theme";
 import { CustomPopUp } from "../../components/organisms/index"
 
@@ -43,7 +40,6 @@ let chosenModels: Model[] = [];
 export default function ChooseMode({ navigation }: Props) {
   const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent});
   const dispatch = useDispatch();
-  const redux = useSelector((state) => state);
   const [models, setModels] = useState<Model[]>([]);
 
   const [mergePopupVisible, setMergePopupVisible] = useState({ contentText:"",visible:false})
@@ -148,18 +144,6 @@ export default function ChooseMode({ navigation }: Props) {
                                                     "\" (" + chosenModels[1].mode + ") \n Do you want to save it as Projection mode or Speed mode"
 
                                 setMergePopupVisible({ contentText: popupMergeContent, visible:true })
-                                //await setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent })
-                                //chosenModels = [];
-                                /*if (confirm("Do you want to combine: " + chosenModels[0].name + " and " + chosenModels[1].name)) {
-                                    const Result = combineModelInStorage(chosenModels[0], chosenModels[1])
-                                    await saveModelInAsyncStorage(Result);
-                                    chosenModels = [];
-                                    await getModels();
-                                    //setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent, chosenModels: [] })
-                                    //React.useCallback(() => setState({ ...state, Title: "Load Model", Mode: "Load", ModeColor: colors.accent }),[])
-                                } else {
-                                    chosenModels.pop()
-                                }*/
                             }
                             
 
@@ -174,15 +158,7 @@ export default function ChooseMode({ navigation }: Props) {
                       await dispatch(setPositive(item.positives));
                       await dispatch(setSeen(item.seen));
                       await dispatch(setSelectedFilter(item.filter));
-                      if (item.lastSeen.length == getNumberOfImageByPlatformAndMode(item.mode)) {
-                         await dispatch(setImages(item.lastSeen))
-                      } else {
-                        if (item.negatives.length == 0 && item.positives.length == 0) {
-                            dispatch(randomSetAsync());
-                        } else {
-                            await dispatch(learnModelAsync());
-                        }
-                      }
+                     
                       dispatch(setLoading(false));
                       if (item.mode === "projection") {
                         dispatch(setMode("projection"));
@@ -191,6 +167,18 @@ export default function ChooseMode({ navigation }: Props) {
                       if (item.mode === "speed") {
                         dispatch(setMode("speed"));
                         navigation.navigate("SpeedMode", { loadModel: item });
+                        }
+                      if (item.lastSeen.length == getNumberOfImageByPlatformAndMode(item.mode)) {
+                          console.log("line 162")
+                          await dispatch(setImages(item.lastSeen))
+                      } else {
+                          if (item.negatives.length == 0 && item.positives.length == 0) {
+                              console.log("Line 166")
+                              dispatch(randomSetAsync());
+                          } else {
+                              console.log("Line 169")
+                              await dispatch(learnModelAsync());
+                          }
                       }
                     }
                 }}
