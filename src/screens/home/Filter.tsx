@@ -1,33 +1,26 @@
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  ImagePropTypes,
+    StyleSheet, TouchableOpacity, View
 } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList, State } from "../../utils/types";
+import { useDispatch, useSelector } from "react-redux";
 import { Text } from "../../components/atoms/index";
 import {
-  Button,
-  Header,
-  IconButton,
-  ModelOption,
+    Header,
+    IconButton
 } from "../../components/molecules/index";
-import { useSelector, useDispatch } from "react-redux";
-import { Container } from "../../containers/index";
-import { RouteProp } from "@react-navigation/native";
 import { ButtonBar } from "../../components/organisms";
-import { formatTimeToPeriod } from "../../utils/helpers";
-import {
-  setSearchData,
-  setTempFilter,
-  setTimePicker,
-} from "../../redux/actions";
-import { reducer } from "../../redux/reducers";
 import { TimePicker } from "../../components/organisms/index";
+import { Container } from "../../containers/index";
+import {
+    setSearchData,
+    setTempFilter,
+    setTimePicker
+} from "../../redux/actions";
+import { formatTimeToPeriod } from "../../utils/helpers";
 import { colors, fonts } from "../../utils/theme";
+import { HomeStackParamList, State } from "../../utils/types";
 
 type FilterProps = StackNavigationProp<HomeStackParamList, "Filter">;
 type RouteProps = RouteProp<HomeStackParamList, "Filter">;

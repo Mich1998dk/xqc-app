@@ -1,56 +1,31 @@
-import React, { useEffect, useState, useContext, CSSProperties } from "react";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  View,
-  Image,
-  Alert,
-  Platform,
-  ScrollView,
-} from "react-native";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@reach/tabs";
+import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList, State } from "../../utils/types";
+import React, { CSSProperties, useEffect, useState } from "react";
+import { isMobile } from "react-device-detect";
+import {
+    Dimensions, Platform,
+    ScrollView
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { Text } from "../../components/atoms/index";
 import {
-  Header,
-  Button,
-  IconButton,
-  ImageOverlay,
+    Header
 } from "../../components/molecules/index";
-import { useSelector, useDispatch } from "react-redux";
-import { Container } from "../../containers/index";
 import {
-  initModelAsync,
-  negativeExamplePressed,
-  positiveExamplePressed,
-  learnModelAsync,
-  randomSetAsync,
-  resetModelAsync,
-  replaceImageAsync,
-  reset,
-  initExistingModel,
-  addNewModelAsync,
-} from "../../redux/reducers";
-import { colors, fonts, sizes  } from "../../utils/theme";
-import {
-  formatTime,
-  formatDate,
-  isUpperCase,
-  formatToLocation,
-} from "../../utils/helpers";
-import {
-  ButtonBar,
-  ImageRenderer,
-  Menu,
+    ButtonBar,
+    ImageRenderer
 } from "../../components/organisms/index";
-import { Obj } from "../../utils/types";
-import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
-import { RouteProp } from "@react-navigation/native";
-import { setSearchData, setSeen, setSelectedFilter } from "../../redux/actions";
-import { isMobile } from "react-device-detect";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@reach/tabs";
-import { Dimensions } from "react-native";
+import { Container } from "../../containers/index";
+import { setSearchData } from "../../redux/actions";
+import {
+    addNewModelAsync, initModelAsync, reset
+} from "../../redux/reducers";
+import {
+    formatTime
+} from "../../utils/helpers";
+import { colors, fonts, sizes } from "../../utils/theme";
+import { HomeStackParamList, State } from "../../utils/types";
 
 
 
@@ -257,27 +232,3 @@ export default function SpeedMode({ navigation, route }: Props) {
     }
 }
 
-
-
-const styles = StyleSheet.create({
-  box: {
-    width: calculateImageWidth(),
-    backgroundColor: "#393939",
-    marginTop: 10,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 200,
-  },
-  buttons: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 64,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.background,
-  },
-});

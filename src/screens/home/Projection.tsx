@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, FlatList, View, Image, Platform } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList, State } from "../../utils/types";
-
 import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useEffect, useState } from "react";
+import { FlatList, Image, Platform, StyleSheet, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { Text } from "../../components/atoms";
 import { Header, IconButton } from "../../components/molecules/index";
-import { useSelector, useDispatch } from "react-redux";
 import { Container } from "../../containers/index";
 import { learnWithProjectedImageAsync } from "../../redux/reducers";
-import { colors } from "../../utils/theme";
 import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
-import { Obj, Model } from "../../utils/types";
-import { ButtonBar } from "../../components/organisms";
-import { Text } from "../../components/atoms";
+import { colors } from "../../utils/theme";
+import { HomeStackParamList, State } from "../../utils/types";
+
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Projection">;
 type RouteProps = RouteProp<HomeStackParamList, "Projection">;
@@ -99,7 +97,7 @@ export default function ProjectionMode({ navigation, route }: Props) {
         style={{ paddingBottom: 80 }}
         numColumns={calculateColumnAmount()}
         keyExtractor={(item) => item.exqId.toString()}
-        renderItem={({ item, index }) => {
+        renderItem={({ item }) => {
           return (
             <View style={styles.box}>
               {/* //@ts-ignore */}

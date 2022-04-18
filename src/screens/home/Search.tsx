@@ -1,33 +1,23 @@
+import { Ionicons } from "@expo/vector-icons";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
-  FlatList,
-  View,
-  Image,
-  Platform,
-  TextInput,
-  TouchableHighlight,
+    FlatList, Platform, StyleSheet, TextInput,
+    TouchableHighlight, View
 } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList, State } from "../../utils/types";
-import { RouteProp } from "@react-navigation/native";
-import { Header, ImageOverlay } from "../../components/molecules/index";
-import { useSelector, useDispatch } from "react-redux";
-import { Container } from "../../containers/index";
-import { Text } from "../../components/atoms/index";
-import * as l from "../../utils/layout";
-import {
-  initModelAsync,
-  negativeExamplePressed,
-  positiveExamplePressed,
-  searchAsync,
-} from "../../redux/reducers";
-import { ButtonBar, ImageRenderer } from "../../components/organisms/index";
-import { setSearchResults, setSeen, setTempFilter } from "../../redux/actions";
-import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
-import { Ionicons } from "@expo/vector-icons";
-import { colors, fonts, sizes } from "../../utils/theme";
 import { ScrollView } from "react-native-gesture-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { Text } from "../../components/atoms/index";
+import { Header } from "../../components/molecules/index";
+import { ImageRenderer } from "../../components/organisms/index";
+import { Container } from "../../containers/index";
+import { setSearchResults, setTempFilter } from "../../redux/actions";
+import {
+    searchAsync
+} from "../../redux/reducers";
+import { colors, fonts, sizes } from "../../utils/theme";
+import { HomeStackParamList, State } from "../../utils/types";
 
 type SearchProps = StackNavigationProp<HomeStackParamList, "Search">;
 type RouteProps = RouteProp<HomeStackParamList, "Search">;

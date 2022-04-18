@@ -88,7 +88,7 @@ export default function Container({
           }}
           onClickSaveModel={() => {
             dispatch(setMenu(false,tabIndex));
-            navigation!.navigate("ModelName", { mode: redux.states[tabIndex].mode,tabIndex });
+            navigation!.navigate("ModelName", { tabIndex: tabIndex });
           }}
           canQuickSave={model !== undefined}
           onClickQuickSave={() => {

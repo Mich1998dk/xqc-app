@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, TextInput, Platform } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList, Model, State } from "../../utils/types";
-import { Text } from "../../components/atoms/index";
-import { Header, Button } from "../../components/molecules/index";
-import { useSelector, useDispatch } from "react-redux";
-import { Container } from "../../containers/index";
-import {} from "../../redux/reducers";
-import { colors, fonts } from "../../utils/theme";
-import { saveModelInAsyncStorage, checkName } from "../../utils/storage";
-import { customAlert } from "../../utils/helpers";
 import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useEffect, useState } from "react";
+import { Platform, StyleSheet, TextInput, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, Header } from "../../components/molecules/index";
+import { Container } from "../../containers/index";
 import { setName } from "../../redux/actions";
+import { } from "../../redux/reducers";
+import { customAlert } from "../../utils/helpers";
+import { checkName, saveModelInAsyncStorage } from "../../utils/storage";
+import { colors, fonts } from "../../utils/theme";
+import { HomeStackParamList, Model, State } from "../../utils/types";
 
 type ModelNameProps = StackNavigationProp<HomeStackParamList, "ModelName">;
 type RouteProps = RouteProp<HomeStackParamList, "ModelName">;
@@ -25,7 +24,7 @@ export default function ChooseMode({ navigation, route }: Props) {
   const [state, setState] = useState({ loading: false, name: "" });
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
-  const { mode,tabIndex } = route.params;
+  const { tabIndex } = route.params;
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {});
     return unsubscribe;

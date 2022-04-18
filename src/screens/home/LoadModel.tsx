@@ -189,14 +189,6 @@ export default function ChooseMode({ navigation }: Props) {
 
 }
 
-
-
-
-
-
-const styles = StyleSheet.create({});
-
-
 const buttonStyles = StyleSheet.create({
     buttonStyle: {
         width: "auto",
