@@ -279,18 +279,19 @@ export const reducer = (state = initialState, action: any) => {
 };
 
 export const reset = () => async (dispatch: any, getState: any) => {
+  resetFiltersAsync()
   dispatch(resetAll())
 };
 
 
-export const resetFiltersAsync = (index: number = 0) => async (dispatch: any, getState: any) => {
+export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
   await fetch(`${URL}/resetFilters`, {
     method: "post",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      user: getState().states[index].user,
+      user: getState().states[0].user,
       model: 0,
     }),
   })
@@ -305,7 +306,7 @@ export const resetFiltersAsync = (index: number = 0) => async (dispatch: any, ge
             start: 0,
             end: 0,
           },
-        },index)
+        },0)
       );
       //dispatch(setFilter({ activities: [], locations: [] }));
       customAlert("success", "Filters has been reset!");
