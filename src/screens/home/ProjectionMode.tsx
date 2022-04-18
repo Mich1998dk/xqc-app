@@ -3,7 +3,7 @@ import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { CSSProperties, useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
-import { Dimensions, Platform, ScrollView, StyleSheet } from "react-native";
+import { Dimensions, Platform, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Text } from "../../components/atoms";
 import { Header } from "../../components/molecules/index";
@@ -14,7 +14,6 @@ import {
     addNewModelAsync,
     initModelAsync, reset
 } from "../../redux/reducers";
-import { calculateImageWidth } from "../../utils/layout";
 import { colors, fonts, sizes } from "../../utils/theme";
 import { HomeStackParamList, State } from "../../utils/types";
 

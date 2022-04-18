@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, Image, ScrollView } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList, State } from "../../utils/types";
-import { Text } from "../../components/atoms/index";
-import {
-  Header,
-  ModeOption,
-  IconButton,
-  RMOverlay,
-  SubmitOverlay,
-} from "../../components/molecules/index";
-import { useSelector, useDispatch } from "react-redux";
-import { Container } from "../../containers/index";
-import {} from "../../redux/reducers";
-import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
-import { removeNegative, removePositive } from "../../redux/actions";
-import { ImageRenderer } from "../../components/organisms";
-import { customAlert } from "../../utils/helpers";
 import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useEffect, useState } from "react";
+import { FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    Header, IconButton,
+    RMOverlay,
+    SubmitOverlay
+} from "../../components/molecules/index";
+import { ImageRenderer } from "../../components/organisms";
+import { Container } from "../../containers/index";
+import { removeNegative, removePositive } from "../../redux/actions";
+import { } from "../../redux/reducers";
+import { customAlert } from "../../utils/helpers";
+import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
+import { HomeStackParamList, State } from "../../utils/types";
 
 type PosAndNegProps = StackNavigationProp<HomeStackParamList, "Welcome">;
 
@@ -68,7 +65,7 @@ export default function PosAndNeg({ navigation,route }: Props) {
           numColumns={calculateColumnAmount()}
           style={{ paddingBottom: 80 }}
           keyExtractor={(item) => item.exqId.toString()}
-          renderItem={({ item, index }) => {
+          renderItem={({ item}) => {
             return (
               <View style={styles.box}>
                 {/* //@ts-ignore */}

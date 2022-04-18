@@ -18,13 +18,22 @@ type HomeProps = StackNavigationProp<HomeStackParamList>;
 interface Props {
   data: any;
   navigation: HomeProps;
-  tabIndex?: number;
-  time?: string;
   style?: CSSProperties;
   numberOfImages?: number;
+  tabIndex: number;
 }
 
-export default function ImageRenderer({ data, navigation, time, style, numberOfImages, tabIndex = 0 }: Props) {
+/** ImageRendere creates a view containing a flatlist of all the data you supply it with.
+ * 
+ * @param data Is the data you want to be rendered and displayed in thew view, this is of type @type {any}
+ * @param navigation Is used to be able to navigate to projection of image, when in projection mode, this is of type @type {HomeProps}
+ * @param style is an optional paramter, it is used to override the style of the view/touchable opacity, that the data resides inside, this is of type @type {CSSProperties}
+ * @param numberOfImages is an optional paramter, it is used to override how many boxes of data you want per row before going to next row, 
+ * if not set this is decided by the size of the window, this is of type @type {number}
+ * @param tabIndex is the index of the tab/panel that the ImageRenderer is associated with, this is of type @type {number}
+ */
+
+export default function ImageRenderer({ data, navigation, style, numberOfImages, tabIndex }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 

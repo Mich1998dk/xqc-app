@@ -8,7 +8,7 @@ export type HomeStackParamList = {
   Welcome: undefined;
   PosAndNeg: {tabIndex:number};
   LoadModal: undefined;
-  ModelName: { mode: Mode,tabIndex:number };
+  ModelName: {tabIndex:number };
   SpeedMode: { loadModel?: Model };
   ProjectionMode: { loadModel?: Model };
   Projection: {tabIndex:number };

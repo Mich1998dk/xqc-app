@@ -5,7 +5,7 @@ import React, { CSSProperties, useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 import {
     Dimensions, Platform,
-    ScrollView, StyleSheet
+    ScrollView
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Text } from "../../components/atoms/index";
@@ -24,7 +24,6 @@ import {
 import {
     formatTime
 } from "../../utils/helpers";
-import { calculateImageWidth } from "../../utils/layout";
 import { colors, fonts, sizes } from "../../utils/theme";
 import { HomeStackParamList, State } from "../../utils/types";
 
@@ -250,7 +249,6 @@ export default function SpeedMode({ navigation, route }: Props) {
                                     <ImageRenderer
                                         navigation={navigation}
                                         data={redux.states[i].images}
-                                        time={formatTime(min) + ":" + formatTime(seconds)}
                                         tabIndex={i}
                                     />
                                 )}
@@ -271,27 +269,3 @@ export default function SpeedMode({ navigation, route }: Props) {
     }
 }
 
-
-
-const styles = StyleSheet.create({
-  box: {
-    width: calculateImageWidth(),
-    backgroundColor: "#393939",
-    marginTop: 10,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 200,
-  },
-  buttons: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 64,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.background,
-  },
-});
