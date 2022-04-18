@@ -1,40 +1,8 @@
+import { Filter, ImageInfo, Obj, SelectedFilter } from "../utils/types";
 import {
-  ADD_POSITIVE,
-  ADD_NEGATIVE,
-  ADD_IMAGES,
-  ADD_SEEN,
-  ADD_NEW_MODEL,
-  REMOVE_NEGATIVE,
-  REMOVE_POSITIVE,
-  SET_POSITIVE,
-  SET_NEGATIVE,
-  SET_IMAGES,
-  SET_SEEN,
-  SET_LOADING,
-  UPDATE_SEEN,
-  SET_MEDIA_INFO,
-  RESET_MODEL,
-  SET_IMAGE_FOR_PROJECTION,
-  SET_POSITIVE_PROJECTION,
-  SET_NEGATIVE_PROJECTION,
-  REPLACE_IMAGE,
-  SET_MODE,
-  SET_TERMS,
-  SET_MENU,
-  SET_SEARCH,
-  SET_FILTER,
-  SET_TEMP_FILTER,
-  SET_SEARCH_DATA,
-  SET_USER,
-  SET_SELECTED_FILTER,
-  SET_SEARCH_RESULTS,
-  SET_TIME_PICKER,
-  SET_TIMER_STATUS,
-  SET_IMAGE_INFO,
-  RESET_ALL,
-  SET_NAME,
+    ADD_IMAGES, ADD_NEGATIVE, ADD_NEW_MODEL, ADD_POSITIVE, ADD_SEEN, REMOVE_NEGATIVE,
+    REMOVE_POSITIVE, REPLACE_IMAGE, RESET_ALL, RESET_MODEL, SET_FILTER, SET_IMAGES, SET_IMAGE_FOR_PROJECTION, SET_IMAGE_INFO, SET_LOADING, SET_MEDIA_INFO, SET_MENU, SET_MODE, SET_NAME, SET_NEGATIVE, SET_NEGATIVE_PROJECTION, SET_POSITIVE, SET_POSITIVE_PROJECTION, SET_SEARCH, SET_SEARCH_DATA, SET_SEARCH_RESULTS, SET_SEEN, SET_SELECTED_FILTER, SET_TEMP_FILTER, SET_TERMS, SET_TIMER_STATUS, SET_TIME_PICKER, SET_USER, UPDATE_SEEN
 } from "./action-types";
-import { Obj, Filter, SelectedFilter, ImageInfo } from "../utils/types";
 
 export const setTimePicker = (payload: boolean, index: number = 0) => ({
   type: SET_TIME_PICKER,
@@ -132,12 +100,6 @@ export const setLoading = (bool: boolean, index: number = 0) => ({
   payload: bool,
 });
 
-export const addPositive = (positives: Obj[], index: number = 0) => ({
-  type: ADD_POSITIVE,
-  index:index,
-  payload: positives,
-});
-
 export const setPositive = (positives: Obj[], index: number = 0) => ({
   type: SET_POSITIVE,
   index:index,
@@ -148,12 +110,6 @@ export const removePositive = (pos: Obj, index: number = 0) => ({
   type: REMOVE_POSITIVE,
   index:index,
   payload: pos,
-});
-
-export const addNegative = (negatives: Obj[], index: number = 0) => ({
-  type: ADD_NEGATIVE,
-  index:index,
-  payload: negatives,
 });
 
 export const setNegative = (negatives: Obj[], index: number = 0) => ({
@@ -168,12 +124,6 @@ export const removeNegative = (neg: Obj, index: number = 0) => ({
   payload: neg,
 });
 
-export const addSeen = (seen: Obj[], index: number = 0) => ({
-  type: ADD_SEEN,
-  index:index,
-  payload: seen,
-});
-
 export const setSeen = (seen: Obj[], index: number = 0) => ({
   type: SET_SEEN,
   index:index,
@@ -186,11 +136,6 @@ export const updateSeen = (seen: Obj[], index: number = 0) => ({
   payload: seen,
 });
 
-export const addImages = (images: Obj[], index: number = 0) => ({
-  type: ADD_IMAGES,
-  index:index,
-  payload: images,
-});
 
 export const setImages = (images: Obj[], index: number = 0) => ({
   type: SET_IMAGES,

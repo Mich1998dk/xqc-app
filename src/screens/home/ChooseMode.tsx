@@ -33,7 +33,7 @@ export default function ChooseMode({ navigation }: Props) {
           title="PROJECTION MODE (BROWSE ORIENTED)"
           onPress={() => {
             dispatch(setMode("projection"));
-            navigation.navigate("Home", { loadModel: undefined });
+            navigation.navigate("ProjectionMode", { loadModel: undefined });
           }}
         />
         <Text.Regular style={{ paddingHorizontal: 6, marginBottom: 30 }}>

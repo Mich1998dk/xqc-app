@@ -152,7 +152,7 @@ export default function ChooseMode({ navigation }: Props) {
                       dispatch(setLoading(false));
                       if (item.mode === "projection") {
                         dispatch(setMode("projection"));
-                        navigation.navigate("Home", { loadModel: item });
+                        navigation.navigate("ProjectionMode", { loadModel: item });
                       }
                       if (item.mode === "speed") {
                         dispatch(setMode("speed"));
