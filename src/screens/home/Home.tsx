@@ -157,48 +157,69 @@ export default function Home({ navigation, route }: Props) {
      * lastly it adds a tab with the text "+" that generates extra tabs
      */
     function tabGenerator() {
-        var acc = [];
+        var tabs = [];
         for (var i = 0; i < redux.states.length; i++) {
-            acc.push(<Tab key={"tab" + i} index={i} style={
+            tabs.push(<Tab key={"tab" + i} index={i} style={
                 tabStyle(i)
             }>{redux.states[i].name}</Tab>)
         }
-        acc.push(<button onClick={() => addModel()} style={tabStyle(-1)} >+</button>)
-        return acc
+        tabs.push(<button onClick={() => addModel()} style={tabStyle(-1)} >+</button>)
+        return tabs
     }
 
+    /*
+     * returns a list of all the different panels for each model/tab
+     * and adds all the associated pictures for each model to their different views.
+     * 
+     */
     function panelGenerator() {
-        var acc = [];
+        // the list that will be filled with different panels
+        var panels = [];
 
         for (var i = 0; i < redux.states.length; i++)
         {
-            acc.push(
+            panels.push(
                 <TabPanel key={"panel" + i} style={{ width: "100%" }} index={i}>
-                <div style={{ width: "100%", display: "flex" }}>
-                    {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} >
 
+                {/* the main div that contains all different divs/views containing pictures*/}
+                <div style={{ width: "100%", display: "flex" }}>
+
+                    {/* generates a div that contains a scroll view with all the negative pictures if the user is not on a mobile device*/}
+                    {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} >
                         <ScrollView style={{ height: "82.2vh", backgroundColor: colors.lightRed, borderRadius: 12 }} >
-                        {redux.states[i].negatives.length > 0 && (
-                                <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+
+                            {/* chekcs if there is any negative pictures, and the ImageRenderer returns a view with all the negative pictures */}
+                            {redux.states[i].negatives.length > 0 && (
+                            <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
                         )}
                         </ScrollView>
                     </div>}
+
+                    {/* the middle div containing all the pictures yet to be set as positive or negative */}
                     <div style={mobileStyle}>
+
+                        {/* if there is no pictures to show due to too strict filters or something else */}
                         {redux.states[i].images.length === 0 && !redux.states[i].loading && (
                             <Text.Regular style={{ display: "flex", justifyContent: "center" }}>
                                 No results - maybe your filter is too strict
                             </Text.Regular>
                         )}
+
+                        
                         <ScrollView style={{ height: "82.2vh" }}>
+                            {/* checks if there is any pictures to show and the ImageRenderer returns a view will all the pictures*/ }
                             {redux.states[i].images.length > 0 && (
-                                    <ImageRenderer navigation={navigation} data={redux.states[i].images} tabIndex={i} />
+                                <ImageRenderer navigation={navigation} data={redux.states[i].images} tabIndex={i} />
                             )}
                         </ScrollView>
                     </div>
+
+                    {/* generates a div that contains a scroll view with all the positive pictures if the user is not on a mobile device*/}
                     {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
                         <ScrollView style={{ height: "82.2vh", backgroundColor: colors.lightGreen, borderRadius: 12 }}>
+                            {/* chekcs if there is any positive pictures, and the ImageRenderer returns a view with all the positive pictures */ }
                             {redux.states[i].positives.length > 0 && (
-                                    <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+                                <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
                             )}
                         </ScrollView>
                     </div>}
@@ -206,7 +227,7 @@ export default function Home({ navigation, route }: Props) {
             </TabPanel>
             )
         }
-        return acc
+        return panels
     }
 }
 
