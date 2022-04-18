@@ -1,21 +1,9 @@
-import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { HomeStackParamList } from "../utils/types";
+import React from "react";
 import {
-  Home,
-  ChooseMode,
-  Welcome,
-  PosAndNeg,
-  LoadModel,
-  SpeedMode,
-  ModelName,
-  ProjectionMode,
-  Projection,
-  Filter,
-  Search,
-  Info,
-  History,
+    ChooseMode, Filter, History, Home, Info, LoadModel, ModelName, PosAndNeg, Projection, ProjectionMode, Search, SpeedMode, Welcome
 } from "../screens/home/index";
+import { HomeStackParamList } from "../utils/types";
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
