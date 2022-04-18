@@ -1,9 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import React, { CSSProperties } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { fonts, colors, sizes } from "../../utils/theme";
+import { colors } from "../../utils/theme";
 import { Text } from "../atoms/index";
-import { Ionicons } from "@expo/vector-icons";
-import * as Animatable from "react-native-animatable";
 
 interface Props {
   title: string;

@@ -1,19 +1,14 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-  learnModelAsync,
-  learnWithProjectedImageAsync,
-  applyFiltersAsync,
-  randomSetAsync,
-  resetModelAsync,
-  resetFiltersAsync,
+    applyFiltersAsync, learnModelAsync, randomSetAsync,
+    resetFiltersAsync
 } from "../../redux/reducers";
-import { State } from "../../utils/types";
-import { IconButton } from "../molecules";
 import { colors } from "../../utils/theme";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "../../utils/types";
+import { IconButton } from "../molecules";
 
 type HomeProps = StackNavigationProp<HomeStackParamList>;
 
@@ -25,7 +20,6 @@ interface Props {
   update?: boolean;
   confirm?: boolean;
   applyFilter?: boolean;
-  history?: boolean;
   tabIndex?:number;
 }
 
@@ -35,14 +29,12 @@ export default function ButtonBar({
   randomSet,
   train,
   update,
-  history,
   applyFilter,
   tabIndex = 0,
 }: Props) {
   const dispatch = useDispatch();
   const [lastUsed, setLastUsed] = useState<"random" | "update">();
 
-  const redux = useSelector((state: State) => state);
   return (
     <View style={styles.buttons}>
       {posAndNeg && (
@@ -83,7 +75,7 @@ export default function ButtonBar({
           <IconButton
             title="RESET FILTERS"
             onPress={() => {
-              dispatch(resetFiltersAsync(tabIndex));
+              dispatch(resetFiltersAsync());
             }}
             style={{ marginRight: 10 }}
             secondary

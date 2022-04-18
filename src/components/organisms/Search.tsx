@@ -1,25 +1,17 @@
+import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Platform,
-  TextInput,
-  ScrollView,
-  FlatList,
-  TouchableHighlight,
+    FlatList, Platform, StyleSheet, TextInput, TouchableHighlight, TouchableOpacity,
+    View
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { fonts, colors, sizes } from "../../utils/theme";
-import i18n from "i18n-js";
-import * as Text from "../atoms/Text";
-import { ModeOption } from "../molecules/index";
-import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearch } from "../../redux/actions";
-import * as l from "../../utils/layout";
-import { State } from "../../utils/types";
 import { searchAsync } from "../../redux/reducers";
+import * as l from "../../utils/layout";
+import { colors, fonts, sizes } from "../../utils/theme";
+import { State } from "../../utils/types";
+import * as Text from "../atoms/Text";
 
 interface Props {}
 
@@ -83,7 +75,7 @@ export default function Menu({}: Props) {
           }
           style={{ height: 300 }}
           keyExtractor={(item) => item.toString()}
-          renderItem={({ item, index }) => {
+          renderItem={({ item }) => {
             return (
               <TouchableHighlight
                 underlayColor={colors.box}

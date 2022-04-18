@@ -1,7 +1,5 @@
-import React, { CSSProperties } from "react";
-import { StyleSheet, View, Image } from "react-native";
-import { fonts, colors, sizes } from "../../utils/theme";
-import { Text, Icon } from "../atoms/index";
+import React from "react";
+import { Image, StyleSheet } from "react-native";
 
 interface Props {
   src?: string;

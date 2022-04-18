@@ -1,6 +1,6 @@
 import React, { CSSProperties } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { fonts, colors, sizes } from "../../utils/theme";
+import { colors } from "../../utils/theme";
 import { Text } from "../atoms/index";
 
 interface Props {

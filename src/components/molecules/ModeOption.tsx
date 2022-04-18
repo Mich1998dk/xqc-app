@@ -1,8 +1,8 @@
+import { MaterialIcons } from "@expo/vector-icons";
 import React, { CSSProperties } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { fonts, colors, sizes } from "../../utils/theme";
+import { colors } from "../../utils/theme";
 import { Text } from "../atoms/index";
-import { MaterialIcons } from "@expo/vector-icons";
 
 interface Props {
   title: string;

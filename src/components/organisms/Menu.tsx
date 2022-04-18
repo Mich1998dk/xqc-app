@@ -1,14 +1,11 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { fonts, colors, sizes } from "../../utils/theme";
-import i18n from "i18n-js";
-import * as Text from "../atoms/Text";
-import { ModeOption } from "../molecules/index";
-import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { setMenu } from "../../redux/actions";
-import { Model } from "../../utils/types";
+import { colors } from "../../utils/theme";
+import { ModeOption } from "../molecules/index";
 
 interface Props {
   onClickReset: (event: React.MouseEvent<HTMLButtonElement>) => void;

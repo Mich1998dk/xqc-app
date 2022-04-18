@@ -1,37 +1,18 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { CSSProperties, useEffect } from "react";
 import {
-  StyleSheet,
-  View,
-  Image,
-  FlatList,
-  TouchableOpacity,
-  Alert,
-  Platform,
-  ScrollView,
+    FlatList, Image, Platform, StyleSheet, TouchableOpacity, View
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  learnModelAsync,
-  learnWithProjectedImageAsync,
-  applyFiltersAsync,
-  randomSetAsync,
-  resetModelAsync,
-  negativeExamplePressed,
-  positiveExamplePressed,
-  replaceImageAsync,
-  makeProjection,
-  getImageInfo,
-  submitImage,
-} from "../../redux/reducers";
-import { HomeStackParamList, Obj, State } from "../../utils/types";
-import { IconButton, ImageOverlay, SubmitOverlay } from "../molecules";
-import { colors } from "../../utils/theme";
-import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
 import { setImageForProjection } from "../../redux/actions";
-import { StackNavigationProp } from "@react-navigation/stack";
-//import { LogBox } from "react-native";
-import { customAlert, showSubmitPopup } from "../../utils/helpers";
-import { ButtonBar } from "../../components/organisms";
+import {
+    getImageInfo, makeProjection, negativeExamplePressed,
+    positiveExamplePressed,
+    replaceImageAsync, submitImage
+} from "../../redux/reducers";
+import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
+import { HomeStackParamList, State } from "../../utils/types";
+import { ImageOverlay, SubmitOverlay } from "../molecules";
 type HomeProps = StackNavigationProp<HomeStackParamList>;
 
 interface Props {
@@ -75,7 +56,7 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
           data={data}
           numColumns={numberOfCollumns}
           keyExtractor={(item) => item.exqId.toString()}
-          renderItem={({ item, index }) => {
+          renderItem={({ item }) => {
             return (
               <TouchableOpacity
                 style={[styles.box, style as any]}
@@ -100,7 +81,6 @@ export default function ImageRenderer({ data, navigation, time, style, numberOfI
                 />
                 <SubmitOverlay
                   onPressSubmit={() => dispatch(submitImage(item.exqId,tabIndex))}
-                  thumbnail={item.thumbnail}
                 />  
 
                 <ImageOverlay

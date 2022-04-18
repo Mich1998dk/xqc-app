@@ -1,9 +1,9 @@
+import moment from "moment";
 import React, { CSSProperties, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { fonts, colors, sizes } from "../../utils/theme";
-import { Text, Icon } from "../atoms/index";
-import { Mode, Model } from "../../utils/types";
-import moment from "moment";
+import { colors } from "../../utils/theme";
+import { Model } from "../../utils/types";
+import { Icon, Text } from "../atoms/index";
 
 interface Props {
   onPressFunction: Function;

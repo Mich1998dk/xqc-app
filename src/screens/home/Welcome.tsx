@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, FlatList, View, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList, State } from "../../utils/types";
-import { Text, Icon } from "../../components/atoms/index";
-import { Button, ModeOption } from "../../components/molecules/index";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { View } from "react-native";
+import { useDispatch } from "react-redux";
+import { Text } from "../../components/atoms/index";
+import { Button } from "../../components/molecules/index";
 import { Container } from "../../containers/index";
-import { initExquisitorAsync, reducer } from "../../redux/reducers";
+import { initExquisitorAsync } from "../../redux/reducers";
+import { HomeStackParamList } from "../../utils/types";
 
 type WelcomeProps = StackNavigationProp<HomeStackParamList, "Welcome">;
 
@@ -15,9 +15,7 @@ type Props = {
 };
 
 export default function Welcome({ navigation }: Props) {
-  const [state, setState] = useState({ loading: false });
   const dispatch = useDispatch();
-  const redux = useSelector((state: State) => state);
 
   useEffect(() => {
     dispatch(initExquisitorAsync());
@@ -46,5 +44,3 @@ export default function Welcome({ navigation }: Props) {
     </Container>
   );
 }
-
-const styles = StyleSheet.create({});

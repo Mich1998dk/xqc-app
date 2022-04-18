@@ -1,8 +1,7 @@
 import React from "react";
-import { StyleSheet, ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { fonts, colors, sizes } from "../../utils/theme";
-import i18n from "i18n-js";
+import { colors } from "../../utils/theme";
 import * as Text from "../atoms/Text";
 
 interface Props {

@@ -1,7 +1,7 @@
 import React from "react";
-import { StyleSheet, Image, View } from "react-native";
-import { Obj } from "../../utils/types";
+import { Image, StyleSheet, View } from "react-native";
 import { calculateImageWidth } from "../../utils/layout";
+import { Obj } from "../../utils/types";
 
 interface Props {
   imageObj: Obj;

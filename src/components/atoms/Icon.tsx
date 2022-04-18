@@ -1,8 +1,7 @@
-import React, { CSSProperties } from "react";
+import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { fonts, colors, sizes } from "../../utils/theme";
-import { MaterialIcons, Ionicons, FontAwesome } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors } from "../../utils/theme";
 
 interface Props {
   type:
@@ -60,9 +59,8 @@ export default function Icon({ type, onPress, marginRight }: Props) {
         );
       case "filter":
         return <FontAwesome name="filter" size={24} color={colors.accent} />;
-      default:
-        return <View></View>;
-        break;
+        default:
+           return <View></View>;
     }
   };
 

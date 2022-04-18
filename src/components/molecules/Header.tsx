@@ -1,12 +1,11 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { CSSProperties } from "react";
 import { StyleSheet, View } from "react-native";
-import { fonts, colors, sizes } from "../../utils/theme";
-import { Text, Icon } from "../atoms/index";
 import { useDispatch, useSelector } from "react-redux";
-import { setMenu, setSearch, setTimerStatus } from "../../redux/actions";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { setMenu, setTimerStatus } from "../../redux/actions";
+import { colors } from "../../utils/theme";
 import { HomeStackParamList, State } from "../../utils/types";
-import Navigation from "../../navigation/HomeNavigator";
+import { Icon, Text } from "../atoms/index";
 
 type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
 

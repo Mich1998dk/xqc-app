@@ -1,32 +1,20 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Platform,
-  TextInput,
-  ScrollView,
-  FlatList,
-  TouchableHighlight,
+    Platform, StyleSheet,
+    TouchableOpacity,
+    View
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { fonts, colors, sizes } from "../../utils/theme";
-import i18n from "i18n-js";
-import * as Text from "../atoms/Text";
-import { IconButton, ModeOption } from "../molecules/index";
-import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setSearch, setTempFilter, setTimePicker } from "../../redux/actions";
-import * as l from "../../utils/layout";
+import { setTempFilter, setTimePicker } from "../../redux/actions";
+import { colors } from "../../utils/theme";
 import { State } from "../../utils/types";
+import * as Text from "../atoms/Text";
+import { IconButton } from "../molecules/index";
 
 interface Props {
   type: "start" | "end";
 }
-
-const webStyles = {
-  outlineWidth: 0,
-};
 
 export default function TimePicker({ type }: Props) {
   const dispatch = useDispatch();
