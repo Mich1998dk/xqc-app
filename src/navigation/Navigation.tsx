@@ -10,7 +10,7 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator headerMode="none">
-        <Stack.Screen name="Home" component={HomeNavigator}></Stack.Screen>
+        <Stack.Screen name="ProjectionMode" component={HomeNavigator}></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
