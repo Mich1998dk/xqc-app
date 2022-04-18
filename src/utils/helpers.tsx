@@ -1,8 +1,5 @@
-import { Platform, Alert } from "react-native";
-import { MediaInfo, Mode, Obj } from "../utils/types";
-import { useSelector } from "react-redux";
-import { State } from "./types";
-import { store } from "../redux/store";
+import { Alert, Platform } from "react-native";
+import { Mode, Obj } from "../utils/types";
 
 export function formatDate(str: string) {
   var y = str.substr(0, 4),

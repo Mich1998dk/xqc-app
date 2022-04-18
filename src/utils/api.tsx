@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Obj } from "./types";
 import { URL } from "./constants";
 import { getNumberOfImageByPlatformAndMode } from "./helpers";
 
