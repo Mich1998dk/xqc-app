@@ -159,10 +159,10 @@ export default function Home({ navigation, route }: Props) {
                 <div style={{ width: "100%", display: "flex" }}>
                     {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} >
 
-                            <ScrollView style={{ height: "82.2vh", backgroundColor: colors.lightRed, borderRadius: 12 }} >
-                            {redux.states[i].images.length > 0 && (
-                                    <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
-                            )}
+                        <ScrollView style={{ height: "82.2vh", backgroundColor: colors.lightRed, borderRadius: 12 }} >
+                        {redux.states[i].negatives.length > 0 && (
+                                <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+                        )}
                         </ScrollView>
                     </div>}
                     <div style={mobileStyle}>
@@ -179,7 +179,7 @@ export default function Home({ navigation, route }: Props) {
                     </div>
                     {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
                         <ScrollView style={{ height: "82.2vh", backgroundColor: colors.lightGreen, borderRadius: 12 }}>
-                            {redux.states[i].images.length > 0 && (
+                            {redux.states[i].positives.length > 0 && (
                                     <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
                             )}
                         </ScrollView>
