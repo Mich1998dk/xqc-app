@@ -1,34 +1,29 @@
-import React, {CSSProperties, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList, Mode } from "../../utils/types";
+import React, { CSSProperties, useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import { useDispatch } from "react-redux";
 import { Text } from "../../components/atoms/index";
-import { Model } from "../../utils/types";
 import { Button, Header, ModelOption } from "../../components/molecules/index";
-import { useSelector, useDispatch } from "react-redux";
+import { CustomPopUp } from "../../components/organisms/index";
 import { Container } from "../../containers/index";
 import {
-  getModelsInAsyncStorage,
-  deleteModelInAsyncStorage,
-  combineModelInStorage,
-  saveModelInAsyncStorage,
-} from "../../utils/storage";
-import { initExistingModel, learnModelAsync, randomSetAsync, reset } from "../../redux/reducers";
-import { FlatList, State } from "react-native-gesture-handler";
-
-import {
-  setImages,
-  setLoading,
-  setMode,
-  setName,
-  setNegative,
-  setPositive,
-  setSeen,
-  setSelectedFilter,
+    setImages,
+    setLoading,
+    setMode,
+    setName,
+    setNegative,
+    setPositive,
+    setSeen,
+    setSelectedFilter
 } from "../../redux/actions";
+import { initExistingModel, learnModelAsync, randomSetAsync, reset } from "../../redux/reducers";
 import { getNumberOfImageByPlatformAndMode } from "../../utils/helpers";
+import {
+    combineModelInStorage, deleteModelInAsyncStorage, getModelsInAsyncStorage, saveModelInAsyncStorage
+} from "../../utils/storage";
 import { colors } from "../../utils/theme";
-import { CustomPopUp } from "../../components/organisms/index"
+import { HomeStackParamList, Mode, Model } from "../../utils/types";
 
 type LoadModelProps = StackNavigationProp<HomeStackParamList, "LoadModal">;
 
@@ -41,7 +36,6 @@ export default function ChooseMode({ navigation }: Props) {
   const [state, setState] = useState({ loading: true, Title: "", Mode: "", ModeColor: colors.accent});
   const dispatch = useDispatch();
   const [models, setModels] = useState<Model[]>([]);
-
   const [mergePopupVisible, setMergePopupVisible] = useState({ contentText:"",visible:false})
   const getModels = async () => {
     var models = await getModelsInAsyncStorage();
@@ -99,8 +93,7 @@ export default function ChooseMode({ navigation }: Props) {
   }, [navigation]);
 
     return (
-      <Container>
-          
+      <Container>    
       <Header title={state.Title} onPress={() => navigation.goBack()} />
       {models.length === 0 && (
         <Text.Button style={{ alignSelf: "center", opacity: 0.4 }}>
@@ -145,9 +138,6 @@ export default function ChooseMode({ navigation }: Props) {
 
                                 setMergePopupVisible({ contentText: popupMergeContent, visible:true })
                             }
-                            
-
-                           
                         }
                     } else if (state.Mode == "Load") {
                       await dispatch(reset());
@@ -169,14 +159,11 @@ export default function ChooseMode({ navigation }: Props) {
                         navigation.navigate("SpeedMode", { loadModel: item });
                         }
                       if (item.lastSeen.length == getNumberOfImageByPlatformAndMode(item.mode)) {
-                          console.log("line 162")
                           await dispatch(setImages(item.lastSeen))
                       } else {
                           if (item.negatives.length == 0 && item.positives.length == 0) {
-                              console.log("Line 166")
                               dispatch(randomSetAsync());
                           } else {
-                              console.log("Line 169")
                               await dispatch(learnModelAsync());
                           }
                       }
