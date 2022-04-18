@@ -1,23 +1,20 @@
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StatusBar } from "expo-status-bar";
 import React, { CSSProperties } from "react";
 import {
-  StyleSheet,
-  View,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
+    KeyboardAvoidingView,
+    Platform, SafeAreaView, StyleSheet,
+    View
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "../components/molecules/index";
 import { Menu, Search } from "../components/organisms/index";
-import { colors } from "../utils/theme";
-import { StatusBar } from "expo-status-bar";
-import { useSelector, useDispatch } from "react-redux";
-import { Model, State } from "../utils/types";
-import { reset, resetModelAsync } from "../redux/reducers";
 import { setMenu } from "../redux/actions";
-import { saveModelInAsyncStorage } from "../utils/storage";
+import { reset, resetModelAsync } from "../redux/reducers";
 import { customAlert } from "../utils/helpers";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList } from "../utils/types";
+import { saveModelInAsyncStorage } from "../utils/storage";
+import { colors } from "../utils/theme";
+import { HomeStackParamList, Model, State } from "../utils/types";
 
 type HomeProps = StackNavigationProp<HomeStackParamList>;
 
