@@ -269,6 +269,9 @@ export const reducer = (state = initialState, action: any) => {
           newArray = [addModel("Default", newArray[0].user, undefined, newArray[0].terms)]
           return { ...state, states: newArray };
         }
+        case RESET_MODEL: {
+          newArray[index] = addModel("Model" + index, newArray[0].user, undefined, newArray[0].terms)
+        }
         
     default:
       return state;
@@ -278,6 +281,7 @@ export const reducer = (state = initialState, action: any) => {
 export const reset = () => async (dispatch: any, getState: any) => {
   dispatch(resetAll())
 };
+
 
 export const resetFiltersAsync = (index: number = 0) => async (dispatch: any, getState: any) => {
   await fetch(`${URL}/resetFilters`, {
@@ -611,7 +615,7 @@ export const resetModelAsync = (index:number = 0) => async (dispatch: any, getSt
           time: { start: 0, end: 0 },
         },index)
       );
-      dispatch(reset());
+      dispatch(resetModel(index));
       dispatch(randomSetAsync(index));
       dispatch(setLoading(false,index));
     })

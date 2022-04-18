@@ -86,7 +86,7 @@ export default function Container({
             navigation?.navigate("Info");
           }}
           onClickReset={() => {
-            dispatch(resetModelAsync());
+            dispatch(resetModelAsync(tabIndex));
             dispatch(setMenu(false,tabIndex));
           }}
           onClickSaveModel={() => {
