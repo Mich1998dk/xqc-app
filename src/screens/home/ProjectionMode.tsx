@@ -229,22 +229,3 @@ export default function projectionMode({ navigation, route }: Props) {
         return panels
     }
 }
-
-
-
-
-
-
-
-
-const styles = StyleSheet.create({
-  box: {
-    width: calculateImageWidth(),
-    backgroundColor: "#393939",
-    marginTop: 10,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 200,
-    },
-});
