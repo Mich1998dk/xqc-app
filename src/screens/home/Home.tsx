@@ -166,17 +166,16 @@ export default function Home({ navigation, route }: Props) {
                         </ScrollView>
                     </div>}
                     <div style={mobileStyle}>
-                        <ScrollView style={{ height: "82.2vh" }}>
-                            {redux.states[i].images.length > 0 && (
-                                <ImageRenderer navigation={navigation} data={redux.states[i].images} tabIndex={i} />
-                            )}
-                        </ScrollView>
-
                         {redux.states[i].images.length === 0 && !redux.states[i].loading && (
-                            <Text.Regular style={{ alignSelf: "center" }}>
+                            <Text.Regular style={{ display: "flex", justifyContent: "center" }}>
                                 No results - maybe your filter is too strict
                             </Text.Regular>
                         )}
+                        <ScrollView style={{ height: "82.2vh" }}>
+                            {redux.states[i].images.length > 0 && (
+                                    <ImageRenderer navigation={navigation} data={redux.states[i].images} tabIndex={i} />
+                            )}
+                        </ScrollView>
                     </div>
                     {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
                         <ScrollView style={{ height: "82.2vh", backgroundColor: colors.lightGreen, borderRadius: 12 }}>

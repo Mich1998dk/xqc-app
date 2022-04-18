@@ -226,7 +226,11 @@ export default function SpeedMode({ navigation, route }: Props) {
                                 </ScrollView>
                             </div>}
                             <div style={mobileStyle}>
-
+                            {redux.states[i].images.length === 0 && !redux.states[i].loading && (
+                                <Text.Regular style={{ display: "flex", justifyContent: "center" }}>
+                                    No results - maybe your filter is too strict
+                                </Text.Regular>
+                            )}
                             <ScrollView style={{ height: "80vh" }}>
                                 {redux.states[i].images.length > 0 && (
                                     <ImageRenderer
@@ -237,12 +241,6 @@ export default function SpeedMode({ navigation, route }: Props) {
                                     />
                                 )}
                             </ScrollView>
-
-                                {redux.states[i].images.length === 0 && !redux.states[i].loading && (
-                                    <Text.Regular style={{ alignSelf: "center" }}>
-                                        No results - maybe your filter is too strict
-                                    </Text.Regular>
-                                )}
                             </div>
                             {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
                                 <ScrollView style={{ height: "80vh", backgroundColor: colors.lightGreen, borderRadius: 12 }}>
