@@ -1,56 +1,32 @@
-import React, { useEffect, useState, useContext, CSSProperties } from "react";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  View,
-  Image,
-  Alert,
-  Platform,
-  ScrollView,
-} from "react-native";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@reach/tabs";
+import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { HomeStackParamList, State } from "../../utils/types";
+import React, { CSSProperties, useEffect, useState } from "react";
+import { isMobile } from "react-device-detect";
+import {
+    Dimensions, Platform,
+    ScrollView, StyleSheet
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { Text } from "../../components/atoms/index";
 import {
-  Header,
-  Button,
-  IconButton,
-  ImageOverlay,
+    Header
 } from "../../components/molecules/index";
-import { useSelector, useDispatch } from "react-redux";
-import { Container } from "../../containers/index";
 import {
-  initModelAsync,
-  negativeExamplePressed,
-  positiveExamplePressed,
-  learnModelAsync,
-  randomSetAsync,
-  resetModelAsync,
-  replaceImageAsync,
-  reset,
-  initExistingModel,
-  addNewModelAsync,
-} from "../../redux/reducers";
-import { colors, fonts, sizes  } from "../../utils/theme";
-import {
-  formatTime,
-  formatDate,
-  isUpperCase,
-  formatToLocation,
-} from "../../utils/helpers";
-import {
-  ButtonBar,
-  ImageRenderer,
-  Menu,
+    ButtonBar,
+    ImageRenderer
 } from "../../components/organisms/index";
-import { Obj } from "../../utils/types";
-import { calculateColumnAmount, calculateImageWidth } from "../../utils/layout";
-import { RouteProp } from "@react-navigation/native";
-import { setSearchData, setSeen, setSelectedFilter } from "../../redux/actions";
-import { isMobile } from "react-device-detect";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@reach/tabs";
-import { Dimensions } from "react-native";
+import { Container } from "../../containers/index";
+import { setSearchData } from "../../redux/actions";
+import {
+    addNewModelAsync, initModelAsync, reset
+} from "../../redux/reducers";
+import {
+    formatTime
+} from "../../utils/helpers";
+import { calculateImageWidth } from "../../utils/layout";
+import { colors, fonts, sizes } from "../../utils/theme";
+import { HomeStackParamList, State } from "../../utils/types";
 
 
 
@@ -63,6 +39,13 @@ type Props = {
   route: RouteProps;
 };
 
+
+/**
+ * This is the main page for speed mode.
+ * 
+ * @param navigation
+ * @param route
+ */
 export default function SpeedMode({ navigation, route }: Props) {
   const { loadModel } = route.params;
   const dispatch = useDispatch();
@@ -78,6 +61,7 @@ export default function SpeedMode({ navigation, route }: Props) {
     return unsubscribe;
   }, [navigation]);
 
+  // This effect updates the timer that tells you how long you have been in speed mode
   useEffect(() => {
     if (!redux.states[selectedTab].loading) {
       var _s = 0;
@@ -101,6 +85,11 @@ export default function SpeedMode({ navigation, route }: Props) {
       return unsubscribe;
   }, [redux.states[selectedTab].loading]);
 
+    /**
+     * This function returns a style @type {CSSProperties}
+     * It changes the color of the background based on if it is for the positive or negative header
+     * @param pos of @type {Boolean} this is used to determine if it is for the negative or positive header
+     */
     function posNegHeaderStyle(pos: Boolean): CSSProperties {
         var temp = {
             width: "25%",
@@ -118,16 +107,21 @@ export default function SpeedMode({ navigation, route }: Props) {
         return temp
     }
 
+    // Makes sure the following container will use the entire screen if not on a mobile device
     var mobilestylingContainer = (!isMobile) ? {
         width: "100%", maxWidth: "100%", flexDirection: "column"
     } as CSSProperties : {};
+
+    // Makes a style sheet that sets the width to 50% of the screen if not on a mobile device, otherwise sets the width to 100%
     var mobileStyle = (!isMobile) ? {
         width: "50%"
     } as CSSProperties : { width: "100%" } as CSSProperties;
     return (
+
+        // Main container that contains everything in speed mode
         <Container model={loadModel} navigation={navigation} tabIndex={selectedTab} style={mobilestylingContainer}>
             <Tabs onChange={(index) => setSelectedTab(index)}>
-
+                {/*Makes a div inside the container with the height of the screen minus 64 which is the height of the ButtonBar at the bottom of the screen*/}
                     <div style={{ height: (Dimensions.get("window").height-64)}}>
                         <div style={{ display: "flex" }}>
                             {!isMobile && (<Header title={"Negative"} hideBack style={posNegHeaderStyle(false)} />)}
@@ -150,34 +144,44 @@ export default function SpeedMode({ navigation, route }: Props) {
                             }}
                             menu
                             time
-                                />
-                                <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                            />
+                            {/* This div contains a text field which shows the time of how long you have been in speed mode */ }
+                            <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
                               {redux.states[0].timerStatus && (
                                   <Text.Button>
                                       {formatTime(min) + ":" + formatTime(seconds)}
                                   </Text.Button>
                                )}
-                          </div>
-                          <TabList>
-                              {tabGenerator()}
-                          </TabList>
-                          </div>
-                            {!isMobile && (<Header title={"Positive"} hideBack style={posNegHeaderStyle(true)} />)}
-                          </div>
-                          <TabPanels>
-                              {panelGenerator()}
-                            </TabPanels>
+                            </div>
+                            <TabList>
+                                {tabGenerator()}
+                            </TabList>
                         </div>
+                            {!isMobile && (<Header title={"Positive"} hideBack style={posNegHeaderStyle(true)} />)}
+                        </div>
+                        <TabPanels>
+                            {panelGenerator()}
+                        </TabPanels>
+                    </div>
                     <ButtonBar navigation={navigation} tabIndex={selectedTab} posAndNeg randomSet train />
             </Tabs>
           
         </Container>
     );
 
+    /**
+     *  Adds another model as the next in line
+     */
     function addModel() {
         var index = redux.states.length
         dispatch(addNewModelAsync(index))
     }
+
+    /**
+     * returns the a stylesheet which is used for the tabs.
+     * checks if the tab has been selected, and changes the color of the tab accordingly
+     * @param index the index of the tab @type {number}
+     */
     function tabStyle(index: number) {
         var temp = {
             backgroundColor: colors.background,
@@ -198,6 +202,12 @@ export default function SpeedMode({ navigation, route }: Props) {
         return temp
     }
 
+    /**
+     * returns a list of tabs.
+     * it runs through all the states to see how many models there is and tabs that need to be generated, and adds them to the list, with unique keys.
+     * it sets the style of each tab using tabStyle, and sets the visible name of the tab to the name of the model.
+     * lastly it adds a tab with the text "+" that generates extra tabs
+     */
     function tabGenerator() {
         var acc = [];
         for (var i = 0; i < redux.states.length; i++) {
@@ -209,6 +219,10 @@ export default function SpeedMode({ navigation, route }: Props) {
         return acc
     }
 
+    /*
+     * returns a list of all the different panels for each model/tab
+     * and adds all the associated pictures for each model to their different views.
+     */
     function panelGenerator() {
         var acc = [];
 
