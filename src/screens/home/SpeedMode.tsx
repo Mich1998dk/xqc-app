@@ -211,7 +211,6 @@ export default function SpeedMode({ navigation, route }: Props) {
                                     <ImageRenderer
                                         navigation={navigation}
                                         data={redux.states[i].images}
-                                        time={formatTime(min) + ":" + formatTime(seconds)}
                                         tabIndex={i}
                                     />
                                 )}
