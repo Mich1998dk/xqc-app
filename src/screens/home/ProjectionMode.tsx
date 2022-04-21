@@ -28,8 +28,8 @@ type Props = {
 /**
  * This is the main page for projection mode. 
  * 
- * @param navigation This is of @type {HomeStackParamList} which is something that contains all the information that Projection modes need to function
- * @param rotue
+ * @param navigation This is the value saying what page we are navigating from which is used for useEffect to have code running only once
+ * @param route This represents the values given from the page we are navigating from
  */
 export default function projectionMode({ navigation, route }: Props) {
     const { loadModel } = route.params;
