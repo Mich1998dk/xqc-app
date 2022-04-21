@@ -21,6 +21,7 @@ interface Props {
   style?: CSSProperties;
   numberOfImages?: number;
   tabIndex: number;
+  containerStyle?: CSSProperties;
 }
 
 /** ImageRendere creates a view containing a flatlist of all the data you supply it with.
@@ -33,7 +34,7 @@ interface Props {
  * @param tabIndex is the index of the tab/panel that the ImageRenderer is associated with, this is of type @type {number}
  */
 
-export default function ImageRenderer({ data, navigation, style, numberOfImages, tabIndex }: Props) {
+export default function ImageRenderer({ data, navigation, style, numberOfImages, tabIndex, containerStyle }: Props) {
   const dispatch = useDispatch();
   const redux = useSelector((state: State) => state);
 
@@ -57,8 +58,8 @@ export default function ImageRenderer({ data, navigation, style, numberOfImages,
       //LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     }
   }, []);
-  return (
-    <View style={styles.container}>
+    return (
+        <View style={[styles.container, containerStyle as any]}>
       {redux.states[tabIndex].mode === "projection" && (
         <FlatList
           columnWrapperStyle={{ justifyContent: "center" }}

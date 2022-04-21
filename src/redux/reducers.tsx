@@ -415,7 +415,7 @@ export const negativeExamplePressed =
       dispatch(removeNegative(item,index));
     } else {
       //Add to positives
-      dispatch(setNegative([...getState().states[index].negatives, item],index));
+        dispatch(setNegative([item, ...getState().states[index].negatives],index));
     }
   };
 /** 
@@ -436,7 +436,7 @@ export const positiveExamplePressed =
       dispatch(removePositive(item,index));
     } else {
       //Add to positives
-      dispatch(setPositive([...getState().states[index].positives, item],index));
+      dispatch(setPositive([item,...getState().states[index].positives],index));
     }
   };
 /**

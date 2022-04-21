@@ -56,8 +56,8 @@ export default function ModeOption({
           </View>
         )}
       </View>
-      <View style={styles.title}>
-              <Text.Header style={[{ fontSize: 16 }, style as any, { width: "auto"}]}>{title}</Text.Header>
+          <View style={styles.title}>
+              <Text.Header style={[{ fontSize: 16 }, style as any, { width: "auto", height: "auto", alignSelf: "center" }]}>{title}</Text.Header>
       </View>
       <View style={{ flexDirection: "row" }}>
         <View>

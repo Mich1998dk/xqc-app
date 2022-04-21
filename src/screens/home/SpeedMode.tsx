@@ -91,13 +91,14 @@ export default function SpeedMode({ navigation, route }: Props) {
      */
     function posNegHeaderStyle(pos: Boolean): CSSProperties {
         var temp = {
-            width: "25%",
-            height: "auto",
+            width: "20%",
+            height: "10vh",
             backgroundColor: colors.accent,
             borderRadius: 12,
-            fontSize: sizes.base28
-        }
-
+            fontSize: sizes.base28,
+            alignSelf: "end"
+        } as CSSProperties
+         
         if (pos) {
             temp.backgroundColor = colors.green
         } else {
@@ -122,7 +123,7 @@ export default function SpeedMode({ navigation, route }: Props) {
             <Tabs onChange={(index) => setSelectedTab(index)}>
                 {/*Makes a div inside the container with the height of the screen minus 64 which is the height of the ButtonBar at the bottom of the screen*/}
                     <div style={{ height: (Dimensions.get("window").height-64)}}>
-                        <div style={{ display: "flex" }}>
+                    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
                             {!isMobile && (<Header title={"Negative"} hideBack style={posNegHeaderStyle(false)} />)}
                         <div style={mobileStyle}>
                             <Header
@@ -190,7 +191,8 @@ export default function SpeedMode({ navigation, route }: Props) {
             fontSize: sizes.base20,
             color: colors.accent,
             borderRadius: 10,
-            margin: 5
+            margin: 5,
+            padding: 8
         } as CSSProperties
 
         if (index == selectedTab) {
@@ -229,12 +231,12 @@ export default function SpeedMode({ navigation, route }: Props) {
             acc.push(
                 <TabPanel key={"panel" + i} style={{ width: "100%" }} index={i}>
                     
-                        <div style={{ width: "100%", display: "flex" }}>
-                            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} >
+                    <div style={{ width: "100%", display: "flex", justifyContent: "space-evenly" }}>
+                            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "20%" }} >
 
-                                <ScrollView style={{ height: "80vh", backgroundColor: colors.lightRed, borderRadius: 12 }} >
+                            <ScrollView style={{ height: "78vh", backgroundColor: colors.lightRed, borderRadius: 12, overflow: "hidden" }} showsHorizontalScrollIndicator={false}  >
                                     {redux.states[i].images.length > 0 && (
-                                        <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+                                    <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} containerStyle={{ marginTop: "3%", marginBottom: "3%" }} />
                                     )}
                                 </ScrollView>
                             </div>}
@@ -244,7 +246,7 @@ export default function SpeedMode({ navigation, route }: Props) {
                                     No results - maybe your filter is too strict
                                 </Text.Regular>
                             )}
-                            <ScrollView style={{ height: "80vh" }}>
+                            <ScrollView style={{ height: "78vh" }} showsHorizontalScrollIndicator={false} >
                                 {redux.states[i].images.length > 0 && (
                                     <ImageRenderer
                                         navigation={navigation}
@@ -254,10 +256,10 @@ export default function SpeedMode({ navigation, route }: Props) {
                                 )}
                             </ScrollView>
                             </div>
-                            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
-                                <ScrollView style={{ height: "80vh", backgroundColor: colors.lightGreen, borderRadius: 12 }}>
+                            {!isMobile && <div style={{ color: "white", fontSize: 10, width: "20%" }} title={"Positives"}>
+                            <ScrollView style={{ height: "78vh", backgroundColor: colors.lightGreen, borderRadius: 12 }} showsHorizontalScrollIndicator={false} >
                                     {redux.states[i].images.length > 0 && (
-                                        <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+                                    <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} containerStyle={{ marginTop: "3%", marginBottom: "3%" }} />
                                     )}
                                 </ScrollView>
                             </div>}

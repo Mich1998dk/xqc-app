@@ -51,7 +51,7 @@ export default function projectionMode({ navigation, route }: Props) {
      */
     function posNegHeaderStyle(pos: Boolean): CSSProperties {
         var temp = {
-            width: "25%",
+            width: "20%",
             height: "auto",
             backgroundColor: colors.accent,
             borderRadius: 12,
@@ -81,7 +81,7 @@ export default function projectionMode({ navigation, route }: Props) {
             <Tabs onChange={(index) => setSelectedTab(index)}>
                 {/*Makes a div inside the container with the height of the screen minus 64 which is the height of the ButtonBar at the bottom of the screen*/}
                 <div style={{ height: (Dimensions.get("window").height - 64) }}>
-                    <div style={{ display: "flex" }}>
+                    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
                         {!isMobile && (<Header title={"Negative"} hideBack style={posNegHeaderStyle(false)} />)}
                         <div style={mobileStyle}>
                             <Header
@@ -138,7 +138,8 @@ export default function projectionMode({ navigation, route }: Props) {
             fontSize: sizes.base20,
             color: colors.accent,
             borderRadius: 10,
-            margin: 5
+            margin: 5,
+            padding: 8
         } as CSSProperties
 
         if (index == selectedTab) {
@@ -180,15 +181,15 @@ export default function projectionMode({ navigation, route }: Props) {
                 <TabPanel key={"panel" + i} style={{ width: "100%" }} index={i}>
 
                     {/* the main div that contains all different divs/views containing pictures*/}
-                    <div style={{ width: "100%", display: "flex" }}>
+                    <div style={{ width: "100%", display: "flex", justifyContent: "space-evenly" }}>
 
                         {/* generates a div that contains a scroll view with all the negative pictures if the user is not on a mobile device*/}
-                        {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} >
-                            <ScrollView style={{ height: "82.2vh", backgroundColor: colors.lightRed, borderRadius: 12 }} >
+                        {!isMobile && <div style={{ color: "white", fontSize: 10, width: "20%" }} >
+                            <ScrollView style={{ height: "80vh", backgroundColor: colors.lightRed, borderRadius: 12 }} showsHorizontalScrollIndicator={false}  >
 
                                 {/* chekcs if there is any negative pictures, and the ImageRenderer returns a view with all the negative pictures */}
                                 {redux.states[i].negatives.length > 0 && (
-                                    <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+                                    <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} containerStyle={{ marginTop: "3%", marginBottom: "3%" }} />
                                 )}
                             </ScrollView>
                         </div>}
@@ -204,7 +205,7 @@ export default function projectionMode({ navigation, route }: Props) {
                             )}
 
 
-                            <ScrollView style={{ height: "82.2vh" }}>
+                            <ScrollView style={{ height: "80vh" }} showsHorizontalScrollIndicator={false} >
                                 {/* checks if there is any pictures to show and the ImageRenderer returns a view will all the pictures*/}
                                 {redux.states[i].images.length > 0 && (
                                     <ImageRenderer navigation={navigation} data={redux.states[i].images} tabIndex={i} />
@@ -213,11 +214,11 @@ export default function projectionMode({ navigation, route }: Props) {
                         </div>
 
                         {/* generates a div that contains a scroll view with all the positive pictures if the user is not on a mobile device*/}
-                        {!isMobile && <div style={{ color: "white", fontSize: 10, width: "25%" }} title={"Positives"}>
-                            <ScrollView style={{ height: "82.2vh", backgroundColor: colors.lightGreen, borderRadius: 12 }}>
+                        {!isMobile && <div style={{ color: "white", fontSize: 10, width: "20%" }} title={"Positives"}>
+                            <ScrollView style={{ height: "80vh", backgroundColor: colors.lightGreen, borderRadius: 12 }} showsHorizontalScrollIndicator={false} >
                                 {/* chekcs if there is any positive pictures, and the ImageRenderer returns a view with all the positive pictures */}
                                 {redux.states[i].positives.length > 0 && (
-                                    <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} />
+                                    <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} containerStyle={{ marginTop: "3%", marginBottom: "3%"}} />
                                 )}
                             </ScrollView>
                         </div>}
