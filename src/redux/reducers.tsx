@@ -700,7 +700,6 @@ export const initExistingModel =
   };
 //sets up the first model only run on startup
 export const initModelAsync = (index: number = 0) => async (dispatch: any, getState: any) => {
-  console.log(index)
   dispatch(setLoading(true,index));
   dispatch(setImages([],index));
   dispatch(setNegative([],index));

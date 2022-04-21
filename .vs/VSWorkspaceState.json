@@ -11,6 +11,6 @@
     "\\src\\screens\\home",
     "\\src\\utils"
   ],
-  "SelectedNode": "\\package-lock.json",
+  "SelectedNode": "\\src\\screens\\home\\ProjectionMode.tsx",
   "PreviewInSolutionExplorer": false
 }
