@@ -144,7 +144,7 @@ export const reducer = (state = initialState, action: any) => {
           newArray[index].negatives = action.payload
           return { ...state, states: newArray };
         }
-      case REMOVE_NEGATIVE: {
+        case REMOVE_NEGATIVE: {
           newArray[index].negatives = newArray[index].negatives.filter((item) => item.exqId !== action.payload.exqId)
           return { ...state, states: newArray };
         }
@@ -226,6 +226,7 @@ export const reset = () => async (dispatch: any, getState: any) => {
  *Calls a filter reset from server since filter is connected to user
  **/
 export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
+    //specifically asks for the default model state to make sure the there are no problem with asyncronous resetting  (states[0])
   await fetch(`${URL}/resetFilters`, {
     method: "post",
     headers: {
@@ -249,22 +250,21 @@ export const resetFiltersAsync = () => async (dispatch: any, getState: any) => {
           },
         },0)
       );
-      //dispatch(setFilter({ activities: [], locations: [] }));
       customAlert("success", "Filters has been reset!");
     })
     .catch((err) => {
       customAlert("error", "Something went wrong resetting the filters.");
     });
 };
-
+// calls for applying a filter from server so the server remembers a filter given to a user
 export const applyFiltersAsync = (index: number = 0) => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true,index));
-
+  // sets all values that was chosen from filter
   var selecting = false;
   var selected: number[] = [];
   const start = getState().states[index].tempFilter.time.start;
   const end = getState().states[index].tempFilter.time.end;
-
+  // checks if time is valid otherwise makes every hour into a array
   if (start == 0 && end == 0) {
     selected = [];
   } else if (start == 0 || end == 0) {
@@ -287,7 +287,7 @@ export const applyFiltersAsync = (index: number = 0) => async (dispatch: any, ge
       }
     }
   }
-
+  // creates JSON body containing filter infomation
   const body = JSON.stringify({
     ts: parseInt(new Date().getTime().toString()),
     user: getState().states[index].user,
@@ -300,7 +300,7 @@ export const applyFiltersAsync = (index: number = 0) => async (dispatch: any, ge
   });
 
   console.log(body);
-
+  //send filter request to server
   await fetch(`${URL}/applyFilters`, {
     method: "post",
     headers: {
@@ -329,7 +329,10 @@ export const applyFiltersAsync = (index: number = 0) => async (dispatch: any, ge
     );
   }
 };
-
+/** gets detailed information about a specific picture
+ *  @param id the id of the given picture
+ *  @param index the index of the model the picture was in
+ **/
 export const getImageInfo =
   (id: number, index:number = 0) => async (dispatch: any, getState: any) => {
     await axios(`${URL}/getImageInfo`, {
@@ -352,7 +355,11 @@ export const getImageInfo =
         console.log(err);
       });
   };
-
+/**
+ * request search items from server
+ * @param term the term used to get search items from server
+ * @param index what model the search items should be given
+ */
 export const searchAsync =
   (term: string, index:number = 0) => async (dispatch: any, getState: any) => {
     dispatch(setLoading(true,index));
@@ -379,7 +386,6 @@ export const searchAsync =
         );
         console.log("SIZE OF RESULTS: " + images.length);
 
-        //dispatch(setImages(images));
         dispatch(setSearchResults(images,index));
         dispatch(updateSeen(images,index));
       })
@@ -389,7 +395,11 @@ export const searchAsync =
 
     dispatch(setLoading(false,index));
   };
-
+/** 
+ * sets a negative in the given model
+ * @param item is the given picture
+ * @param index the given model
+ */
 export const negativeExamplePressed =
   (item: Obj, index:number = 0) => async (dispatch: any, getState: any) => {
       console.log(index)
@@ -408,7 +418,11 @@ export const negativeExamplePressed =
       dispatch(setNegative([...getState().states[index].negatives, item],index));
     }
   };
-
+/** 
+ * sets a positive in the given model
+ * @param item is the given picture
+ * @param index the given model
+ */
 export const positiveExamplePressed =
   (item: Obj, index:number = 0) => async (dispatch: any, getState: any) => {
     //Check if it is in positives
@@ -425,7 +439,11 @@ export const positiveExamplePressed =
       dispatch(setPositive([...getState().states[index].positives, item],index));
     }
   };
-
+/**
+ * use a projected image and sets it to positive or negative in the
+ * @param label if the projection currently is on positive or negative
+ * @param index the current model that the image is projected from
+ */
 export const learnWithProjectedImageAsync =
   (label: "positive" | "negative", index:number = 0) => async (dispatch: any, getState: any) => {
     dispatch(setLoading(true,index));
@@ -451,7 +469,11 @@ export const learnWithProjectedImageAsync =
     dispatch(setPositiveProjection([],index));
     dispatch(setLoading(false,index));
   };
-
+/**
+ * set up a projection of a given image
+ * @param obj the given image
+ * @param index the given model the image is projected from
+ */
 export const makeProjection =
   (obj: Obj,index:number=0) => async (dispatch: any, getState: any) => {
     dispatch(setLoading(true,index));
@@ -495,7 +517,10 @@ export const makeProjection =
 
     dispatch(setLoading(false,index));
   };
-
+/**
+ * train model from the currently selected images in positive and negative
+ * @param index
+ */
 export const learnModelAsync = (index:number = 0) => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true,index));
 
@@ -528,7 +553,7 @@ export const learnModelAsync = (index:number = 0) => async (dispatch: any, getSt
       dispatch(setLoading(false,index));
     });
 };
-
+// request a reset for a given model
 export const resetModelAsync = (index:number = 0) => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true,index));
   dispatch(setImages([],index));
@@ -566,7 +591,7 @@ export const resetModelAsync = (index:number = 0) => async (dispatch: any, getSt
     });
   customAlert("success", "Your model has been reset!");
 };
-
+// ask server for new random set of images independent of current trained model
 export const randomSetAsync = (index:number = 0) => async (dispatch: any, getState: any) => {
   dispatch(setLoading(true,index));
 
@@ -616,7 +641,7 @@ export const randomSetAsync = (index:number = 0) => async (dispatch: any, getSta
       dispatch(setLoading(false,index));
     });
 };
-
+// initialize the application, only run on startup
 export const initExquisitorAsync =
   (index:number = 0) => async (dispatch: any, getState: any) => {
     dispatch(setLoading(true,index));
@@ -647,7 +672,7 @@ export const initExquisitorAsync =
         customAlert("error", err);
       });
   };
-
+//load a saved model from the loadModel page
 export const initExistingModel =
   (lastSeen: Obj[],index:number = 0) => async (dispatch: any, getState: any) => {
     const body = JSON.stringify({
@@ -673,7 +698,7 @@ export const initExistingModel =
         console.log(err);
       });
   };
-
+//sets up the first model only run on startup
 export const initModelAsync = (index: number = 0) => async (dispatch: any, getState: any) => {
   console.log(index)
   dispatch(setLoading(true,index));
@@ -755,17 +780,14 @@ export const initModelAsync = (index: number = 0) => async (dispatch: any, getSt
   //}
   dispatch(setLoading(false,index));
 };
-
+// adds a new default model when loading in 
 export const addNewModelAsync = (index: number = 0) => async (dispatch: any, getState: any) => {
     await dispatch(addNewModel())
     console.log(getState().states.length)
     dispatch(initModelAsync(index))
 }
-export const deleteModelAsync =
-  (name: string,index:number=0) => async (dispatch: any, getState: any) => {
-    deleteModelInAsyncStorage(name);
-  };
 
+// replaces a single image for when clicking on speed mode
 export const replaceImageAsync =
     (index: number, modelIndex: number = 0) => async (dispatch: any, getState: any) => {
       console.log("imageindex:" + index)
@@ -812,7 +834,7 @@ export const replaceImageAsync =
         dispatch(setLoading(false,modelIndex));
       });
   };
-
+// submits a image to the server
 export const submitImage =
   (imageId: string,index:number = 0) => async (dispatch: any, getState: any) => {
     dispatch(setLoading(true, index));
