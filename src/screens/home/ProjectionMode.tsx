@@ -185,7 +185,7 @@ export default function projectionMode({ navigation, route }: Props) {
 
                         {/* generates a div that contains a scroll view with all the negative pictures if the user is not on a mobile device*/}
                         {!isMobile && <div style={{ color: "white", fontSize: 10, width: "20%" }} >
-                            <ScrollView style={{ height: "80vh", backgroundColor: colors.lightRed, borderRadius: 12 }} showsHorizontalScrollIndicator={false}  >
+                            <ScrollView style={{ height: ((Dimensions.get("window").height - 64) * 0.8), backgroundColor: colors.lightRed, borderRadius: 12 }} showsHorizontalScrollIndicator={false}  >
 
                                 {/* chekcs if there is any negative pictures, and the ImageRenderer returns a view with all the negative pictures */}
                                 {redux.states[i].negatives.length > 0 && (
@@ -205,7 +205,7 @@ export default function projectionMode({ navigation, route }: Props) {
                             )}
 
 
-                            <ScrollView style={{ height: "80vh" }} showsHorizontalScrollIndicator={false} >
+                            <ScrollView style={{ height: ((Dimensions.get("window").height - 64) *0.8) }} showsHorizontalScrollIndicator={false} >
                                 {/* checks if there is any pictures to show and the ImageRenderer returns a view will all the pictures*/}
                                 {redux.states[i].images.length > 0 && (
                                     <ImageRenderer navigation={navigation} data={redux.states[i].images} tabIndex={i} />
@@ -215,7 +215,7 @@ export default function projectionMode({ navigation, route }: Props) {
 
                         {/* generates a div that contains a scroll view with all the positive pictures if the user is not on a mobile device*/}
                         {!isMobile && <div style={{ color: "white", fontSize: 10, width: "20%" }} title={"Positives"}>
-                            <ScrollView style={{ height: "80vh", backgroundColor: colors.lightGreen, borderRadius: 12 }} showsHorizontalScrollIndicator={false} >
+                            <ScrollView style={{ height: ((Dimensions.get("window").height - 64) * 0.8), backgroundColor: colors.lightGreen, borderRadius: 12 }} showsHorizontalScrollIndicator={false} >
                                 {/* chekcs if there is any positive pictures, and the ImageRenderer returns a view with all the positive pictures */}
                                 {redux.states[i].positives.length > 0 && (
                                     <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} containerStyle={{ marginTop: "3%", marginBottom: "3%"}} />

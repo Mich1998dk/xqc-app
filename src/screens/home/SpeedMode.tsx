@@ -146,7 +146,7 @@ export default function SpeedMode({ navigation, route }: Props) {
                             time
                             />
                             {/* This div contains a text field which shows the time of how long you have been in speed mode */ }
-                            <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                            <div style={{ width: "100%", display: "flex", justifyContent: "center", height: "2vh" }}>
                               {redux.states[0].timerStatus && (
                                   <Text.Button>
                                       {formatTime(min) + ":" + formatTime(seconds)}
@@ -234,7 +234,7 @@ export default function SpeedMode({ navigation, route }: Props) {
                     <div style={{ width: "100%", display: "flex", justifyContent: "space-evenly" }}>
                             {!isMobile && <div style={{ color: "white", fontSize: 10, width: "20%" }} >
 
-                            <ScrollView style={{ height: "78vh", backgroundColor: colors.lightRed, borderRadius: 12, overflow: "hidden" }} showsHorizontalScrollIndicator={false}  >
+                            <ScrollView style={{ height: ((Dimensions.get("window").height - 64) * 0.78), backgroundColor: colors.lightRed, borderRadius: 12, overflow: "hidden" }} showsHorizontalScrollIndicator={false}  >
                                     {redux.states[i].images.length > 0 && (
                                     <ImageRenderer navigation={navigation} data={redux.states[i].negatives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} containerStyle={{ marginTop: "3%", marginBottom: "3%" }} />
                                     )}
@@ -246,7 +246,7 @@ export default function SpeedMode({ navigation, route }: Props) {
                                     No results - maybe your filter is too strict
                                 </Text.Regular>
                             )}
-                            <ScrollView style={{ height: "78vh" }} showsHorizontalScrollIndicator={false} >
+                            <ScrollView style={{ height: ((Dimensions.get("window").height - 64) * 0.78) }} showsHorizontalScrollIndicator={false} >
                                 {redux.states[i].images.length > 0 && (
                                     <ImageRenderer
                                         navigation={navigation}
@@ -257,7 +257,7 @@ export default function SpeedMode({ navigation, route }: Props) {
                             </ScrollView>
                             </div>
                             {!isMobile && <div style={{ color: "white", fontSize: 10, width: "20%" }} title={"Positives"}>
-                            <ScrollView style={{ height: "78vh", backgroundColor: colors.lightGreen, borderRadius: 12 }} showsHorizontalScrollIndicator={false} >
+                            <ScrollView style={{ height: ((Dimensions.get("window").height - 64) * 0.78), backgroundColor: colors.lightGreen, borderRadius: 12 }} showsHorizontalScrollIndicator={false} >
                                     {redux.states[i].images.length > 0 && (
                                     <ImageRenderer navigation={navigation} data={redux.states[i].positives} tabIndex={i} style={{ width: "45%" }} numberOfImages={2} containerStyle={{ marginTop: "3%", marginBottom: "3%" }} />
                                     )}
