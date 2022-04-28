@@ -57,7 +57,8 @@ export default function PosAndNeg({ navigation,route }: Props) {
         />
       </View>
       {state.selected !== "history" && (
-        <FlatList
+        <FlatList 
+          showsHorizontalScrollIndicator={false}
           columnWrapperStyle={{ justifyContent: "flex-start" }}
           data={
             state.selected === "negative" ? redux.states[tabIndex].negatives : redux.states[tabIndex].positives
@@ -100,7 +101,7 @@ export default function PosAndNeg({ navigation,route }: Props) {
       )}
 
       {state.selected === "history" && (
-              <ScrollView>
+        <ScrollView showsHorizontalScrollIndicator={false}>
                   <ImageRenderer navigation={navigation as any} tabIndex={tabIndex} data={redux.states[tabIndex].seen} />
         </ScrollView>
       )}

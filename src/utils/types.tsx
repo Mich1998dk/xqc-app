@@ -1,9 +1,8 @@
 export type NavigationParamList = {
-  Home: undefined;
+  ProjectionMode: undefined;
 };
 
 export type HomeStackParamList = {
-  Home: { loadModel?: Model };
   ChooseMode: undefined;
   Welcome: undefined;
   PosAndNeg: {tabIndex:number};

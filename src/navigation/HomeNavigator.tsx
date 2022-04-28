@@ -1,7 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import {
-    ChooseMode, Filter, History, ProjectionMode, Info, LoadModel, ModelName, PosAndNeg, Projection, Search, SpeedMode, Welcome
+    ChooseMode, Filter, ProjectionMode, Info, LoadModel, ModelName, PosAndNeg, Projection, Search, SpeedMode, Welcome
 } from "../screens/home/index";
 import { HomeStackParamList } from "../utils/types";
 
@@ -21,7 +21,6 @@ export default function Navigation() {
       <Stack.Screen name="Filter" component={Filter}></Stack.Screen>
       <Stack.Screen name="Search" component={Search}></Stack.Screen>
       <Stack.Screen name="Info" component={Info}></Stack.Screen>
-      <Stack.Screen name="History" component={History}></Stack.Screen>
     </Stack.Navigator>
   );
 }

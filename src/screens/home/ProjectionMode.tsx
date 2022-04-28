@@ -18,8 +18,8 @@ import { colors, fonts, sizes } from "../../utils/theme";
 import { HomeStackParamList, State } from "../../utils/types";
 
 
-type HomeProps = StackNavigationProp<HomeStackParamList, "Home">;
-type RouteProps = RouteProp<HomeStackParamList, "Home">;
+type HomeProps = StackNavigationProp<HomeStackParamList, "ProjectionMode">;
+type RouteProps = RouteProp<HomeStackParamList, "ProjectionMode">;
 
 type Props = {
   navigation: HomeProps;

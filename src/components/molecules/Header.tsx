@@ -60,15 +60,7 @@ export default function ModeOption({
               <Text.Header style={[{ fontSize: 16 }, style as any, { width: "auto", height: "auto", alignSelf: "center" }]}>{title}</Text.Header>
       </View>
       <View style={{ flexDirection: "row" }}>
-        <View>
-          {history && (
-            <Icon
-              onPress={() => navigation.navigate("History")}
-              type="history"
-              marginRight
-            />
-          )}
-        </View>
+        
         <View>
           {time && (
             <Icon
