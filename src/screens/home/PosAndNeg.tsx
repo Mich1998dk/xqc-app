@@ -100,8 +100,8 @@ export default function PosAndNeg({ navigation,route }: Props) {
       )}
 
       {state.selected === "history" && (
-        <ScrollView>
-            <ImageRenderer navigation={navigation as any} data={redux.states[tabIndex].seen} />
+              <ScrollView>
+                  <ImageRenderer navigation={navigation as any} tabIndex={tabIndex} data={redux.states[tabIndex].seen} />
         </ScrollView>
       )}
     </Container>
