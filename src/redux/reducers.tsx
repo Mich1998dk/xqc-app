@@ -815,7 +815,7 @@ export const replaceImageAsync =
           thumbnail: formatToLocation(loc),
           folderName: "",
           shotId: 6,
-            imageURI: `http://bjth.itu.dk:5005/images/${formatFolderName(
+            imageURI: `http://bjth.itu.dk:5002/images/${formatFolderName(
             folderName
           )}/${formatToLocation(loc)}`,
         };
