@@ -2,14 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\components",
-    "\\src\\components\\organisms",
-    "\\src\\containers",
-    "\\src\\navigation",
-    "\\src\\redux",
     "\\src\\screens",
-    "\\src\\screens\\home",
-    "\\src\\utils"
+    "\\src\\screens\\home"
   ],
   "SelectedNode": "\\src\\screens\\home\\ProjectionMode.tsx",
   "PreviewInSolutionExplorer": false

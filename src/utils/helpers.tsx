@@ -63,7 +63,7 @@ export function formatBackendDataToImageObjects(res: any) {
       thumbnail: formatToLocation(loc),
       folderName: "",
       shotId: -1,
-        imageURI: `http://bjth.itu.dk:5005/images/${formatFolderName(
+        imageURI: `http://bjth.itu.dk:5002/images/${formatFolderName(
         folderName
       )}/${formatToLocation(loc)}`,
     };
@@ -94,7 +94,7 @@ export function formatObjectsFromMediaInfo(
           exqId: obj.exqId,
           folderName: folderName,
           thumbnail: obj.thumbnail,
-            imageURI: `http://bjth.itu.dk:5005/images/${formatFolderName(folderName)}/${
+            imageURI: `http://bjth.itu.dk:5002/images/${formatFolderName(folderName)}/${
             obj.thumbnail
           }`,
         };
